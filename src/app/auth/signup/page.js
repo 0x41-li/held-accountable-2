@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../../../lib/firebase";
 
