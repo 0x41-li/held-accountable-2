@@ -14,11 +14,13 @@ export default function Sidebar() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            if (!currentUser) {
+            if (!currentUser && pathname.indexOf("/auth") == -1) {
                 router.push("/auth/signin");
                 return;
             }
-            getUserById(auth.currentUser.uid).then(u => setUser(u));
+            if (currentUser) {
+                getUserById(auth.currentUser.uid).then(u => setUser(u));
+            }
         });
 
         return () => unsubscribe();
