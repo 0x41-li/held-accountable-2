@@ -1,12 +1,12 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import CreateArticle from "./CreateArticle";
-import { addArticleToPoll, createPoll, getWikipediaSummary, updatePoll } from "@/services/polls/polls";
+import { addArticleToPoll, createPoll, getDescriptionUsingGPT, getWikipediaSummary, updatePoll } from "@/services/polls/polls";
 import { auth, db } from "../../lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { toast } from "react-toastify";
 
-export default function CreatePoll({show, hideDialog}) {
+export default function CreatePoll({show, hideDialog, onRefresh}) {
     const [data, setData] = useState({ topic: "Digital Assets & Crypto", activeDate: {
             from: "2025-01-01",
             to: "2025-01-01",
@@ -130,6 +130,17 @@ export default function CreatePoll({show, hideDialog}) {
 
         let dataWithSummary = data;
 
+        for (let i = 0; i < data.questions.length; i ++) {
+            try {
+                const summary = await getDescriptionUsingGPT(data.questions[i].question);
+                if (summary)
+                    dataWithSummary.questions[i].summary = summary;
+            }
+            catch (e) {
+    
+            }
+        }
+
         // return;
         const createdPoll = await createPoll({
             ...dataWithSummary,
@@ -171,6 +182,7 @@ export default function CreatePoll({show, hideDialog}) {
                 firstArticleDescription
             });
         hideDialog();
+        onRefresh();
     }
 
     if (!show) {

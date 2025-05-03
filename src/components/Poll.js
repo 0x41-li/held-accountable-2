@@ -40,7 +40,7 @@ export default function Poll({poll}) {
 
     console.log(selectedOptions);
     const handleShowSummary = () => {
-        setShowSummary(true);
+        setShowSummary(!showSummary);
     }
 
     return <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white">

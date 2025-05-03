@@ -249,7 +249,7 @@ export const getTrendingTopics = async (length = 10) => {
 export const getPollsByTopic = async (topicName, start = null, length = 10) => {
   try {
     const pollsCollection = collection(db, POLLS_COLLECTION);
-    let q = query(pollsCollection, where("topic", "==", topicName), limit(length));
+    let q = query(pollsCollection, where("topic", "==", topicName), orderBy("createdAt", "desc"), limit(length));
 
     if (start) {
       q = query(q, startAfter(start));
@@ -487,4 +487,32 @@ export async function getWikipediaSummary(title) {
         console.error("Error fetching Wikipedia summary:", error);
         return null;
     }
+}
+
+export async function getDescriptionUsingGPT(question) {
+  const openai_api_key = "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";
+  const url = "https://api.openai.com/v1/responses";
+
+  try {
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            "Authorization": "Bearer " + openai_api_key,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            "model": "gpt-4.1",
+            "instructions": "Please write wiki description about question's keyword in 2~3 sentences. don't mention like keyword in the response.",
+            "input": question
+          })
+      });
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.output[0].content[0].text;
+  } catch (error) {
+      console.error("Error fetching Wikipedia summary:", error);
+      return null;
+  }
 }
