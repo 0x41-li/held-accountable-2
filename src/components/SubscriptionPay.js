@@ -4,6 +4,15 @@ import { ethers } from "ethers";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { auth } from "../../lib/firebase";
+import {
+  PaymentElement,
+  useStripe,
+  useElements,
+  Elements
+} from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
 const USDT_BEP20_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // Replace with actual USDT contract address on BSC
 const USDT_ABI = [
@@ -13,42 +22,81 @@ const USDT_ABI = [
 export default function SubscriptionPay({show, hideDialog}) {
     const [tipAmount, setTipAmount] = useState("5");
     const [paymentType, setPaymentType] = useState(0);
-    
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState(null);
+    const elements = useElements();
+    const stripe = useStripe();
+
+    const paymentElementOptions = {
+        layout: "accordion",
+    };
     if (!show)
         return "";
 
     const onSend = async () => {
-        if (window.ethereum) {
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const accounts = await provider.send("eth_requestAccounts", []);
-                let account = accounts[0];
-                if (!account) {
-                    toast.error("Please connect MetaMask first!");
-                    return;
-                }
-            
+        if (paymentType == 0) {
+            if (window.ethereum) {
                 try {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const signer = provider.getSigner();
-                    const contract = new ethers.Contract(USDT_BEP20_ADDRESS, USDT_ABI, signer);
+                    const accounts = await provider.send("eth_requestAccounts", []);
+                    let account = accounts[0];
+                    if (!account) {
+                        toast.error("Please connect MetaMask first!");
+                        return;
+                    }
                 
-                    const decimals = 18; // Check the token decimals
-                    const value = ethers.utils.parseUnits(tipAmount, decimals);
-                
-                    const tx = await contract.transfer("192.168.135.102", value);
-                    await tx.wait();
-
-                    toast.success("Paid Successfully!");
-                    hideDialog();
+                    try {
+                        const provider = new ethers.providers.Web3Provider(window.ethereum);
+                        const signer = provider.getSigner();
+                        const contract = new ethers.Contract(USDT_BEP20_ADDRESS, USDT_ABI, signer);
+                    
+                        const decimals = 18; // Check the token decimals
+                        const value = ethers.utils.parseUnits(tipAmount, decimals);
+                    
+                        const tx = await contract.transfer("192.168.135.102", value);
+                        await tx.wait();
+    
+                        toast.success("Paid Successfully!");
+                        hideDialog();
+                    } catch (error) {
+                        toast.error("Transaction Error: " + error);
+                    }
                 } catch (error) {
-                    toast.error("Transaction Error: " + error);
+                    toast.error("Connection Error: " + error);
                 }
-            } catch (error) {
-                toast.error("Connection Error: " + error);
+            } else {
+                toast.error("Please install MetaMask!");
             }
-        } else {
-            toast.error("Please install MetaMask!");
+        }
+        else {
+            if (!stripe || !elements) {
+                // Stripe.js hasn't yet loaded.
+                // Make sure to disable form submission until Stripe.js has loaded.
+                return;
+            }
+        
+            setIsLoading(true);
+        
+            const { error } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                // Make sure to change this to your payment completion page
+                return_url: "http://localhost:3000/success",
+                },
+            });
+        
+            // This point will only be reached if there is an immediate error when
+            // confirming the payment. Otherwise, your customer will be redirected to
+            // your `return_url`. For some payment methods like iDEAL, your customer will
+            // be redirected to an intermediate site first to authorize the payment, then
+            // redirected to the `return_url`.
+            if (error.type === "card_error" || error.type === "validation_error") {
+                setMessage(error.message);
+            } else {
+                setMessage("An unexpected error occurred.");
+            }
+        
+            setIsLoading(false);
         }
     }
 
@@ -97,9 +145,11 @@ export default function SubscriptionPay({show, hideDialog}) {
                             </button>
                         </div>
                     </div>
+                    {paymentType == 1 && <PaymentElement id="payment-element" />}
+                    {message && <div id="payment-message">{message}</div>}
                     <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b gap-[12px]">
                         <button type="button" className="flex-1 py-[10px] rounded-[8px] border border-secondary font-semibold text-[16px] leading-[24px]" onClick={() => hideDialog()}> Cancel </button>
-                        <button type="button" className="flex-1 py-[10px] rounded-[8px] border border-secondary font-semibold text-[16px] leading-[24px] text-white bg-blue" onClick={() => onSend()}> Proceed </button>
+                        <button type="button" className="flex-1 py-[10px] rounded-[8px] border border-secondary font-semibold text-[16px] leading-[24px] text-white bg-blue" onClick={() => onSend()}> {isLoading ? <div className="spinner" id="spinner"></div> : "Proceed"} </button>
                     </div>
                 </div>
             </div>
