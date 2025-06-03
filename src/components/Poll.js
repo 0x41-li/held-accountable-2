@@ -8,6 +8,32 @@ import Link from "next/link";
 import TipAuthor from "./TipAuthor";
 import { toast } from "react-toastify";
 
+const NARRATIVES = [
+    {
+        "id": 1,
+        "title": "Narrative Title here...",
+        "description": "How do you create compelling presentations that wow your colleagues and impress your managers?",
+        "user": {
+            "avatar": "/images/olivar_avatar.png",
+            "username": "Olivia Rhye",
+        },
+        "created_at": "20 Jan 2025",
+        "vote_up": 120,
+        "vote_down": 120
+    },
+    {
+        "id": 2,
+        "title": "Narrative Title here...",
+        "description": "How do you create compelling presentations that wow your colleagues and impress your managers?",
+        "user": {
+            "avatar": "/images/olivar_avatar.png",
+            "username": "Olivia Rhye",
+        },
+        "created_at": "20 Jan 2025",
+        "vote_up": 120,
+        "vote_down": 120
+    }
+]
 export default function Poll({poll}) {
     const [curQueId, setCurQueId] = useState(0);
     const [voted, setVoted] = useState([]);
@@ -55,10 +81,11 @@ export default function Poll({poll}) {
                 </div>
             </div>
             <div className="hidden md:flex gap-[8px]">
-                {/* <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
+                <button className="text-xl"><Icon icon="mdi:bookmark-plus-outline" /></button>
+                <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
                     <Icon icon="mingcute:document-fill" />
                     <span className="text-xs leading-xs font-medium">Read Articles</span>
-                </Link> */}
+                </Link>
                 <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                     <Icon icon="tabler:heart-filled" />
                     <span className="text-xs leading-xs font-medium">Tip Author</span>
@@ -70,10 +97,10 @@ export default function Poll({poll}) {
             <img src="/images/fire_icon.png" />
         </div>
         <div className="flex md:hidden gap-[8px]">
-            {/* <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
+            <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
                 <Icon icon="mingcute:document-fill" />
                 <span className="text-xs leading-xs font-medium">Read Articles</span>
-            </Link> */}
+            </Link>
             <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                 <Icon icon="tabler:heart-filled" />
                 <span className="text-xs leading-xs font-medium">Tip Author</span>
@@ -133,6 +160,46 @@ export default function Poll({poll}) {
             <span>Questions:</span>
             {poll.questions.map((question, i) => <button key={question.question + i} onClick={() => setCurQueId(i)} className={`rounded-full p-[8px] w-[36px] text-center border border-primary ${curQueId === i ? 'bg-blue text-white': ''}`}>{i + 1}</button>)}
         </div>: ""}
+        <div className="flex w-full flex-col pt-[12px]">
+            <div className="flex gap-[10px] items-center pb-[10px]">
+                <Icon icon="mynaui:chat-messages" />
+                <span>Community Narratives</span>
+                <div className="rounded-[50px] border border-[#B2DDFF] bg-[#EFF8FF] text-[#175CD3] text-xs px-[10px]">Premium</div>
+            </div>
+            <div className="w-full overflow-auto">
+                <div className="flex w-max gap-[10px]">
+                {
+                    NARRATIVES.map(narrative => <div key={narrative.id} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
+                        <div className="w-[350px] relative">
+                            <img src="/images/narrative_detail.jpg" className="w-[350px]" />
+                            <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
+                                <p className="text-white hidden group-hover:block">Read more</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-[10px] max-w-64 p-[10px]">
+                            <p className="font-semibold">{narrative.title}</p>
+                            <p className="flex-1">{narrative.description}</p>
+                            <div className="flex items-end">
+                                <div className="flex-1 flex">
+                                    <div className="w-[40px] rounded-full overflow-hidden">
+                                        <img src={narrative.user.avatar} />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <p>{narrative.user.username}</p>
+                                        <p className="text-xs">{narrative.created_at}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-[10px]">
+                                    <span className="flex text-[#ff0000] items-center gap-[5px]">{narrative.vote_down}<Icon icon="octicon:thumbsdown-16" /></span>
+                                    <span className="flex text-[#00bb00] items-center gap-[5px]">{narrative.vote_up}<Icon icon="octicon:thumbsdown-16" /></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>)
+                }
+                </div>
+            </div>
+        </div>
         <div className="flex w-full text-[14px] leading-[7px] text-[#949494]">
             <span className="flex-1">Poll started from {formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
             {/* <span>{formatDate(new Date(poll.createdAt.seconds))}</span> */}

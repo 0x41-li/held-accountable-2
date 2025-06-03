@@ -13,10 +13,12 @@ export default {
         foreground: "var(--foreground)",
         "tertiary-600": "#475467",
         "blue": "#3B88E3",
+        "subyellow": "#FFCC00"
       },
       borderColor: {
         primary: "#D0D5DD",
         secondary: "#E4E7EC",
+        "subprimary": "#D5D7DA",
       }
     },
   },

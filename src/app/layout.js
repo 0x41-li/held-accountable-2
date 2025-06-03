@@ -31,9 +31,11 @@ export default function RootLayout({ children }) {
       >
         <ToastContainer />
         <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
-            <Sidebar />
-            <Navbar />
-            <div className='flex-1 md:pt-[12px]'>
+            <div className="flex">
+              <Sidebar />
+              <Navbar />
+            </div>
+            <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
               {children}
             </div>
         </div>

@@ -61,9 +61,31 @@ export default function Sidebar() {
                     <Icon icon="mi:document" />
                     <span>Blog</span>
                 </Link> */}
+                <Link href="/narratives" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
+                    <Icon icon="mi:document" />
+                    <span>Narratives</span>
+                </Link>
             </div>
         </div>
         {user && <div className="flex flex-col gap-[20px]">
+            <div className="p-[12px] w-full">
+                <div className="rounded-[12px] p-[16px] border border-secondary w-full gap-[8px] flex flex-col">
+                    <div className="flex w-full justify-between">
+                        <div className="flex gap-[8px] items-center">
+                            <img src="/images/sub_avatars.png" />
+                            <Link href="/subscription" className="w-[24px] h-[24px] rounded-full border border-primary bg-[#FAFAFA] flex items-center justify-center text-[#717680]">
+                                <Icon icon="ic:baseline-plus" />
+                            </Link>
+                        </div>
+                        <div className="text-xl">
+                            <Icon icon="material-symbols:close" />
+                        </div>
+                    </div>
+                    <p className="font-semibold">Join our brilliant community</p>
+                    <p>Upgrade your plan to leverage your abilities with Poll Mania’s premium features.</p>
+                    <Link href="/subscription" className=" w-full text-center rounded-[8px] bg-blue text-white w-full p-[8px]">Upgrade Now</Link>
+                </div>
+            </div>
             <div className="flex items-center gap-[10px] justify-center px-[20px] mx-[10px] border rounded-full">
                 <div className="rounded-full overflow-hidden">
                     {user.avatar ? <img src={user.avatar} className="w-[32px] h-[32px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />}
