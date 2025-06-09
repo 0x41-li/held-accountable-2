@@ -517,4 +517,85 @@ export async function getDescriptionUsingGPT(question) {
   }
 }
 
+// subscription apis
+export async function updateSubscription(userId, subscription) {
+  
+}
+
 // narrative apis
+
+
+export async function generatePoll(topic) {
+  /*
+  {
+    "model": "gpt-4.1",
+    "tools": [{"type": "web_search_preview"}],
+    "input": "Please create poll with the topic: \"Digital Assets & Crypto\" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response.",
+    "text": { 
+        "format": { 
+            "name": "poll",
+            "type": "json_schema", 
+            "strict": true, 
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "question": { "type": "string" },
+                    "options": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+                    "wiki_summary": { "type": "string" }
+                },
+                "required": ["question", "options", "wiki_summary"],
+                "additionalProperties": false
+            }
+        }
+    }
+}
+  */
+  const openai_api_key = "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";
+  const url = "https://api.openai.com/v1/responses";
+
+  try {
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            "Authorization": "Bearer " + openai_api_key,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+                  "model": "gpt-4.1",
+                  "tools": [{"type": "web_search_preview"}],
+                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response.`,
+                  "text": { 
+                      "format": { 
+                          "name": "poll",
+                          "type": "json_schema", 
+                          "strict": true, 
+                          "schema": {
+                              "type": "object",
+                              "properties": {
+                                  "question": { "type": "string" },
+                                  "options": {
+                                      "type": "array",
+                                      "items": { "type": "string" }
+                                  },
+                                  "wiki_summary": { "type": "string" }
+                              },
+                              "required": ["question", "options", "wiki_summary"],
+                              "additionalProperties": false
+                          }
+                      }
+                  }
+                })
+      });
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      return JSON.parse(data.output[1].content[0].text);
+  } catch (error) {
+      console.error("Error fetching Wikipedia summary:", error);
+      return null;
+  }
+}

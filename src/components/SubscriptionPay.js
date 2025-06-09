@@ -136,7 +136,7 @@ export default function SubscriptionPay({show, hideDialog}) {
                             <button className={"flex rounded-[12px] border-[2px] items-center p-[16px] h-[72px] gap-[12px] text-left" + (paymentType == 1 ? " border-blue": "")} onClick={() => setPaymentType(1)}>
                                 <img src="/images/mastercard.png" className="pl-[5px]" />
                                 <div className="flex flex-1 flex-col gap-[2px]">
-                                    <p className="text-[16px] leading-[24px]">Mastercard <span className="text-tertiary-600">Global</span></p>
+                                    <p className="text-[16px] leading-[24px]">Credit Card</p>
                                 </div>
                                 {paymentType == 1 && <div className="w-[20px] h-[20px] border-[5px] rounded-full border-blue bg-white">
                                 </div>}
