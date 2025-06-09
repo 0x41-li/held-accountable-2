@@ -77,7 +77,7 @@ export default function Poll({poll}) {
                 </div>
                 <div>
                     <p className="leading-[20px] text-[14px] font-medium">{poll.user ? poll.user.fullname: ""}</p>
-                    <p className="leading-[16px] text-[12px]">@{poll.user ? poll.user.username: ""}</p>
+                    <p className="leading-[16px] text-[12px]">{poll.user ? "@" + poll.user.username: ""}</p>
                 </div>
             </div>
             <div className="hidden md:flex gap-[8px]">
