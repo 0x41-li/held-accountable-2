@@ -31,10 +31,10 @@ export async function GET(req) {
             ...dataWithSummary,
             status: 1,
             user: {
-                id: userDoc.docs[0].id,
-                fullname: userDoc.docs[0].data().fullname,
-                username: userDoc.docs[0].data().username,
-                avatar: userDoc.docs[0].data().avatar ?? "" 
+                id: "",
+                fullname: "",
+                username: "",
+                avatar: "https://held-accountable.vercel.app/images/logo.png" 
             }
         });
         return NextResponse.json({ message: 'created', poll: createdPoll }, { status: 200 })
