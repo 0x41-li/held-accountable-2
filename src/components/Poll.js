@@ -86,10 +86,10 @@ export default function Poll({poll}) {
                     <Icon icon="mingcute:document-fill" />
                     <span className="text-xs leading-xs font-medium">Read Articles</span>
                 </Link>
-                <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
+                {poll.user.id === "" ? "" : <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                     <Icon icon="tabler:heart-filled" />
                     <span className="text-xs leading-xs font-medium">Tip Author</span>
-                </button>
+                </button>}
             </div>
             <div className="rounded-full bg-[#3B88E3] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
                 <span className="text-xs leading-xs font-medium">{curQueId + 1}/{poll.questions.length}</span>
@@ -160,16 +160,16 @@ export default function Poll({poll}) {
             <span>Questions:</span>
             {poll.questions.map((question, i) => <button key={question.question + i} onClick={() => setCurQueId(i)} className={`rounded-full p-[8px] w-[36px] text-center border border-primary ${curQueId === i ? 'bg-blue text-white': ''}`}>{i + 1}</button>)}
         </div>: ""}
-        <div className="flex w-full flex-col pt-[12px]">
+        {poll.golden_insights?<div className="flex w-full flex-col pt-[12px]">
             <div className="flex gap-[10px] items-center pb-[10px]">
                 <Icon icon="mynaui:chat-messages" />
-                <span>Community Narratives</span>
-                <div className="rounded-[50px] border border-[#B2DDFF] bg-[#EFF8FF] text-[#175CD3] text-xs px-[10px]">Premium</div>
+                <span>Golden Insights</span>
+                {/* <div className="rounded-[50px] border border-[#B2DDFF] bg-[#EFF8FF] text-[#175CD3] text-xs px-[10px]">Premium</div> */}
             </div>
             <div className="w-full overflow-auto">
                 <div className="flex w-max gap-[10px]">
                 {
-                    NARRATIVES.map(narrative => <div key={narrative.id} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
+                    poll.golden_insights.map((narrative, i) => <Link href={"/golden-insights/" + poll.id} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
                         <div className="w-[350px] relative">
                             <img src="/images/narrative_detail.jpg" className="w-[350px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
@@ -178,28 +178,13 @@ export default function Poll({poll}) {
                         </div>
                         <div className="flex flex-col gap-[10px] max-w-64 p-[10px]">
                             <p className="font-semibold">{narrative.title}</p>
-                            <p className="flex-1">{narrative.description}</p>
-                            <div className="flex items-end">
-                                <div className="flex-1 flex">
-                                    <div className="w-[40px] rounded-full overflow-hidden">
-                                        <img src={narrative.user.avatar} />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <p>{narrative.user.username}</p>
-                                        <p className="text-xs">{narrative.created_at}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-[10px]">
-                                    <span className="flex text-[#ff0000] items-center gap-[5px]">{narrative.vote_down}<Icon icon="octicon:thumbsdown-16" /></span>
-                                    <span className="flex text-[#00bb00] items-center gap-[5px]">{narrative.vote_up}<Icon icon="octicon:thumbsdown-16" /></span>
-                                </div>
-                            </div>
+                            <p className="flex-1">{narrative.content.substring(0, 100) + "..."}</p>
                         </div>
-                    </div>)
+                    </Link>)
                 }
                 </div>
             </div>
-        </div>
+        </div>: ""}
         <div className="flex w-full text-[14px] leading-[7px] text-[#949494]">
             <span className="flex-1">Poll started from {formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
             {/* <span>{formatDate(new Date(poll.createdAt.seconds))}</span> */}

@@ -526,33 +526,6 @@ export async function updateSubscription(userId, subscription) {
 
 
 export async function generatePoll(topic) {
-  /*
-  {
-    "model": "gpt-4.1",
-    "tools": [{"type": "web_search_preview"}],
-    "input": "Please create poll with the topic: \"Digital Assets & Crypto\" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response.",
-    "text": { 
-        "format": { 
-            "name": "poll",
-            "type": "json_schema", 
-            "strict": true, 
-            "schema": {
-                "type": "object",
-                "properties": {
-                    "question": { "type": "string" },
-                    "options": {
-                        "type": "array",
-                        "items": { "type": "string" }
-                    },
-                    "wiki_summary": { "type": "string" }
-                },
-                "required": ["question", "options", "wiki_summary"],
-                "additionalProperties": false
-            }
-        }
-    }
-}
-  */
   const openai_api_key = "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";
   const url = "https://api.openai.com/v1/responses";
 
@@ -566,7 +539,7 @@ export async function generatePoll(topic) {
           body: JSON.stringify({
                   "model": "gpt-4.1",
                   "tools": [{"type": "web_search_preview"}],
-                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response.`,
+                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response. And also generate a blog with 250~500 words about the news and poll.`,
                   "text": { 
                       "format": { 
                           "name": "poll",
@@ -580,9 +553,11 @@ export async function generatePoll(topic) {
                                       "type": "array",
                                       "items": { "type": "string" }
                                   },
-                                  "wiki_summary": { "type": "string" }
+                                  "wiki_summary": { "type": "string" },
+                                  "blog_title": { "type": "string" },
+                                  "blog_content": { "type": "string" }
                               },
-                              "required": ["question", "options", "wiki_summary"],
+                              "required": ["question", "options", "wiki_summary", "blog_title", "blog_content"],
                               "additionalProperties": false
                           }
                       }

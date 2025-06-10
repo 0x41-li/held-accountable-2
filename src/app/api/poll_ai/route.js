@@ -5,7 +5,8 @@ import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../../../lib/firebase'
 export async function GET(req) {
     const topics = ["Digital Assets & Crypto", "Artificial Intelligence", "Aviation"];
-    const poll = await generatePoll(topics[parseInt(Math.random() * 9999) % topics.length]) // random topic
+    const topic = topics[parseInt(Math.random() * 9999) % topics.length];
+    const poll = await generatePoll(topic) // random topic
     if (poll) {
         console.log('Poll generated successfully:', poll)
         const userDoc = await getDocs(query(collection(db, "users"), where("email", "==", "ahura0901@gmail.com")));
@@ -13,7 +14,7 @@ export async function GET(req) {
             return;
         }
 
-        let dataWithSummary = { topic: "Digital Assets & Crypto", activeDate: {
+        let dataWithSummary = { topic: topic, activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",
             },
@@ -24,6 +25,7 @@ export async function GET(req) {
                 summary: poll.wiki_summary,
                 totalVotes: 0,
             }],
+
         };
 
         // return;
@@ -34,8 +36,14 @@ export async function GET(req) {
                 id: "",
                 fullname: "",
                 username: "",
-                avatar: "https://held-accountable.vercel.app/images/logo.png" 
-            }
+                avatar: "https://held-accountable.vercel.app/images/logo.png"
+            },
+            golden_insights: [
+                {
+                    title: poll.blog_title,
+                    content: poll.blog_content
+                }
+            ]
         });
         return NextResponse.json({ message: 'created', poll: createdPoll }, { status: 200 })
     }
