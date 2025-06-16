@@ -9,11 +9,6 @@ export async function GET(req) {
     const poll = await generatePoll(topic) // random topic
     if (poll) {
         console.log('Poll generated successfully:', poll)
-        const userDoc = await getDocs(query(collection(db, "users"), where("email", "==", "ahura0901@gmail.com")));
-        if (userDoc.empty) {
-            return;
-        }
-
         let dataWithSummary = { topic: topic, activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",

@@ -46,14 +46,15 @@ const subscriptionItems = [
     "Cancel anytime"
 ]
 
-export default function Subscription({ clientSecret }) {
+export default function Subscription({ clientSecret1, clientSecret2 }) {
     const [showPayDlg, setShowPayDlg] = useState(false);
+    const [subscriptionType, setSubscriptionType] = useState("monthly");
     const appearance = {
         theme: 'stripe',
       };
 
     return (
-        <Elements stripe={stripePromise} options={{ appearance, clientSecret }}>
+        <Elements stripe={stripePromise} options={{ appearance, clientSecret: subscriptionType === 'monthly'? clientSecret1: clientSecret2 }}>
             <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
                 <div className='hidden md:flex px-[24px] pb-[20px] border-b border-secondary items-start'>
                     <div className='flex flex-col gap-[4px] flex-1'>
@@ -91,7 +92,7 @@ export default function Subscription({ clientSecret }) {
                                         }
                                     </div>
                                     <div className="px-[32px] pb-[32px] w-full">
-                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]" onClick={() => setShowPayDlg(true)}>Start Now</button>
+                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]" onClick={() => {setSubscriptionType("monthly"); setShowPayDlg(true)}}>Start Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +120,7 @@ export default function Subscription({ clientSecret }) {
                                         }
                                     </div>
                                     <div className="px-[32px] pb-[32px] w-full">
-                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]" onClick={() => setShowPayDlg(true)}>Start Now</button>
+                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]" onClick={() => {setSubscriptionType("yearly"); setShowPayDlg(true)}}>Start Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +167,7 @@ export default function Subscription({ clientSecret }) {
                                         }
                                     </div>
                                     <div className="px-[32px] pb-[32px] w-full">
-                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]"  onClick={() => setShowPayDlg(true)}>Start Now</button>
+                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]"  onClick={() => {setSubscriptionType("monthly"); setShowPayDlg(true)}}>Start Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -194,12 +195,12 @@ export default function Subscription({ clientSecret }) {
                                         }
                                     </div>
                                     <div className="px-[32px] pb-[32px] w-full">
-                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]"  onClick={() => setShowPayDlg(true)}>Start Now</button>
+                                        <button className="w-full rounded-[10px] bg-blue text-white py-[12px] px-[14px]"  onClick={() => {setSubscriptionType("yearly"); setShowPayDlg(true)}}>Start Now</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <SubscriptionPay show={showPayDlg} hideDialog={() => setShowPayDlg(false)} />
+                        <SubscriptionPay show={showPayDlg} subscriptionType={subscriptionType} hideDialog={() => setShowPayDlg(false)} />
                     </div>
                 </div>
             </div>

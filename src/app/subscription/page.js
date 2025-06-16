@@ -2,18 +2,18 @@ import Subscription from "@/views/Subscription";
 import { stripe } from '../../../lib/stripe'
 
 export default async function SubscriptionPage() {
-    const calculateOrderAmount = (items) => {
-        // Replace this constant with a calculation of the order's amount
-        // Calculate the order total on the server to prevent
-        // people from directly manipulating the amount on the client
-        return 1400;
-      };
     // Create PaymentIntent as soon as the page loads
-    const { client_secret: clientSecret } = await stripe.paymentIntents.create({
-      amount: calculateOrderAmount([{ id: 'xl-tshirt' }]),
-      currency: 'eur',
+    const { client_secret: clientSecret1 } = await stripe.paymentIntents.create({
+      amount: 500,
+      currency: 'usd',
+      payment_method_types: ['card'],
+    })
+    const { client_secret: clientSecret2 } = await stripe.paymentIntents.create({
+      amount: 5000,
+      currency: 'usd',
       payment_method_types: ['card'],
     })
 
-    return <Subscription clientSecret={clientSecret} />;
+
+    return <Subscription clientSecret1={clientSecret1} clientSecret2={clientSecret2}/>;
 }

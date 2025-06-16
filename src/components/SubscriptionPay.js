@@ -1,7 +1,7 @@
 import { createTippingHistory, getUserById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import { ethers } from "ethers";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { auth } from "../../lib/firebase";
 import {
@@ -19,13 +19,21 @@ const USDT_ABI = [
   "function transfer(address to, uint amount) public returns (bool)",
 ];
 
-export default function SubscriptionPay({show, hideDialog}) {
+export default function SubscriptionPay({show, hideDialog, subscriptionType}) {
     const [tipAmount, setTipAmount] = useState("5");
     const [paymentType, setPaymentType] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
     const elements = useElements();
     const stripe = useStripe();
+
+    useEffect(() => {
+        if (subscriptionType == 'monthly')
+            setTipAmount(5);
+        else {
+            setTipAmount(50);
+        }
+    }, [subscriptionType]);
 
     const paymentElementOptions = {
         layout: "accordion",
@@ -81,7 +89,7 @@ export default function SubscriptionPay({show, hideDialog}) {
                 elements,
                 confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: "http://localhost:3000/success",
+                return_url: window.location.origin + "/profile",
                 },
             });
         

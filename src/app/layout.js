@@ -5,6 +5,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import Head from "next/head";
+import { AuthProvider } from "@/providers/authProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +30,18 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} antialiased`}
       >
-        <ToastContainer />
-        <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
-            <div className="flex">
-              <Sidebar />
-              <Navbar />
-            </div>
-            <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
-              {children}
-            </div>
-        </div>
+        <AuthProvider>
+          <ToastContainer />
+          <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
+              <div className="flex">
+                <Sidebar />
+                <Navbar />
+              </div>
+              <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
+                {children}
+              </div>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );

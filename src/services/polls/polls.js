@@ -575,3 +575,44 @@ export async function generatePoll(topic) {
       return null;
   }
 }
+
+export async function getExistingSubscriptionLogForIntentId(intentId) {
+  const logs = await getDocs(query(collection(db, "subscription_logs"), where("intentId", "==", intentId)));
+  return logs.docs.map(doc => doc.data());
+}
+
+export async function addSubscriptionLog(userId, amount, intentId) {
+  const log = {
+      userId,
+      amount,
+      intentId,
+      createdAt: new Date()
+  };
+  await addDoc(collection(db, "subscription_logs"), log);
+}
+
+export async function updateUserSubscription(userId, amount, intentId) {
+  let logs = await getExistingSubscriptionLogForIntentId(intentId);
+  if (logs.length > 0) {
+    console.log("already exists");
+    return;
+  }
+  const user = await getUserById(userId);
+  let duration = 1;
+  if (amount == 5000) {
+    duration = 12;
+  }
+  // extend one month
+  if (user.subscripted_at) {
+      user.subscripted_at = new Date(user.subscripted_at);
+      user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
+      await updateUserById(userId, { subscripted_at: user.subscripted_at.getTime() });
+  }
+  else {
+    user.subscripted_at = new Date();
+    console.log(user.subscripted_at);
+    user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
+    await updateUserById(userId, { subscripted_at: user.subscripted_at.getTime() });
+  }
+  await addSubscriptionLog(userId, amount, intentId);
+}
