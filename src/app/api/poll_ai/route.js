@@ -20,6 +20,7 @@ export async function GET(req) {
             },
             totalVotes: 0,
             questions: [{
+                headline: poll.headline,
                 question: poll.question,
                 options: poll.options.map(option => ({text:option, votes:0})),
                 summary: poll.wiki_summary,

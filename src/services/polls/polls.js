@@ -539,7 +539,7 @@ export async function generatePoll(topic) {
           body: JSON.stringify({
                   "model": "gpt-4.1",
                   "tools": [{"type": "web_search_preview"}],
-                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, guardian, Roiters news. And also please write wiki description about question's keyword in 2~3 sentences add attach that to summary property at output. don't mention like keyword in the response. And also generate a blog with 250~500 words about the news and poll.`,
+                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, Guardian, or Reuters. Add a short headline before the question that summarizes the article in 1 sentence. Then write a clear, balanced poll question. Also write wiki description about question's keyword in 2~3 sentences and attach that to the summary property. Don't say 'keyword' explicitly in the text. Also generate a blog with 250~500 words about the news and the poll, making sure it's a professionally summarized original.`,
                   "text": { 
                       "format": { 
                           "name": "poll",
@@ -548,6 +548,7 @@ export async function generatePoll(topic) {
                           "schema": {
                               "type": "object",
                               "properties": {
+                                  "headline": { "type": "string" },
                                   "question": { "type": "string" },
                                   "options": {
                                       "type": "array",
@@ -557,7 +558,7 @@ export async function generatePoll(topic) {
                                   "blog_title": { "type": "string" },
                                   "blog_content": { "type": "string" }
                               },
-                              "required": ["question", "options", "wiki_summary", "blog_title", "blog_content"],
+                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content"],
                               "additionalProperties": false
                           }
                       }

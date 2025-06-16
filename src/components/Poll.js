@@ -64,7 +64,6 @@ export default function Poll({poll}) {
         setVoted(poll.questions.map(q => -1));
     }, [poll]);
 
-    console.log(selectedOptions);
     const handleShowSummary = () => {
         setShowSummary(!showSummary);
     }
@@ -107,6 +106,7 @@ export default function Poll({poll}) {
             </button>
         </div>
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
+            {poll.questions[curQueId].headline && <p className="font-bold">News - {poll.questions[curQueId].headline}</p>}
             {poll.questions[curQueId].question}
             { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Read more <Icon icon="lsicon:up-filled" /></button>: ""}
         </div>

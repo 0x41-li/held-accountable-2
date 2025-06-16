@@ -107,11 +107,10 @@ export default function Home() {
         lastDoc = last;
     }
     else {
-        const { result, lastDoc: last } = await getPollsByTopic(currentTopic);
+        const { result, lastDoc: last } = await getPollsByTopic(currentTopic, start);
         poll_list = result;
         lastDoc = last;
     }
-    console.log(poll_list);
 
     if (poll_list.length === 0) {
       setLoading(false);
@@ -145,10 +144,39 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log(loading, inView)
     if (!loading && inView && hasMore)
       loadPolls();
   }, [inView, loading, hasMore, currentTopic]);
+
+  const loadNewPolls = useCallback(async () => {
+      let poll_list = [];
+      
+      if (currentTopic === 'All') {
+          const { result } = await getHomePolls(viewType);
+          poll_list = result;
+      }
+      else {
+          const { result } = await getPollsByTopic(currentTopic);
+          poll_list = result;
+      }
+
+      if (poll_list.length > 0) {
+        // only add new polls where same id does not exist in the polls
+        const newPolls = poll_list.filter(p => !polls.find(existing => existing.id === p.id));
+        if (newPolls.length > 0) {
+          console.log("New polls found:", newPolls);
+          // prepend new polls to the existing polls
+          // so that the latest polls are shown at the top
+          // and update the polls state
+          setPolls([...newPolls, ...polls]);
+        }
+      }
+    }, [currentTopic, viewType, setPolls, polls]);
+
+  useEffect(() => {
+    const interval = setInterval(loadNewPolls, 2000);
+    return () => clearInterval(interval);
+  }, [loadNewPolls]);
 
   return (<div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start flex-col md:flex-row'>
