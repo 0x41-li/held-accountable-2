@@ -11,30 +11,24 @@ export default async function ProfilePage({searchParams}) {
     let redirect_status = searchParams["redirect_status"];
     let intentId = searchParams["payment_intent"];
 
-    console.log(redirect_status);
-    console.log(intentId);
-
     // get cookies
-    const cookies = headerList.get("cookie");
-    const sessionCookie = cookies.split('; ').find(row => row.startsWith('token='));
-    if (sessionCookie) {
-      const token = sessionCookie.split('=')[1];
-      console.log(token);
-      try {
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        let user = decodedToken;
-        if (redirect_status === "succeeded") {
-            // check intentId from stripe
-            const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
-            console.log(intentId);
-            if (paymentIntent.status === "succeeded") {
-                // Update user subscription status in your database
-                await updateUserSubscription(user.uid, paymentIntent.amount, intentId);
+    try {
+        const cookies = headerList.get("cookie");
+        const sessionCookie = cookies.split('; ').find(row => row.startsWith('token='));
+        if (sessionCookie) {
+            const token = sessionCookie.split('=')[1];
+            const decodedToken = await admin.auth().verifyIdToken(token);
+            let user = decodedToken;
+            if (redirect_status === "succeeded") {
+                // check intentId from stripe
+                const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
+                if (paymentIntent.status === "succeeded") {
+                    // Update user subscription status in your database
+                    await updateUserSubscription(user.uid, paymentIntent.amount, intentId);
+                }
             }
         }
-      } catch (error) {
-        console.error("Error verifying token:", error);
-      }
+    } catch (error) {
     }
 
 

@@ -181,12 +181,8 @@ export default function Home() {
   return (<div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start flex-col md:flex-row'>
             <div className='flex flex-col gap-[4px] flex-1'>
-              <div className='text-[30px] leading-[38px] font-semibold'>Latest Polls</div>
+              <div className='text-[30px] leading-[38px] font-semibold'>Latest Trends</div>
               <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>You can see the latest polls submitted to Held Accountable </div>
-            </div>
-            <div className='border border-secondary rounded-md overflow-hidden flex items-center gap-[8px] p-[10px]'>
-              <Icon icon="ri:search-line" className='text-[#667085]' />
-              <input type="text" placeholder='Search...' className='outline-none bg-white' />
             </div>
           </div>
           <div className='flex-1 flex h-full'>

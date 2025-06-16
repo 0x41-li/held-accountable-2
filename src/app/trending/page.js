@@ -84,10 +84,6 @@ export default function Home() {
             <div className='text-[30px] leading-[38px] font-semibold'>Trending Polls</div>
             <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>You can see the most trend polls submitted to Held Accountable</div>
         </div>
-        <div className='border border-secondary rounded-md overflow-hidden flex items-center gap-[8px] p-[10px]'>
-          <Icon icon="ri:search-line" className='text-[#667085]' />
-          <input type="text" placeholder='Search...' className='outline-none bg-white' />
-        </div>
       </div>
       <div className='flex-1 flex h-full'>
         <div className='px-[32px] flex-1 pt-[24px] flex flex-col h-full'>

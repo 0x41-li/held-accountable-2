@@ -60,9 +60,9 @@ export default function Navbar() {
                         <Icon icon="ix:support" />
                         <span>Support</span>
                     </Link>
-                    <Link href="/narratives" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
+                    <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />
-                        <span>Narratives</span>
+                        <span>Through my Eyes</span>
                     </Link>
                     {/* <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />
