@@ -2,7 +2,7 @@
 import { votePoll } from "@/services/polls/polls";
 import { formatDate, formatDateTime } from "@/utils/date";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../lib/firebase";
 import Link from "next/link";
 import TipAuthor from "./TipAuthor";
@@ -68,9 +68,17 @@ export default function Poll({poll}) {
         setShowSummary(!showSummary);
     }
 
+    const isNew = useMemo(() => {
+        const created_at = new Date(poll.createdAt.seconds * 1000)
+        return created_at > Date.now() - 24 * 60 * 60 * 1000;
+    }, [poll]);
+
     return <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white">
+        {/* <div className="flex w-full text-[14px] leading-[7px] text-[#949494]">
+        </div> */}
         <div className="flex w-full gap-[8px] items-center w-full">
             <div className="flex flex-1 gap-[10px] items-center">
+                <span className="text-[14px] leading-[7px] text-[#949494]">Poll started from {formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
                 <div className="rounded-full overflow-hidden">
                     {poll.user.avatar ? <img src={poll.user.avatar} className="w-[44px] h-[44px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />}
                 </div>
@@ -90,9 +98,10 @@ export default function Poll({poll}) {
                     <span className="text-xs leading-xs font-medium">Tip Author</span>
                 </button>}
             </div>
-            <div className="rounded-full bg-[#3B88E3] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
+            {/* <div className="rounded-full bg-[#3B88E3] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
                 <span className="text-xs leading-xs font-medium">{curQueId + 1}/{poll.questions.length}</span>
-            </div>
+            </div> */}
+            {isNew && <Icon icon="mdi:new-box" />}
             <img src="/images/fire_icon.png" />
         </div>
         <div className="flex md:hidden gap-[8px]">
@@ -106,7 +115,7 @@ export default function Poll({poll}) {
             </button>
         </div>
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
-            {poll.questions[curQueId].headline && <p className="font-bold">News - {poll.questions[curQueId].headline}</p>}
+            {poll.questions[curQueId].headline && <p className="font-bold">Headline - {poll.questions[curQueId].headline}</p>}
             {poll.questions[curQueId].question}
             { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Read more <Icon icon="lsicon:up-filled" /></button>: ""}
         </div>
@@ -185,10 +194,6 @@ export default function Poll({poll}) {
                 </div>
             </div>
         </div>: ""}
-        <div className="flex w-full text-[14px] leading-[7px] text-[#949494]">
-            <span className="flex-1">Poll started from {formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
-            {/* <span>{formatDate(new Date(poll.createdAt.seconds))}</span> */}
-        </div>
         <TipAuthor selectedUser={poll.user} show={tipDlgShow} hideDialog={() => setTipDlgShow(false)} />
     </div>;
 }

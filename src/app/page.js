@@ -182,7 +182,6 @@ export default function Home() {
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start flex-col md:flex-row'>
             <div className='flex flex-col gap-[4px] flex-1'>
               <div className='text-[30px] leading-[38px] font-semibold'>Latest Trends</div>
-              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>You can see the latest polls submitted to Held Accountable </div>
             </div>
           </div>
           <div className='flex-1 flex h-full'>

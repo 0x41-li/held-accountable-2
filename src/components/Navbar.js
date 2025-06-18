@@ -48,10 +48,14 @@ export default function Navbar() {
                         <Icon icon="mingcute:fire-line" />
                         <span>Trending</span>
                     </Link>
-                    <Link href="/manage" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/manage' ? "bg-blue  text-white": "")}>
+                    <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
+                        <Icon icon="mi:document" />
+                        <span>Through my Eyes</span>
+                    </Link>
+                    {/* <Link href="/manage" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/manage' ? "bg-blue  text-white": "")}>
                         <Icon icon="gravity-ui:square-list-ul" />
                         <span>Poll Management</span>
-                    </Link>
+                    </Link> */}
                     <Link href="/profile" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/profile' ? "bg-blue  text-white": "")}>
                         <Icon icon="mingcute:user-4-line" />
                         <span>Profile</span>
@@ -59,10 +63,6 @@ export default function Navbar() {
                     <Link href="/support" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
                         <Icon icon="ix:support" />
                         <span>Support</span>
-                    </Link>
-                    <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
-                        <Icon icon="mi:document" />
-                        <span>Through my Eyes</span>
                     </Link>
                     {/* <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />

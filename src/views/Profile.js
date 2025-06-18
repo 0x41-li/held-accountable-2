@@ -55,6 +55,9 @@ export default function Profile() {
         }
     }
 
+    if (!user)
+        return <></>;
+
     return (
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
         <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
@@ -76,6 +79,27 @@ export default function Profile() {
                 <div className="flex gap-[32px]">
                     <span className="w-[160px]">Username</span>
                     <input type="text" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Enter your username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                </div>
+                <hr />
+                <div className="text-[18px] leading-[38px]">Account Plan</div>
+                <div className="flex gap-[32px] items-center">
+                    <span className="w-[160px]">Current Plan</span>
+                    {user.subscripted_at > Date.now() ? <span className="flex-1 flex items-center"><img src="/images/subscription.png" /> Premium Subscription </span> : <span className="flex-1"></span>}
+                    <button><img src="/images/sub-history.png" /></button>
+                </div>
+                <div className="flex gap-[32px] items-center">
+                    <span className="w-[160px]">Renewal Date</span>
+                    <span className="flex-1 flex items-center">2025/3/26 </span>
+                </div>
+                <div className="flex gap-[32px] items-center">
+                    <span className="w-[160px]">Total Earnings</span>
+                    <span className="flex-1 flex items-center">$27,593.25</span>
+                    <span className="text-slate-400 text-xs"><i>Updated 30 sec ago.</i></span>
+                </div>
+                <div className="flex gap-[32px] items-center">
+                    <span className="flex-1">Actions</span>
+                    <button className="text-red-500">Cancel Premium</button>
+                    <button className="px-4 py-2 rounded-[10px] bg-blue text-white">Renew Now</button>
                 </div>
                 <hr />
                 <div className="text-[18px] leading-[38px]">Financial</div>
