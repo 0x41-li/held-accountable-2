@@ -48,7 +48,7 @@ export default function GoldenInsightDetail() {
                     <span className="text-xs leading-xs font-medium">{poll.topic}</span>
                 </div>
             </div>
-            <div className="w-full px-[100px] flex flex-col gap-[20px]">
+            <div className="w-full px-[16px] md:px-[100px] flex flex-col gap-[20px]">
                 {/* <img src={article.image} /> */}
                 <div className="text-[18px] leading-[28px]" dangerouslySetInnerHTML={{ __html: marked(article.content) }}>
                 </div>

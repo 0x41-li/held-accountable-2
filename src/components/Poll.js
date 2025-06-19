@@ -81,7 +81,7 @@ export default function Poll({poll}) {
                 <div className="rounded-full overflow-hidden">
                     {poll.user.avatar ? <img src={poll.user.avatar} className="w-[44px] h-[44px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />}
                 </div>
-                <span className="text-[14px] leading-[7px] text-[#949494]">Poll started from {formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
+                <span className="text-[14px] leading-[7px] text-[#949494]">{formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
                 <div>
                     <p className="leading-[20px] text-[14px] font-medium">{poll.user ? poll.user.fullname: ""}</p>
                     <p className="leading-[16px] text-[12px]">{poll.user ? ((poll.user.username == "")?"":("@" + poll.user.username)): ""}</p>
@@ -101,7 +101,7 @@ export default function Poll({poll}) {
             {/* <div className="rounded-full bg-[#3B88E3] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
                 <span className="text-xs leading-xs font-medium">{curQueId + 1}/{poll.questions.length}</span>
             </div> */}
-            {isNew && <Icon icon="mdi:new-box" />}
+            {isNew && <span className="text-3xl text-green-500"><Icon icon="mdi:new-box" /></span>}
             <img src="/images/fire_icon.png" />
         </div>
         <div className="flex md:hidden gap-[8px]">
@@ -179,8 +179,8 @@ export default function Poll({poll}) {
                 <div className="flex w-max gap-[10px]">
                 {
                     poll.golden_insights.map((narrative, i) => <Link href={"/golden-insights/" + poll.id} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
-                        <div className="w-[350px] relative">
-                            <img src="/images/narrative_detail.jpg" className="w-[350px]" />
+                        <div className="w-[300px] relative">
+                            <img src="/images/narrative_detail.jpg" className="w-[300px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
                                 <p className="text-white hidden group-hover:block">Read more</p>
                             </div>

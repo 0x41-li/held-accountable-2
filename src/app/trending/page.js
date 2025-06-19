@@ -85,7 +85,7 @@ export default function Home() {
         </div>
       </div>
       <div className='flex-1 flex h-full'>
-        <div className='px-[32px] flex-1 pt-[24px] flex flex-col h-full'>
+        <div className='px-[32px] flex-1 pt-[24px] flex flex-col h-full w-full md:w-auto'>
           <div className='flex items-center justify-between'>
             <div className='flex rounded-[8px] overflow-hidden border border-primary'>
               <div className={`py-[8px] px-[16px] cursor-pointer border-r border-primary ${viewType === HOME_TRENDING ? 'bg-[#F4F4F4]': 'bg-white'}`} onClick={() => changeViewType(HOME_TRENDING)}>Trending</div>

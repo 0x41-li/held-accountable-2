@@ -26,7 +26,7 @@ export default function Navbar() {
     if (pathname.indexOf("/auth") > -1) {
         return <></>;
     }
-    return  <div className="flex p-4 md:hidden items-center h-[60px]">
+    return  <div className="flex p-4 md:hidden items-center h-[60px] w-full">
         <div className="flex flex-1 items-center pl-[23px]">
             <img src="/images/logo.png" />
             <span className="text-[24px] leading-[38px] font-medium">Held Accountable</span>

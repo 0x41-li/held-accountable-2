@@ -4,6 +4,7 @@ import { auth } from "../../lib/firebase";
 import { getUserById, updateUserById } from "@/services/polls/polls";
 import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 export default function Profile() {
     const [fullname, setFullname] = useState("");
@@ -22,7 +23,7 @@ export default function Profile() {
                 return;
             }
             getUserById(auth.currentUser.uid).then(async u => {
-                setUser(user);
+                setUser(u);
                 setFullname(u.fullname);
                 setEmail(u.email);
                 setUsername(u.username);
@@ -89,17 +90,17 @@ export default function Profile() {
                 </div>
                 <div className="flex gap-[32px] items-center">
                     <span className="w-[160px]">Renewal Date</span>
-                    <span className="flex-1 flex items-center">2025/3/26 </span>
+                    <span className="flex-1 flex items-center">{user.subscripted_at > Date.now() ? new Date(user.subscripted_at).toLocaleDateString(): ""} </span>
                 </div>
                 <div className="flex gap-[32px] items-center">
                     <span className="w-[160px]">Total Earnings</span>
-                    <span className="flex-1 flex items-center">$27,593.25</span>
+                    <span className="flex-1 flex items-center">$ 0</span>
                     <span className="text-slate-400 text-xs"><i>Updated 30 sec ago.</i></span>
                 </div>
                 <div className="flex gap-[32px] items-center">
                     <span className="flex-1">Actions</span>
-                    <button className="text-red-500">Cancel Premium</button>
-                    <button className="px-4 py-2 rounded-[10px] bg-blue text-white">Renew Now</button>
+                    {user.subscripted_at > Date.now() && <button className="text-red-500">Cancel Premium</button>}
+                    <Link href="/subscription" className="px-4 py-2 rounded-[10px] bg-blue text-white">{user.subscripted_at > Date.now() ?"Renew Now": "Subscribe"}</Link>
                 </div>
                 <hr />
                 <div className="text-[18px] leading-[38px]">Financial</div>
