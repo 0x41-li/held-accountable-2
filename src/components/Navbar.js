@@ -46,7 +46,7 @@ export default function Navbar() {
                     </Link>
                     <Link href="/trending" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/trending' ? "bg-blue  text-white": "")}>
                         <Icon icon="mingcute:fire-line" />
-                        <span>Trending</span>
+                        <span>Headlines</span>
                     </Link>
                     <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />

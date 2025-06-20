@@ -93,10 +93,10 @@ export default function Poll({poll}) {
                     <Icon icon="mingcute:document-fill" />
                     <span className="text-xs leading-xs font-medium">Read Articles</span>
                 </Link>
-                {poll.user.id === "" ? "" : <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
+                {/* {poll.user.id === "" ? "" : <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                     <Icon icon="tabler:heart-filled" />
                     <span className="text-xs leading-xs font-medium">Tip Author</span>
-                </button>}
+                </button>} */}
             </div>
             {/* <div className="rounded-full bg-[#3B88E3] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
                 <span className="text-xs leading-xs font-medium">{curQueId + 1}/{poll.questions.length}</span>
@@ -109,15 +109,15 @@ export default function Poll({poll}) {
                 <Icon icon="mingcute:document-fill" />
                 <span className="text-xs leading-xs font-medium">Read Articles</span>
             </Link>
-            <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
+            {/* <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                 <Icon icon="tabler:heart-filled" />
                 <span className="text-xs leading-xs font-medium">Tip Author</span>
-            </button>
+            </button> */}
         </div>
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
             {poll.questions[curQueId].headline && <p className="font-bold">Headline - {poll.questions[curQueId].headline}</p>}
             {poll.questions[curQueId].question}
-            { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Read more <Icon icon="lsicon:up-filled" /></button>: ""}
+            { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Elaborate <Icon icon="lsicon:up-filled" /></button>: ""}
         </div>
         {
             poll.questions[curQueId].summary && showSummary ? <div className="px-[30px]">
@@ -182,7 +182,7 @@ export default function Poll({poll}) {
                         <div className="w-[300px] relative">
                             <img src="/images/narrative_detail.jpg" className="w-[300px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
-                                <p className="text-white hidden group-hover:block">Read more</p>
+                                <p className="text-white hidden group-hover:block">Elaborate</p>
                             </div>
                         </div>
                         <div className="flex flex-col gap-[10px] max-w-64 p-[10px]">
@@ -194,6 +194,6 @@ export default function Poll({poll}) {
                 </div>
             </div>
         </div>: ""}
-        <TipAuthor selectedUser={poll.user} show={tipDlgShow} hideDialog={() => setTipDlgShow(false)} />
+        {/* <TipAuthor selectedUser={poll.user} show={tipDlgShow} hideDialog={() => setTipDlgShow(false)} /> */}
     </div>;
 }

@@ -525,9 +525,14 @@ export async function updateSubscription(userId, subscription) {
 // narrative apis
 
 
-export async function generatePoll(topic) {
+export async function generatePoll(topic, headlines) {
   const openai_api_key = "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";
   const url = "https://api.openai.com/v1/responses";
+  let previous_headlines = "";
+  
+  if (headlines) {
+    previous_headlines = " Lastly, the source news should not be one of following.\n" + headlines.join("\n");
+  }
 
   try {
       const response = await fetch(url, {
@@ -539,7 +544,8 @@ export async function generatePoll(topic) {
           body: JSON.stringify({
                   "model": "gpt-4.1",
                   "tools": [{"type": "web_search_preview"}],
-                  "input": `Please create poll with the topic: "${topic}" based on one article of latest news from BBC News, Guardian, or Reuters. Add a short headline before the question that summarizes the article in 1 sentence. Then write a clear, balanced poll question. Also write wiki description about question's keyword in 2~3 sentences and attach that to the summary property. Don't say 'keyword' explicitly in the text. Also generate a blog with 250~500 words about the news and the poll, making sure it's a professionally summarized original.`,
+                  "input": `Please create a poll with the topic: "${topic}" based on one current article from BBC News, The Guardian, or Reuters.\n\n1. Add a one-sentence **headline** before the question that summarizes the article.\n2. Write a **balanced poll question** based on the topic and article.\n3. Provide **2 to 4 answer options**.\n4. Include a **wiki_summary** explaining the poll's core subject using only Wikipedia-style information. Do not reference the article here.\n5. Include a **blog_title** that is clear and engaging.\n6. Include a **blog_content** of 250–500 words. Do not paraphrase or rewrite the article. Instead, offer original insights, global comparisons, or implications. Reference only public/open-source data.
+${previous_headlines}`,
                   "text": { 
                       "format": { 
                           "name": "poll",
