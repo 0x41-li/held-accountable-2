@@ -47,7 +47,7 @@ export default function Sidebar() {
                 </Link>
                 <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
                     <Icon icon="mi:document" />
-                    <span>Through my Eyes</span>
+                    <span>Through My Eyes</span>
                 </Link>
                 {/* <Link href="/manage" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/manage' ? "bg-blue  text-white": "")}>
                     <Icon icon="gravity-ui:square-list-ul" />
