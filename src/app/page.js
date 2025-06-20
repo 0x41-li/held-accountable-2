@@ -69,7 +69,7 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [trendingTopics, setTrendingTopics] = useState(["All", "Digital Assets & Crypto", "Artificial Intelligence", "Aviation"]);
+  const [trendingTopics, setTrendingTopics] = useState(["All", "Digital Assets & Crypto", "Artificial Intelligence", "Aviation", "Politics"]);
   const [currentTopic, setCurrentTopic] = useState("All");
 
   const { ref, inView } = useInView();

@@ -88,7 +88,7 @@ export default function Poll({poll}) {
                 </div>
             </div>
             <div className="hidden md:flex gap-[8px]">
-                <button className="text-xl"><Icon icon="mdi:bookmark-plus-outline" /></button>
+                {/* <button className="text-xl"><Icon icon="mdi:bookmark-plus-outline" /></button> */}
                 <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
                     <Icon icon="mingcute:document-fill" />
                     <span className="text-xs leading-xs font-medium">Read Articles</span>
@@ -117,7 +117,7 @@ export default function Poll({poll}) {
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
             {poll.questions[curQueId].headline && <p className="font-bold">Headline - {poll.questions[curQueId].headline}</p>}
             {poll.questions[curQueId].question}
-            { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Elaborate <Icon icon="lsicon:up-filled" /></button>: ""}
+            { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Elaborate <Icon icon="lsicon:down-outline" /></button>: ""}
         </div>
         {
             poll.questions[curQueId].summary && showSummary ? <div className="px-[30px]">
@@ -182,7 +182,7 @@ export default function Poll({poll}) {
                         <div className="w-[300px] relative">
                             <img src="/images/narrative_detail.jpg" className="w-[300px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
-                                <p className="text-white hidden group-hover:block">Elaborate</p>
+                                <p className="text-white hidden group-hover:block">Read more</p>
                             </div>
                         </div>
                         <div className="flex flex-col gap-[10px] max-w-64 p-[10px]">

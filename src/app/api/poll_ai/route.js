@@ -4,12 +4,12 @@ import { createPoll, generatePoll, getPollsByTopic } from '@/services/polls/poll
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../../../lib/firebase'
 export async function GET(req) {
-    const topics = ["Digital Assets & Crypto", "Artificial Intelligence", "Aviation"];
+    const topics = ["Digital Assets & Crypto", "Artificial Intelligence", "Aviation", "Politics"];
     const topic = topics[parseInt(Math.random() * 9999) % topics.length];
 
     const topic_latest_polls = await getPollsByTopic(topic);
     const previous_headlines = topic_latest_polls.result.map(poll => poll.questions[0].headline);
-    const poll = await generatePoll(topic, previous_headlines) // random topic
+    const poll = await generatePoll(topic == 'Politics' ? 'Iran/Israel crisis': topic, previous_headlines) // random topic
 
     if (poll) {
         console.log('Poll generated successfully:', poll)

@@ -3,6 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import { getArticleById, getPollById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import { marked } from "marked";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -53,8 +54,9 @@ export default function GoldenInsightDetail() {
                 <div className="text-[18px] leading-[28px]" dangerouslySetInnerHTML={{ __html: marked(article.content) }}>
                 </div>
             </div>
-            <div className="flex justify-center pb-[30px]">
+            <div className="flex justify-center pb-[30px] gap-[10px]">
                 <button onClick={() => goBack()} className="border border-secondary px-[16px] py-[8px] flex items-center gap-[2px]"><Icon icon='lets-icons:back' />Back</button>
+                <Link href="/blog" className="border border-secondary px-[16px] py-[8px] flex items-center gap-[2px]">Through My Eyes <Icon icon='ep:right' /></Link>
             </div>
           </div>
         </div>);

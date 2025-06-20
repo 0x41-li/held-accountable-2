@@ -1,4 +1,4 @@
-import { createTippingHistory, getUserById } from "@/services/polls/polls";
+import { createTippingHistory, getUserById, updateUserSubscription } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
@@ -10,9 +10,7 @@ import {
   useElements,
   Elements
 } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+import { useRouter } from "next/navigation";
 
 const USDT_BEP20_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // Replace with actual USDT contract address on BSC
 const USDT_ABI = [
@@ -20,6 +18,7 @@ const USDT_ABI = [
 ];
 
 export default function SubscriptionPay({show, hideDialog, subscriptionType}) {
+    const router = useRouter();
     const [tipAmount, setTipAmount] = useState("5");
     const [paymentType, setPaymentType] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -61,11 +60,15 @@ export default function SubscriptionPay({show, hideDialog, subscriptionType}) {
                         const decimals = 18; // Check the token decimals
                         const value = ethers.utils.parseUnits(tipAmount, decimals);
                     
-                        const tx = await contract.transfer("192.168.135.102", value);
+                        const tx = await contract.transfer(process.env.NEXT_PUBLIC_SUBSCRIPTION_CRYPTO_PAY_ADDRESS, value);
+                        const txHash = tx.hash;
                         await tx.wait();
-    
+
+                        await updateUserSubscription(auth.currentUser.uid, tipAmount * 100, txHash);
                         toast.success("Paid Successfully!");
+                        
                         hideDialog();
+                        router.push("/profile");
                     } catch (error) {
                         toast.error("Transaction Error: " + error);
                     }
