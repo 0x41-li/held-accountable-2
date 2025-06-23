@@ -69,7 +69,20 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [trendingTopics, setTrendingTopics] = useState(["All", "Digital Assets & Crypto", "Artificial Intelligence", "Aviation", "Politics"]);
+  const [trendingTopics, setTrendingTopics] = useState([
+    "All", 
+    "AI", 
+    "Health",
+    "Economics",
+    "Travel",
+    "Politics",
+    "Life Style",
+    "Products",
+    "Entertainment",
+    "Crypto", 
+    // "Aviation", 
+    // "Politics"
+  ]);
   const [currentTopic, setCurrentTopic] = useState("All");
 
   const { ref, inView } = useInView();
@@ -192,12 +205,12 @@ export default function Home() {
                       {trendingTopics.map((topic, i) => <div key={topic + "_" + i} className={`py-[8px] px-[16px] cursor-pointer text-nowrap ${currentTopic === topic ? 'bg-[#F4F4F4]': 'bg-white'} ${i != trendingTopics.length - 1 ? ' border-r border-primary':''}`} onClick={() => changeTopic(topic)}>{topic}</div>)}
                   </div>
                 </div>
-                <button className='hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap' onClick={() => handleCreatePoll()}>
+                {/* <button className='hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap' onClick={() => handleCreatePoll()}>
                   + Create Poll
                 </button>
                 <button className='rounded-full block fixed right-[40px] text-xl bottom-[40px] w-[40px] h-[40px] md:hidden bg-blue text-white' onClick={() => handleCreatePoll()}>
                   +
-                </button>
+                </button> */}
                 <CreatePoll show={addPollDialogVisible} hideDialog={() => setAddPollDialogVisible(false)} onRefresh={onRefresh} />
               </div>
               <div className='w-full flex flex-col gap-[24px] pt-[24px] flex-1 h-full overflow-auto pb-[200px]'>

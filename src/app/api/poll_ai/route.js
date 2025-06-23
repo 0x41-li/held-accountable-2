@@ -4,16 +4,38 @@ import { createPoll, generatePoll, getPollsByTopic } from '@/services/polls/poll
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../../../lib/firebase'
 export async function GET(req) {
-    const topics = ["Digital Assets & Crypto", "Artificial Intelligence", "Aviation", "Politics"];
-    const topic = topics[parseInt(Math.random() * 9999) % topics.length];
+    const short_topics = [
+        "AI", 
+        "Health",
+        "Economics",
+        "Travel",
+        "Politics",
+        "Life Style",
+        "Products",
+        "Entertainment",
+        "Crypto", 
+    ]
+    const topics = [
+        "Artificial Intelligence", 
+        "Health and Wellness",
+        "Economic Outlook",
+        "Travel, Hotels, and Navigation",
+        "Iran/Israel crisis",
+        "Food and Life style",
+        "Products and Shopping",
+        "Entertainment, Streaming, and Pop Culture",
+        "Digital Assets & Crypto"
+    ];
+    const topicId = parseInt(Math.random() * 9999) % topics.length;
+    const topic = topics[topicId];
 
     const topic_latest_polls = await getPollsByTopic(topic);
     const previous_headlines = topic_latest_polls.result.map(poll => poll.questions[0].headline);
-    const poll = await generatePoll(topic == 'Politics' ? 'Iran/Israel crisis': topic, previous_headlines) // random topic
+    const poll = await generatePoll(topic, previous_headlines) // random topic
 
     if (poll) {
         console.log('Poll generated successfully:', poll)
-        let dataWithSummary = { topic: topic, activeDate: {
+        let dataWithSummary = { topic: short_topics[topicId], activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",
             },

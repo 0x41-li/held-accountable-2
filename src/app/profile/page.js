@@ -29,6 +29,7 @@ export default async function ProfilePage({searchParams}) {
             }
         }
     } catch (error) {
+        console.log(error);
     }
 
 

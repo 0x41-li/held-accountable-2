@@ -92,12 +92,12 @@ export default function Home() {
               <div className={`py-[8px] px-[16px] cursor-pointer border-r border-primary ${viewType === HOME_LATEST ? 'bg-[#F4F4F4]': 'bg-white'}`} onClick={() => changeViewType(HOME_LATEST)}>Latest</div>
               <div className={`py-[8px] px-[16px] cursor-pointer border-primary ${viewType === HOME_MOST_ANSWERED ? 'bg-[#F4F4F4]': 'bg-white'}`} onClick={() => changeViewType(HOME_MOST_ANSWERED)}>Most Answered</div>
             </div>
-            <button className='hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap' onClick={() => handleCreatePoll()}>
+            {/* <button className='hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap' onClick={() => handleCreatePoll()}>
               + Create Poll
             </button>
             <button className='rounded-full block fixed right-[40px] text-xl bottom-[40px] w-[40px] h-[40px] md:hidden bg-blue text-white' onClick={() => handleCreatePoll()}>
               +
-            </button>
+            </button> */}
             <CreatePoll show={addPollDialogVisible} hideDialog={() => setAddPollDialogVisible(false)} onRefresh={onRefresh} />
           </div>
           <div className='flex flex-col gap-[24px] pt-[24px] flex-1 h-full overflow-auto pb-[200px]'>
