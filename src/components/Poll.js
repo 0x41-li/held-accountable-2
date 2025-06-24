@@ -91,7 +91,7 @@ export default function Poll({poll}) {
                 {/* <button className="text-xl"><Icon icon="mdi:bookmark-plus-outline" /></button> */}
                 <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
                     <Icon icon="mingcute:document-fill" />
-                    <span className="text-xs leading-xs font-medium">Read Articles</span>
+                    <span className="text-xs leading-xs font-medium">&nbsp;{poll.topic}</span>
                 </Link>
                 {/* {poll.user.id === "" ? "" : <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                     <Icon icon="tabler:heart-filled" />
@@ -107,7 +107,7 @@ export default function Poll({poll}) {
         <div className="flex md:hidden gap-[8px]">
             <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
                 <Icon icon="mingcute:document-fill" />
-                <span className="text-xs leading-xs font-medium">Read Articles</span>
+                <span className="text-xs leading-xs font-medium">&nbsp;{poll.topic}</span>
             </Link>
             {/* <button className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white" onClick={() => setTipDlgShow(true)}>
                 <Icon icon="tabler:heart-filled" />
@@ -115,7 +115,7 @@ export default function Poll({poll}) {
             </button> */}
         </div>
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
-            {poll.questions[curQueId].headline && <p className="font-bold">Headline - {poll.questions[curQueId].headline}</p>}
+            {poll.questions[curQueId].headline && <p className="font-bold">Breaking News - {poll.questions[curQueId].headline}</p>}
             {poll.questions[curQueId].question}
             { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Elaborate <Icon icon="lsicon:down-outline" /></button>: ""}
         </div>

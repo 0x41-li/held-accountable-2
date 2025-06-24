@@ -194,7 +194,7 @@ export default function Home() {
   return (<div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start flex-col md:flex-row'>
             <div className='flex flex-col gap-[4px] flex-1'>
-              <div className='text-[30px] leading-[38px] font-semibold'>Latest Trends</div>
+              <div className='text-[30px] leading-[38px] font-semibold'>Headlines</div>
             </div>
           </div>
           <div className='flex-1 flex h-full'>
