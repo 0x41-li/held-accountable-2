@@ -70,7 +70,7 @@ export default function Poll({poll}) {
 
     const isNew = useMemo(() => {
         const created_at = new Date(poll.createdAt.seconds * 1000)
-        return created_at > Date.now() - 24 * 60 * 60 * 1000;
+        return created_at > Date.now() - 2 * 60 * 60 * 1000;
     }, [poll]);
 
     return <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white">
