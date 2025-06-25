@@ -81,7 +81,7 @@ export default function Poll({poll}) {
                 <div className="rounded-full overflow-hidden">
                     {poll.user.avatar ? <img src={poll.user.avatar} className="w-[44px] h-[44px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />}
                 </div>
-                <span className="text-[14px] leading-[7px] text-[#949494]">{formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
+                <span className="text-[14px] text-[#949494]">{formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
                 <div>
                     <p className="leading-[20px] text-[14px] font-medium">{poll.user ? poll.user.fullname: ""}</p>
                     <p className="leading-[16px] text-[12px]">{poll.user ? ((poll.user.username == "")?"":("@" + poll.user.username)): ""}</p>
