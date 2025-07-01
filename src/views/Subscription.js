@@ -18,7 +18,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 const explanations = [
     {
         "icon": "/images/sub1.png",
-        "title": "Share narratives on polls",
+        "title": "share narratives on headlines",
         "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     },
     {
@@ -57,13 +57,13 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
         <div className='hidden md:flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
-            <div className='text-[30px] leading-[38px] font-semibold'>Poll Mania Premium</div>
+            <div className='text-[30px] leading-[38px] font-semibold'>Held Accountable Premium</div>
             <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Upgrade your account and earn money with your activity</div>
             </div>
         </div>
         <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto md:pt-[30px]'>
             <div className="flex px-[12px] md:px-[52px] gap-[32px] md:py-[36px] flex-col items-center">
-                <div className='md:hidden text-[30px] leading-[20px] font-semibold'>Poll Mania Premium</div>
+                <div className='md:hidden text-[30px] leading-[20px] font-semibold'>Held Accountable Premium</div>
                 <div className='md:hidden text-[16px] leading-[16px] text-[#7C7C7C]'>Upgrade your account and earn money with your activity</div>
             
                 <div className="flex flex-1 flex-col md:hidden gap-[16px]">

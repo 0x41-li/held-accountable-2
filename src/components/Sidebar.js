@@ -33,7 +33,7 @@ export default function Sidebar() {
     return <div className="hidden md:flex flex-col justify-between w-[312px]">
         <div className="flex flex-col gap-[24px] pt-[32px] ">
             <div className="flex items-center pl-[23px]">
-                <img src="/images/logo.png" />
+                <img src="/images/logo.png" width={50} />
                 <span className="text-[24px] leading-[38px] font-medium">Held Accountable</span>
             </div>
             <div className="flex flex-col px-[16px] gap-[4px]">

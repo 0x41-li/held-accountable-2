@@ -172,7 +172,7 @@ export default function Poll({poll}) {
         {poll.golden_insights?<div className="flex w-full flex-col pt-[12px]">
             <div className="flex gap-[10px] items-center pb-[10px]">
                 <Icon icon="mynaui:chat-messages" />
-                <span>Golden Insights</span>
+                <span>The Big Picture</span>
                 {/* <div className="rounded-[50px] border border-[#B2DDFF] bg-[#EFF8FF] text-[#175CD3] text-xs px-[10px]">Premium</div> */}
             </div>
             <div className="w-full overflow-auto">
