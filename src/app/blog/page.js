@@ -136,11 +136,7 @@ export default function Home() {
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
               <div className='text-[30px] leading-[38px] font-semibold'>Through My Eyes</div>
-              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>The latest industry news, interviews, technologies, and resources.</div>
-            </div>
-            <div className='border border-secondary rounded-md overflow-hidden flex items-center gap-[8px] p-[10px]'>
-              <Icon icon="ri:search-line" className='text-[#667085]' />
-              <input type="text" placeholder='Search...' className='outline-none bg-white' />
+              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>User perspectives on Breaking News.</div>
             </div>
           </div>
           <div className='flex-1 flex h-full'>

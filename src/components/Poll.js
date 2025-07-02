@@ -79,7 +79,8 @@ export default function Poll({poll}) {
         <div className="flex w-full gap-[8px] items-center w-full">
             <div className="flex flex-1 gap-[10px] items-center">
                 <div className="rounded-full overflow-hidden">
-                    {poll.user.avatar ? <img src={poll.user.avatar} className="w-[44px] h-[44px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />}
+                    {/* {poll.user.avatar ? <img src={poll.user.avatar} className="w-[44px] h-[44px]" />:<Icon icon="mynaui:user-solid" className="text-[32px]" />} */}
+                    <img src="/images/logo.png"  width={44}/>
                 </div>
                 <span className="text-[14px] text-[#949494]">{formatDate(new Date(poll.createdAt.seconds * 1000))}</span>
                 <div>
@@ -116,16 +117,16 @@ export default function Poll({poll}) {
         </div>
         <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
             {poll.questions[curQueId].headline && <p className="font-bold">Breaking News - {poll.questions[curQueId].headline}</p>}
-            {poll.questions[curQueId].question}
             { poll.questions[curQueId].summary ? <button className="text-blue flex gap-[2px] items-center" onClick={handleShowSummary}>Elaborate <Icon icon="lsicon:down-outline" /></button>: ""}
+            {
+                poll.questions[curQueId].summary && showSummary ? <div className="px-[30px]">
+                    <div className="rounded-[7px] border-l-[2px] border-[#3B88E3] bg-[#3B88E326] text-blue p-[14px]">
+                        {poll.questions[curQueId].summary}
+                    </div>
+                </div>:""
+            }<br/>
+            {poll.questions[curQueId].question}
         </div>
-        {
-            poll.questions[curQueId].summary && showSummary ? <div className="px-[30px]">
-                <div className="rounded-[7px] border-l-[2px] border-[#3B88E3] bg-[#3B88E326] text-blue p-[14px]">
-                    {poll.questions[curQueId].summary}
-                </div>
-            </div>:""
-        }
         <div className="pl-[15px] flex flex-col gap-[12px] w-full text-sm leading-sm font-medium">
             {selectedOptions[curQueId] == -1 ? poll.questions[curQueId].options.map((option,i) => <button onClick={()=>handleVote(i)} key={"option" + option.text + i} className="border-secondary border p-[16px] w-full hover:bg-[#E4E7EC] rounded-[12px] cursor-pointer flex">
                 <div className="flex-1">{option.text}</div>
@@ -164,11 +165,11 @@ export default function Poll({poll}) {
                     })
                 )}
         </div>
-        {poll.questions.length > 0 ?
+        {/* {poll.questions.length > 0 ?
         <div className="flex items-center justify-center text-sm leading-sm gap-[17px]">
             <span>Questions:</span>
             {poll.questions.map((question, i) => <button key={question.question + i} onClick={() => setCurQueId(i)} className={`rounded-full p-[8px] w-[36px] text-center border border-primary ${curQueId === i ? 'bg-blue text-white': ''}`}>{i + 1}</button>)}
-        </div>: ""}
+        </div>: ""} */}
         {poll.golden_insights?<div className="flex w-full flex-col pt-[12px]">
             <div className="flex gap-[10px] items-center pb-[10px]">
                 <Icon icon="mynaui:chat-messages" />

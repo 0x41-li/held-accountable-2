@@ -124,7 +124,7 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                         </div>
                     </div>
                 </div>
-                <div className="grid flex-1 grid-cols-1 md:grid-cols-2 gap-[48px]">
+                <div className="grid flex-1 grid-cols-1 md:grid-cols-2 gap-[48px] w-full">
                     {
                         explanations.map((item, index) => {
                             return (
@@ -134,7 +134,7 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                                     </div>
                                     <div className="flex flex-col gap-[16px]">
                                         <div className="text-[18px] leading-[28px] font-semibold">{item.title}</div>
-                                        <div className="text-[16px] leading-[24px] text-[#475467]">{item.content}</div>
+                                        <div className="text-[16px] leading-[24px] text-[#475467]"></div>
                                     </div>
                                 </div>
                             )

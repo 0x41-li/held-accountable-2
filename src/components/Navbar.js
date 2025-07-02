@@ -28,7 +28,7 @@ export default function Navbar() {
     }
     return  <div className="flex p-4 md:hidden items-center h-[60px] w-full">
         <div className="flex flex-1 items-center pl-[23px]">
-            <img src="/images/logo.png" width={50}/>
+            <img src="/images/logo.png"  width={50}/>
             <span className="text-[24px] leading-[38px] font-medium">Held Accountable</span>
         </div>
         <button className="rounded-[8px] w-[40px] h-[40px] border border-primary flex items-center justify-center" onClick={() => setShow(!show)}>
