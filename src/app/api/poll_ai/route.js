@@ -20,7 +20,7 @@ export async function GET(req) {
         "Health and Wellness",
         "Economic Outlook",
         "Travel, Hotels, and Navigation",
-        "Iran/Israel crisis",
+        "Politics",
         "Food and Life style",
         "Products and Shopping",
         "Entertainment, Streaming, and Pop Culture",
