@@ -82,7 +82,7 @@ export default function Sidebar() {
                         </div>
                     </div>
                     <p className="font-semibold">Join our brilliant community</p>
-                    <p>Upgrade your plan to leverage your abilities with Poll Mania’s premium features.</p>
+                    <p>Upgrade your plan to leverage your abilities with Held Accountable’s premium features.</p>
                     <Link href="/subscription" className=" w-full text-center rounded-[8px] bg-blue text-white w-full p-[8px]">Upgrade Now</Link>
                 </div>
             </div>}

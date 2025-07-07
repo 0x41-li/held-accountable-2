@@ -84,7 +84,7 @@ export default function Navbar() {
                                     </button>
                                 </div>
                                 <p className="font-semibold">Join our brilliant community</p>
-                                <p>Upgrade your plan to leverage your abilities with Poll Mania’s premium features.</p>
+                                <p>Upgrade your plan to leverage your abilities with Held Accountable’s premium features.</p>
                                 <button className="rounded-[8px] bg-blue text-white w-full p-[8px]">Upgrade Now</button>
                             </div>
                         </div>

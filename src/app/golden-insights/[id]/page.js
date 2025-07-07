@@ -33,11 +33,7 @@ export default function GoldenInsightDetail() {
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
-              <div className='text-[30px] leading-[38px] font-semibold'>Golden Insights</div>
-            </div>
-            <div className='border border-secondary rounded-md overflow-hidden flex items-center gap-[8px] p-[10px]'>
-              <Icon icon="ri:search-line" className='text-[#667085]' />
-              <input type="text" placeholder='Search...' className='outline-none bg-white' />
+              <div className='text-[30px] leading-[38px] font-semibold'>The Big Picture</div>
             </div>
           </div>
           <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px]'>
