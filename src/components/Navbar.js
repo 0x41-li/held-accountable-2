@@ -26,6 +26,10 @@ export default function Navbar() {
     if (pathname.indexOf("/auth") > -1) {
         return <></>;
     }
+
+    useEffect(() => {
+        setShow(false);
+    }, [pathname]);
     return  <div className="flex p-4 md:hidden items-center h-[60px] w-full">
         <div className="flex flex-1 items-center pl-[23px]">
             <img src="/images/logo.png"  width={50}/>
@@ -48,7 +52,7 @@ export default function Navbar() {
                         <Icon icon="mingcute:fire-line" />
                         <span>Headlines</span>
                     </Link>
-                    <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
+                    <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />
                         <span>Through My Eyes</span>
                     </Link>
