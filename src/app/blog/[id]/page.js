@@ -38,15 +38,9 @@ export default function BlogDetail() {
                 {article.title}
             </div>
             <div className="flex justify-center gap-[10px]">
-                {article.category.split(",").length > 0 ? <div className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
-                    <span className="text-xs leading-xs font-medium">{article.category.split(",")[0]}</span>
+                {article.topic ? <div className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
+                    <span className="text-xs leading-xs font-medium">{article.topic}</span>
                 </div>: ""}
-                {article.category.split(",").length > 1 ? <div className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white">
-                    <span className="text-xs leading-xs font-medium">{article.category.split(",")[1]}</span>
-                </div>:""}
-                {article.category.split(",").length > 2 ? <div className="rounded-full bg-[#3B88E3] w-[114px] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
-                    <span className="text-xs leading-xs font-medium">{article.category.split(",")[2]}</span>
-                </div>:""}
             </div>
             <div className="w-full px-[100px] flex flex-col gap-[20px]">
                 <img src={article.image} />

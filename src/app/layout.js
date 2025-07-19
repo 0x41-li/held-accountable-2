@@ -27,39 +27,39 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en"> {/* Google Analytics Script */}
-      <Script
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-8EGYR63CEH"
-      />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-8EGYR63CEH');
-          `,
-        }}
-      />
-      <body
-        className={`${inter.className} antialiased`}
-      >
-        <AuthProvider>
-          <ToastContainer />
-          <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
-              <div className="flex">
-                <Sidebar />
-                <Navbar />
-              </div>
-              <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
-                {children}
-              </div>
+<html lang="en">
+  <Script
+    strategy="afterInteractive"
+    src="https://www.googletagmanager.com/gtag/js?id=G-8EGYR63CEH"
+  />
+  <Script
+    id="gtag-init"
+    strategy="afterInteractive"
+    dangerouslySetInnerHTML={{
+      __html: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8EGYR63CEH');
+      `,
+    }}
+  />
+  <body
+    className={`${inter.className} antialiased`}
+  >
+    <AuthProvider>
+      <ToastContainer />
+      <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
+          <div className="flex">
+            <Sidebar />
+            <Navbar />
           </div>
-        </AuthProvider>
-      </body>
-    </html>
+          <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
+            {children}
+          </div>
+      </div>
+    </AuthProvider>
+  </body>
+</html>
   );
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import { createPoll, generatePoll, getPollsByTopic } from '@/services/polls/polls'
+import { addNewsArticle, createPoll, generatePoll, getExistingArticles, getHomePolls, getNewsFromNewsAi, getPollsByTopic, getUnusedNewsArticles, HOME_LATEST, updateNewsArticle } from '@/services/polls/polls'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../../../lib/firebase'
 export async function GET(req) {
@@ -16,26 +16,72 @@ export async function GET(req) {
         "Crypto", 
     ]
     const topics = [
-        "Artificial Intelligence", 
-        "Health and Wellness",
-        "Economic Outlook",
-        "Travel, Hotels, and Navigation",
-        "Politics",
-        "Food and Life style",
-        "Products and Shopping",
-        "Entertainment, Streaming, and Pop Culture",
-        "Digital Assets & Crypto"
+        "dmoz/Computers/Artificial_Intelligence", 
+        "dmoz/Health",
+        "news/Business",
+        "dmoz/Recreation/Travel",
+        "news/Politics",
+        "dmoz/Recreation/Food",
+        "dmoz/Shopping",
+        "news/Arts_and_Entertainment",
+        "Cryptocurrency"
     ];
-    const topicId = parseInt(Math.random() * 9999) % topics.length;
+    const last_poll = await getHomePolls(HOME_LATEST, null, 1);
+    let topicId = parseInt(Math.random() * 9999) % topics.length;
+    if (last_poll) {
+        if (last_poll.result.length > 0) {
+            topicId = (short_topics.findIndex(tp => tp == last_poll.result[0].topic) + 1) % short_topics.length;
+        }
+    }
+    
     const topic = topics[topicId];
 
-    const topic_latest_polls = await getPollsByTopic(topic);
-    const previous_headlines = topic_latest_polls.result.map(poll => poll.questions[0].headline);
-    const poll = await generatePoll(topic, previous_headlines) // random topic
+    let { articles: { results } } = await getNewsFromNewsAi(topic);
+    let article_url = "";
+    
+    for (const article of results) {
+        if (article.date != (new Date()).toISOString().substring(0, 10))
+            continue;
+
+
+        const existingArticles = await getExistingArticles(article.url);
+
+        if (existingArticles.length == 0) {
+            let newArticle = { topic: short_topics[topicId], ...article};
+            if (article_url.length == 0) {
+                article_url = article.url;
+                newArticle.used = true;
+            }
+            await addNewsArticle(newArticle);
+            continue;
+        }
+        console.log(existingArticles.length, article.url, !existingArticles.find(article => article.used));
+
+        if (!existingArticles.find(article => article.used) && article_url.length == 0) {
+            article_url = article.url;
+            for (const existArticle of existingArticles) {
+                await updateNewsArticle(existArticle.id, { used: true });
+            }
+        }
+    }
+
+    let short_topic = short_topics[topicId];
+
+    if (article_url.length == 0) {
+        const articles = await getUnusedNewsArticles();
+        if (articles.length == 0) {
+            return "Failed";
+        }
+
+        article_url = articles[0].url;
+        await updateNewsArticle(articles[0].id, { used: true });
+    }
+    
+    const poll = await generatePoll(article_url) // random topic
 
     if (poll) {
         console.log('Poll generated successfully:', poll)
-        let dataWithSummary = { topic: short_topics[topicId], activeDate: {
+        let dataWithSummary = { topic: short_topic, activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",
             },
@@ -69,6 +115,5 @@ export async function GET(req) {
         });
         return NextResponse.json({ message: 'created', poll: createdPoll }, { status: 200 })
     }
-    
     return NextResponse.json({ message: 'Received', poll }, { status: 200 })
 }

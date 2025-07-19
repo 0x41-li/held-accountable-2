@@ -524,15 +524,69 @@ export async function updateSubscription(userId, subscription) {
 
 // narrative apis
 
+export async function getNewsFromNewsAi(topic) {
+  const url = "https://eventregistry.org/api/v1/article/getArticles";
 
-export async function generatePoll(topic, headlines) {
+  try {
+      let condition = `{\"categoryUri\":\"${topic}\"}`;
+
+      if (topic.indexOf("/") < 0) {
+        condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
+      }
+
+      const body = JSON.stringify({
+              "articleBodyLen": "300",
+              "articlesCount": "100",
+              "includeArticleImage": "true",
+              "includeArticleShares": "true",
+              "includeArticleSentiment": "true",
+              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"weather.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"abc.net.au\"},{\"sourceUri\":\"cbc.ca\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+              "resultType": "articles",
+              "articlesSortBy": "date",
+              "apiKey": "fc809a00-a017-4268-aee7-d9430a665362",
+              "articlesConceptLang": "eng",
+              "includeArticleConcepts": "true",
+              "_origin": "sandbox",
+              "articlesPage": "1"
+          });
+
+      console.log(body);
+
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body
+      });
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error("Error fetching news:", error);
+      return null;
+  }
+}
+
+export async function generatePoll(article_url) {
   const openai_api_key = "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";
   const url = "https://api.openai.com/v1/responses";
-  let previous_headlines = "";
-  
-  if (headlines) {
-    previous_headlines = " Lastly, the source news should not be one of following.\n" + headlines.join("\n");
-  }
+
+  const message = `Please create a poll based on this url: ${article_url}
+
+### Rules:
+The **headline** must end with the outlet in parentheses using this format: (Reuters, publisher verified).
+
+
+### Output:
+1. **headline**: One-sentence summary in your own words, ending with the outlet name in parentheses.
+2. **question**: A balanced poll question based on the article's core issue.
+3. **answers**: 2 to 4 multiple choice options.
+4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
+5. **blog_title**: Clear and compelling title.
+6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.`;
 
   try {
       const response = await fetch(url, {
@@ -544,8 +598,7 @@ export async function generatePoll(topic, headlines) {
           body: JSON.stringify({
                   "model": "gpt-4.1",
                   "tools": [{"type": "web_search_preview"}],
-                  "input": `Please create a poll with the topic: \"${topic}\" using one current news article from one of the following sources ONLY: The Weather Channel, BBC News, PBS NewsHour, Reuters, NPR, Financial Times, Wall Street Journal, ABC News (Australia), CBC News (Canada), Bloomberg, Agence France-Presse (AFP), Deutsche Presse-Agentur (dpa), ProPublica, or Mongabay.\n\nRules:\n1. Only use articles published within the last **5 hours**.\n2. The **headline** must end with the outlet in parentheses (e.g., (Reuters, publisher verified)). If it does not, discard it.\n3. **Strictly avoid duplicate headlines or poll topics.** No exceptions.\n4. Cycle through the approved news sources to ensure outlet diversity — do not repeatedly use the same outlet back-to-back.\n\nOutput Format:\n1. **headline**: One-sentence summary in your own words, ending with the outlet name in parentheses.\n2. **question**: Balanced, non-leading poll question based on the article’s core issue.\n3. **answers**: 2 to 4 multiple choice options.\n4. **wiki_summary**: A brief Wikipedia-style explanation of the topic (no article references).\n5. **blog_title**: Clear, compelling title.\n6. **blog_content**: 250–500 words of original, professional analysis based only on Wikipedia and open data. No paraphrasing or summarizing the article. Maintain a neutral, journalistic tone — no editorializing or rhetorical questions.\n\nDo not continue if any requirement fails. If no valid article is found, return nothing.
-${previous_headlines}`,
+                  "input": message,
                   "text": { 
                       "format": { 
                           "name": "poll",
@@ -575,11 +628,32 @@ ${previous_headlines}`,
           throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      return JSON.parse(data.output[1].content[0].text);
+      console.log(data);
+      return data.output.length > 1 ? JSON.parse(data.output[1].content[0].text): JSON.parse(data.output[0].content[0].text);
   } catch (error) {
       console.error("Error fetching Wikipedia summary:", error);
       return null;
   }
+}
+
+export async function addNewsArticle(article) {
+  await addDoc(collection(db, "news_articles"), article);
+}
+
+export async function getExistingArticles(url) {
+  const articles = await getDocs(query(collection(db, "news_articles"), where("url", "==", url)));
+  return articles.docs.map(doc => ({...doc.data(), id: doc.id}));
+}
+
+export async function getUnusedNewsArticles() {
+  const articles = await getDocs(query(collection(db, "news_articles"), orderBy('dateTime', 'desc')));
+  return articles.docs.map(doc => ({...doc.data(), id: doc.id})).filter(article => !article.used);
+}
+
+export async function updateNewsArticle(articleId, updatedData) {
+  console.log(articleId);
+  const articleRef = doc(collection(db, "news_articles"), articleId);
+  await updateDoc(articleRef, updatedData);
 }
 
 export async function getExistingSubscriptionLogForIntentId(intentId) {

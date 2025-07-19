@@ -68,7 +68,20 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [trendingTopics, setTrendingTopics] = useState(["All"]);
+  const [shouldShowNewButton, setShouldShowNewButton] = useState(false);
+
+  const [trendingTopics, setTrendingTopics] = useState([
+    "All", 
+    "AI", 
+    "Health",
+    "Economics",
+    "Travel",
+    "Politics",
+    "Life Style",
+    "Products",
+    "Entertainment",
+    "Crypto", 
+  ]);
   const [currentTopic, setCurrentTopic] = useState("All");
 
   const { ref, inView } = useInView();
@@ -116,20 +129,17 @@ export default function Home() {
     setLoading(false);
   }
 
-  const loadTopics = async () => {
-    const topics = await getTrendingTopics(5);
-    setTrendingTopics(["All", ...topics.map(topic => topic.topic)]);
-  }
-
-  useEffect(() => {
-    loadTopics();
-  }, [setTrendingTopics]);
-
   useEffect(() => {
     console.log(loading, inView)
     if (!loading && inView && hasMore)
       loadBlogs();
   }, [inView, loading, hasMore, currentTopic]);
+
+  if (auth.currentUser && !shouldShowNewButton) {
+    if (auth.currentUser.email == 'ramy@vtslabs.com' || auth.currentUser.email == 'jessicacmatthews25@gmail.com' || auth.currentUser.email == 'ahura0901@gmail.com' || auth.currentUser.email == 'foundaryrs@gmail.com') {
+      setShouldShowNewButton(true);
+    }
+  }
 
   return (
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
@@ -138,12 +148,15 @@ export default function Home() {
               <div className='text-[30px] leading-[38px] font-semibold'>Through My Eyes</div>
               <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>User perspectives on Breaking News.</div>
             </div>
+            {shouldShowNewButton && <div className="flex gap-[10px]  items-center">
+              <Link href="/new-narrative" className="text-center bg-blue rounded-[10px] text-white  w-[200px] py-[14px]">New</Link>
+            </div>}
           </div>
           <div className='flex-1 flex h-full'>
-            <div className='px-[32px] flex-1 pt-[24px] flex flex-col h-full'>
-              <div className='flex items-center justify-between'>
-                <div className='flex rounded-[8px] overflow-hidden border border-primary'>
-                    {trendingTopics.map((topic, i) => <div key={topic + "_" + i} className={`py-[8px] px-[16px] cursor-pointer ${currentTopic === topic ? 'bg-[#F4F4F4]': 'bg-white'} ${i != trendingTopics.length - 1 ? ' border-r border-primary':''}`} onClick={() => changeTopic(topic)}>{topic}</div>)}
+            <div className='px-[32px] flex-1 pt-[24px] flex flex-col h-full w-full'>
+              <div className='w-full overflow-auto'>
+                <div className='flex rounded-[8px] overflow-hidden border border-primary flex-nowrap w-fit'>
+                    {trendingTopics.map((topic, i) => <div key={topic + "_" + i} className={`py-[8px] px-[16px] cursor-pointer text-nowrap ${currentTopic === topic ? 'bg-[#F4F4F4]': 'bg-white'} ${i != trendingTopics.length - 1 ? ' border-r border-primary':''}`} onClick={() => changeTopic(topic)}>{topic}</div>)}
                 </div>
               </div>
               <div className='flex flex-col gap-[24px] pt-[24px] flex-1 h-full overflow-auto pb-[200px]'>

@@ -181,7 +181,7 @@ export default function Poll({poll}) {
                 {
                     poll.golden_insights.map((narrative, i) => <Link href={"/golden-insights/" + poll.id} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
                         <div className="w-[225px] relative">
-                            <img src="/images/narrative_detail.jpg" className="w-[225px] h-[200px]" />
+                            <img src="/images/narrative_detail.png" className="w-[225px] h-[200px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
                                 <p className="text-white hidden group-hover:block">Read more</p>
                             </div>

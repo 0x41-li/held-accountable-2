@@ -1,25 +1,58 @@
 'use client';
 import Sidebar from "@/components/Sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { auth } from "../../../lib/firebase";
-import { getUserById, updateUserById } from "@/services/polls/polls";
+import { addArticleToPoll, getUserById, updateUserById } from "@/services/polls/polls";
 import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { toast } from "react-toastify";
 
 export default function Profile() {
     const [title, setTitle] = useState("");
-    const [user, setUser] = useState(null);
+    const [topic, setTopic] = useState("");
+    const [content, setContent] = useState("");
+    const fileRef = useRef(null);
+    const [image, setImage] = useState("");
+    const handleUploadImage = (e) => {
+        let formData = new FormData();
+        formData.append("key", "60d2ec5533289541d56128c844b52204");
+        formData.append("image", e.target.files[0]);
+        fetch("https://api.imgbb.com/1/upload", {
+            method: "POST",
+            body: formData
+        }).then(res => res.json())
+        .then(res => {
+            console.log(res);
+            setImage(res.data.image.url);
+        });
+    }
+
+    const onSave = async () => {
+        const userDoc = await getUserById(auth.currentUser.uid);
+        const createdArticle = await addArticleToPoll(null, {
+            title,
+            content,
+            image,
+            topic,
+            user: {
+                id: auth.currentUser.uid,
+                fullname: auth.currentUser.displayName,
+                username: userDoc.username,
+                avatar: userDoc.avatar ?? "" 
+            },
+            view_count: 0,
+            status:1
+        });
+        console.log(createdArticle);
+    }
 
     return (
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
-        <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
+        <div className='flex flex-col md:flex-row gap-[10px] px-[24px] pb-[20px] border-b border-secondary items-start'>
           <div className='flex flex-col gap-[4px] flex-1'>
-            <div className='text-[30px] leading-[38px] font-semibold'>New Narrative</div>
-            <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Create your narratives, track your earning! </div>
+            <div className='text-[30px] leading-[38px] font-semibold'>New Throuh My Eyes</div>
           </div>
           <div className="flex gap-[10px]  items-center">
-          <button className="border border-primary rounded-[10px] w-[200px] py-[14px]">Save Draft</button>
-            <button className="bg-blue rounded-[10px] text-white  w-[200px] py-[14px]">Publish</button>
+            <button className="bg-blue rounded-[10px] text-white  w-[200px] py-[14px]" onClick={() => onSave()}>Publish</button>
           </div>
         </div>
         <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px] pl-[24px]'>
@@ -30,29 +63,28 @@ export default function Profile() {
                     <input type="text" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Enter the narrative title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <div className="flex gap-[32px]">
-                    <span className="w-[160px]">Targeted Poll / Topic</span>
-                    <input type="text" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Search" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <span className="w-[160px]">Targeted Topic</span>
+                    <select className="border border-primary outline-none rounded-[8px] w-[448px] py-[10px] px-[14px]" placeholder="Enter the topic name" value={topic} onChange={(e) => setTopic(e.target.value)} >
+                        <option value="AI">Artificial Intelligence</option>
+                        <option value="Health">Health and Wellness</option>
+                        <option value="Economics">Economic Outlook</option>
+                        <option value="Travel">Travel, Hotels, and Navigation</option>
+                        <option value="Politics">Politics</option>
+                        <option value="Life Style">Food and Life style</option>
+                        <option value="Products">Products and Shopping</option>
+                        <option value="Entertainment">Entertainment, Streaming, and Pop Culture</option>
+                        <option value="Crypto">Digital Assets & Crypto</option>
+                    </select>
                 </div>
                 <div className="flex gap-[32px]">
                     <span className="w-[160px]">Header Photo</span>
-                    <input type="file" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Select header photo" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <input type="file" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Select header photo" ref={fileRef} onChange={(e) => handleUploadImage(e)} />
                 </div>
                 <div className="flex gap-[32px]">
                     <span className="w-[160px]">Main Text</span>
-                    <textarea className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Insert the main text of narrative" value={title} onChange={(e) => setTitle(e.target.value)}>
+                    <textarea className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary min-h-[300px]" placeholder="Insert the main text" value={content} onChange={(e) => setContent(e.target.value)}>
                     </textarea>
                 </div>
-                <hr />
-                <div className="text-[18px] leading-[38px]">Donation Detail</div>
-                <div className="flex gap-[32px]">
-                    <span className="w-[160px]">Wallet 1</span>
-                    <input type="text" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Wallet Address 1" value={title} onChange={(e) => setTitle(e.target.value)} />
-                </div>
-                <div className="flex gap-[32px]">
-                    <span className="w-[160px]">Wallet 2</span>
-                    <input type="text" className="px-[14px] py-[10px] rounded-[8px] flex-1 md:w-[448px] border border-primary" placeholder="Wallet Address 1" value={title} onChange={(e) => setTitle(e.target.value)} />
-                </div>
-                <button className="text-blue">+ Add Wallet</button>
             </div>
         </div>
       </div>);

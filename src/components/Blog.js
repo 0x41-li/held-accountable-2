@@ -1,6 +1,7 @@
 import { formatDate } from "@/utils/date";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 const Blog = ({blog}) => {
     const router = useRouter();
@@ -8,6 +9,11 @@ const Blog = ({blog}) => {
     const gotoDetailPage = () => {
         router.push("/blog/" + blog.id);
     }
+
+    const isNew = useMemo(() => {
+        const created_at = new Date(blog.createdAt.seconds * 1000)
+        return created_at > Date.now() - 2 * 60 * 60 * 1000;
+    }, [blog]);
 
     return <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white cursor-pointer" onClick={() => gotoDetailPage()}>
         <div className="flex w-full gap-[8px] items-center w-full">
@@ -20,15 +26,10 @@ const Blog = ({blog}) => {
                     <p className="leading-[16px] text-[12px]">@{blog.user ? blog.user.username: ""}</p>
                 </div>
             </div>
-            {blog.category.split(",").length > 0 ? <div className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
-                <span className="text-xs leading-xs font-medium">{blog.category.split(",")[0]}</span>
+            {blog.topic ? <div className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">
+                <span className="text-xs leading-xs font-medium">{blog.topic}</span>
             </div>: ""}
-            {blog.category.split(",").length > 1 ? <div className="rounded-full bg-[#34C759] w-[114px] h-[22px] flex items-center justify-center text-white">
-                <span className="text-xs leading-xs font-medium">{blog.category.split(",")[1]}</span>
-            </div>:""}
-            {blog.category.split(",").length > 2 ? <div className="rounded-full bg-[#3B88E3] w-[114px] py-[2px] px-[14px] h-[22px] flex items-center justify-center text-white">
-                <span className="text-xs leading-xs font-medium">{blog.category.split(",")[2]}</span>
-            </div>:""}
+            {isNew && <span className="text-3xl text-green-500"><Icon icon="mdi:new-box" /></span>}
         </div>
         <div className="flex gap-[20px]">
             <img src={blog.image} className="w-[215px]" />
@@ -41,7 +42,7 @@ const Blog = ({blog}) => {
             <span className="flex-1 flex gap-[4px] items-center">
                 <Icon icon="solar:eye-outline" />&nbsp;{blog.view_count ?? 0}
             </span>
-            <span>{formatDate(new Date(blog.createdAt.seconds))}</span>
+            <span>{formatDate(new Date(blog.createdAt.seconds * 1000))}</span>
         </div>
     </div>;
 }
