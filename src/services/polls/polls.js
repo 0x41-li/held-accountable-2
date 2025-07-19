@@ -543,7 +543,7 @@ export async function getNewsFromNewsAi(topic) {
               "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"weather.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"abc.net.au\"},{\"sourceUri\":\"cbc.ca\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
               "resultType": "articles",
               "articlesSortBy": "date",
-              "apiKey": "fc809a00-a017-4268-aee7-d9430a665362",
+              "apiKey": "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
               "articlesConceptLang": "eng",
               "includeArticleConcepts": "true",
               "_origin": "sandbox",
