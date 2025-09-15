@@ -54,7 +54,7 @@ export default function RootLayout({ children }) {
             <Sidebar />
             <Navbar />
           </div>
-          <div className='flex-1 md:pt-[12px] overflow-auto h-full'>
+          <div className='flex-1 overflow-auto h-full'>
             {children}
           </div>
       </div>
