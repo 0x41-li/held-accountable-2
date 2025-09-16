@@ -84,14 +84,9 @@ export default function Home() {
         return;
       }
 
-      const newPolls = poll_list.filter(
-        (newPoll) =>
-          !polls.some((existingPoll) => existingPoll.id === newPoll.id)
-      );
-
-      if (newPolls.length > 0) {
+      if (poll_list.length > 0) {
         setStart(lastDoc);
-        setPolls((prevPolls) => [...prevPolls, ...newPolls]);
+        setPolls((prevPolls) => [...prevPolls, ...poll_list]);
       } else {
         setHasMore(false);
       }
@@ -100,7 +95,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, viewType, start, polls]);
+  }, [loading, currentTopic, viewType, start]);
 
   const onRefresh = useCallback(() => {
     setStart(null);
