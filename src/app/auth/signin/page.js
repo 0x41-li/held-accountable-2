@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../../../lib/firebase";
 import AuthSlider from "@/components/AuthSlider";
+import Image from "next/image";
 
 const slides = [
   {
@@ -110,16 +111,24 @@ const SignIn = () => {
 
   return (
     <div className="flex flex-col md:grid md:grid-cols-2 md:grid-reverse h-[100dvh]">
-      <div className="md:p-[16px] pl-0 order-1 md:order-2 w-full">
+      <div className="md:p-4 pl-0 order-1 md:order-2 w-full">
         <AuthSlider slides={slides} />
       </div>
 
-      <div className="order-2 md:order-1 relative mt-[17px] md:mt-0 flex flex-col items-center justify-center">
+      <div className="order-2 md:order-1 relative mt-4 md:mt-0 flex flex-col items-center justify-center">
         <div className="hidden md:flex absolute w-full left-0 right-0 top-0 items-start justify-center overflow-hidden">
-          <img src="/images/auth_bg.png" className="w-[100%] max-w-none" />
+          <Image
+            src="/images/auth_bg.png"
+            width={1920}
+            height={1080}
+            className="w-[100%] max-w-none z-0"
+            alt="Background Image"
+            unoptimized
+            loading="eager"
+          />
         </div>
-        <div className="flex items-start justify-center m-auto">
-          <div className="flex flex-col gap-[12px] md:gap-[32px] w-[360px]">
+        <div className="flex items-start justify-center m-auto z-10">
+          <div className="flex flex-col gap-3 md:gap-8 w-[360px]">
             <div className="text-[30px] leading-[38px] font-bold">Login</div>
             <div className="flex flex-col gap-[24px]">
               <div className="flex flex-col w-full gap-[20px]">
@@ -171,7 +180,7 @@ const SignIn = () => {
               </div>
             </div>
             <p className="text-tertiary-600 leading-[20px] text-[14px] text-center">
-              Don't have an account?{" "}
+              Don{"'"}t have an account?{" "}
               <a href="/auth/signup" className="outline-none text-blue">
                 Sign Up
               </a>

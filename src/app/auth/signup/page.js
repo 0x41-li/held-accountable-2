@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../../../lib/firebase";
 import AuthSlider from "@/components/AuthSlider";
+import Image from "next/image";
 
 const slides = [
   {
@@ -120,9 +121,17 @@ const SignUp = () => {
 
       <div className="order-2 md:order-1 relative mt-[17px] md:mt-0 flex flex-col items-center justify-center">
         <div className="hidden md:flex absolute w-full left-0 right-0 top-0 items-start justify-center overflow-hidden">
-          <img src="/images/auth_bg.png" className="w-[100%] max-w-none" />
+          <Image
+            src="/images/auth_bg.png"
+            width={1920}
+            height={1080}
+            className="w-[100%] max-w-none"
+            alt="Background Image"
+            unoptimized
+            loading="eager"
+          />
         </div>
-        <div className="flex items-start justify-center m-auto">
+        <div className="flex items-start justify-center m-auto z-10">
           <div className="flex flex-col  gap-[12px] md:gap-[32px] w-[360px]">
             <div className="text-[30px] leading-[38px] font-bold">Sign Up</div>
             <div className="flex flex-col gap-[24px]">

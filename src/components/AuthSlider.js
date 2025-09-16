@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 
 export default function AuthSlider({ slides }) {
@@ -64,10 +65,11 @@ export default function AuthSlider({ slides }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000); 
+    }, 5000);
 
-    return () => clearInterval(interval); 
-  }, []);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
   return (
     <div className="bg-blue w-full h-full rounded-bl-[40px] md:rounded-2xl flex flex-col justify-center items-center overflow-hidden select-none pt-[20px]">
       <div
@@ -87,24 +89,43 @@ export default function AuthSlider({ slides }) {
             key={index}
             className="w-full flex-shrink-0 flex flex-col justify-center items-center select-none"
           >
-            <img
+            <Image
               src={slide.img}
-              className="w-[60%] object-cover md:w-[95%] max-w-none select-none"
+              className="w-[60%] object-cover md:w-[80%] max-w-none select-none"
               draggable={false}
+              alt="slide image"
+              width={400}
+              height={400}
+              loading="eager"
+              unoptimized
             />
             <div className="flex flex-col items-center text-center text-white gap-0 md:gap-[8px] max-w-[456px] m-auto px-[10px]">
               <div className="flex items-center gap-[8px]">
-                <img src="/images/logo.png" className="flex md:hidden w-[47px]" />
-                <p className="font-bold text-[18px] md:text-[24px]">{slide.title}</p>
+                <Image
+                  src="/images/logo.png"
+                  className="flex md:hidden w-[47px]"
+                  alt="slide image"
+                  height={47}
+                  width={47}
+                  unoptimized
+                />
+                <p className="font-bold text-[18px] md:text-[24px]">
+                  {slide.title}
+                </p>
               </div>
-              <span className="opacity-[77%] text-[12px] md:text-[16px]">{slide.desc}</span>
+              <span className="opacity-[77%] text-[12px] md:text-[16px]">
+                {slide.desc}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
       <div className="mt-[8px] md:mt-[32px] mb-[16px] flex items-center gap-[50px]">
-        <button onClick={prevSlide} className="hidden md:flex text-white text-2xl w-[24px]">
+        <button
+          onClick={prevSlide}
+          className="hidden md:flex text-white text-2xl w-[24px]"
+        >
           ‹
         </button>
         <div className="flex gap-2">
@@ -117,7 +138,10 @@ export default function AuthSlider({ slides }) {
             />
           ))}
         </div>
-        <button onClick={nextSlide} className="hidden md:flex text-white text-2xl w-[24px]">
+        <button
+          onClick={nextSlide}
+          className="hidden md:flex text-white text-2xl w-[24px]"
+        >
           ›
         </button>
       </div>
