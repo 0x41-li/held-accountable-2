@@ -256,7 +256,7 @@ export default function CreatePoll({show, hideDialog, onRefresh}) {
                             <button onClick={() => handleRemoveQuestion()} className={`rounded-full p-[8px] w-[36px] text-center border border-primary`}> - </button>
                         </div>
                         <div className="flex flex-col gap-[13px]">
-                            {articles.map((article, i) => <div className="flex gap-[20px]">
+                            {articles.map((article, i) => <div className="flex gap-[20px]" key={i}>
                                     <button className="text-[#ff0000] text-[20px]" onClick={() => handleRemoveArticle(i)}><Icon icon="mdi:trash-outline" /></button>
                                     <div className="text-[14px] leading-[20px] flex-1">{article.title}</div>
                                 </div>
