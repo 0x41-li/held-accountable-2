@@ -39,6 +39,8 @@ export default function Support() {
         message: "",
     })
 
+    const [isSending, setIsSending] = useState(false);
+
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index);
     };
@@ -75,13 +77,23 @@ export default function Support() {
             return;
         }
 
+        if (isSending) {
+            return;
+        }
+
+        setIsSending(true);
+
         try {
-            await sendContact(data);
+            await sendContact({
+                email: data.email,
+                message: data.firstName + " " + data.lastName + "\n" + data.message
+            });
             toast.success("Sent successfully");
         }
         catch (e) {
             toast.error(e);
         }
+        setIsSending(false);
     }
 
     return (
@@ -89,7 +101,7 @@ export default function Support() {
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
               <div className='text-[30px] leading-[38px] font-semibold'>Contact us</div>
-              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Fill the form below and we will reach you</div>
+              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Fill the form below and we will contact you in 24 hours</div>
             </div>
           </div>
           <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px]'>
@@ -118,7 +130,7 @@ export default function Support() {
                         <input type="checkbox" ref={agreeRef} />
                         You agree to our friendly <u>privacy policy</u>.
                     </div>
-                    <button className="rounded-[8px] bg-blue w-full text-white py-[10px]" onClick={handleSend}>Send a message</button>
+                    <button className="rounded-[8px] bg-blue w-full text-white py-[10px]" disabled={isSending} onClick={handleSend}>Send a message</button>
                 </div>
                 <div className="flex flex-1 flex-col">
                     {faqs.map((faq, index) => (

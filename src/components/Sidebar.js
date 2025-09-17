@@ -50,7 +50,7 @@ export default function Sidebar() {
             <Icon icon="typcn:home" />
             <span>Home</span>
           </Link>
-          <Link
+          {/* <Link
             href="/trending"
             className={
               "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
@@ -59,7 +59,7 @@ export default function Sidebar() {
           >
             <Icon icon="mingcute:fire-line" />
             <span>Headlines</span>
-          </Link>
+          </Link> */}
           <Link
             href="/blog"
             className={
@@ -74,7 +74,7 @@ export default function Sidebar() {
             href="/about-us"
             className={
               "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-              (pathname == "/support" ? "bg-blue  text-white" : "")
+              (pathname == "/about-us" ? "bg-blue  text-white" : "")
             }
           >
             <Icon icon="solar:info-square-linear"/>

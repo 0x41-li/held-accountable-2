@@ -34,7 +34,7 @@ const NARRATIVES = [
         "vote_down": 120
     }
 ]
-export default function Poll({poll}) {
+export default function Poll({poll, showGoldenInsight}) {
     const [curQueId, setCurQueId] = useState(0);
     const [voted, setVoted] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -124,10 +124,10 @@ export default function Poll({poll}) {
                         {poll.questions[curQueId].summary}
                     </div>
                 </div>:""
-            }<br/>
-            {poll.questions[curQueId].question}
+            }
+            {/* {poll.questions[curQueId].question} */}
         </div>
-        <div className="pl-[15px] flex flex-col gap-[12px] w-full text-sm leading-sm font-medium">
+        {/* <div className="pl-[15px] flex flex-col gap-[12px] w-full text-sm leading-sm font-medium">
             {selectedOptions[curQueId] == -1 ? poll.questions[curQueId].options.map((option,i) => <button onClick={()=>handleVote(i)} key={"option" + option.text + i} className="border-secondary border p-[16px] w-full hover:bg-[#E4E7EC] rounded-[12px] cursor-pointer flex">
                 <div className="flex-1">{option.text}</div>
                 <div className="rounded-full w-[20px] h-[20px] border border-primary"></div>
@@ -155,7 +155,6 @@ export default function Poll({poll}) {
 
                         return (
                             <div key={i} className="relative border-secondary border p-[16px] w-full rounded-[12px] flex items-center">
-                                {/* Progress Bar */}
                                 <div className="absolute inset-0 bg-[#3B88E357] rounded-[12px]" style={{ width: `${percentage}%` }}></div>
 
                                 <div className="relative flex-1">{option.text}</div>
@@ -164,14 +163,14 @@ export default function Poll({poll}) {
                         );
                     })
                 )}
-        </div>
+        </div> */}
         {/* {poll.questions.length > 0 ?
         <div className="flex items-center justify-center text-sm leading-sm gap-[17px]">
             <span>Questions:</span>
             {poll.questions.map((question, i) => <button key={question.question + i} onClick={() => setCurQueId(i)} className={`rounded-full p-[8px] w-[36px] text-center border border-primary ${curQueId === i ? 'bg-blue text-white': ''}`}>{i + 1}</button>)}
         </div>: ""} */}
         {poll.golden_insights?<div className="flex w-full flex-col pt-[12px]">
-            <div className="flex gap-[10px] items-center pb-[10px]">
+            <div className="hidden gap-[10px] items-center pb-[10px]">
                 <Icon icon="mynaui:chat-messages" />
                 <span>The Big Picture</span>
                 {/* <div className="rounded-[50px] border border-[#B2DDFF] bg-[#EFF8FF] text-[#175CD3] text-xs px-[10px]">Premium</div> */}
@@ -179,7 +178,7 @@ export default function Poll({poll}) {
             <div className="w-full overflow-auto">
                 <div className="flex w-max gap-[10px]">
                 {
-                    poll.golden_insights.map((narrative, i) => <Link href={"/golden-insights/" + poll.id} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
+                    poll.golden_insights.map((narrative, i) => <div onClick={() => showGoldenInsight(poll.id)} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
                         <div className="w-[225px] relative">
                             <img src="/images/narrative_detail.png" className="w-[225px] h-[200px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
@@ -190,11 +189,30 @@ export default function Poll({poll}) {
                             <p className="font-semibold">{narrative.title}</p>
                             <p className="flex-1">{narrative.content.substring(0, 100) + "..."}</p>
                         </div>
-                    </Link>)
+                    </div>)
                 }
                 </div>
             </div>
         </div>: ""}
+        
+        <div className="flex items-center gap-5 text-[#404040] font-medium text-[12px] ml-auto">
+            <p
+            className="flex items-center gap-1 cursor-pointer select-none"
+            onClick={() => setLike(!like)}
+            >
+            <Icon
+                icon="icon-park-outline:like"
+                width={20}
+                height={20}
+            />
+            {poll.likes}{" "}
+            Likes
+            </p>
+            <p className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
+            <Icon icon="ix:share" width={20} height={20} />
+            Share
+            </p>
+        </div>
         {/* <TipAuthor selectedUser={poll.user} show={tipDlgShow} hideDialog={() => setTipDlgShow(false)} /> */}
     </div>;
 }

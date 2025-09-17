@@ -31,11 +31,11 @@ const Blog = ({blog}) => {
             </div>: ""}
             {isNew && <span className="text-3xl text-green-500"><Icon icon="mdi:new-box" /></span>}
         </div>
-        <div className="flex gap-[20px]">
+        <div className="flex gap-[20px] md:flex-row flex-col">
             <img src={blog.image} className="w-[215px]" />
             <div className="flex-1 flex flex-col gap-[16px]">
                 <div className="text-[24px] leading-[32px]">{blog.title}</div>
-                <div className="text-[16px] leading-[28px]">{blog.content}</div>
+                <div className="text-[16px] leading-[28px]">{blog.content.substring(0, 100) + (blog.content.length > 100 ? "..." : "")}</div>
             </div>
         </div>
         <div className="flex w-full text-[14px] leading-[7px] text-[#949494]">

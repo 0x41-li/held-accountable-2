@@ -168,7 +168,7 @@ export const getHomePolls = async (type, start = null, length = 10) => {
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
   } catch (error) {
     console.error("Error fetching polls:", error);
     throw error;
@@ -260,7 +260,7 @@ export const getPollsByTopic = async (topicName, start = null, length = 10) => {
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
   } catch (error) {
     console.error("Error fetching polls by topic:", error);
     throw error;
@@ -464,8 +464,15 @@ export const getUsers = async (start = null, length = 10) => {
 
 export const sendContact = async (data) => {
   try {
-    const docRef = await addDoc(collection(db, CONTACTS_COLLECTION), data);
-    return { id: docRef.id, ...data };
+    const FORMSPREE_LINK = "https://formspree.io/f/mpwldrar";
+    let res = await fetch(FORMSPREE_LINK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+    res = await res.json();
   } catch (error) {
     console.error("Error creating contact:", error);
     throw error;
@@ -540,7 +547,7 @@ export async function getNewsFromNewsAi(topic) {
               "includeArticleImage": "true",
               "includeArticleShares": "true",
               "includeArticleSentiment": "true",
-              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"weather.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"abc.net.au\"},{\"sourceUri\":\"cbc.ca\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
               "resultType": "articles",
               "articlesSortBy": "date",
               "apiKey": "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
@@ -586,7 +593,8 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 3. **answers**: 2 to 4 multiple choice options.
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
 5. **blog_title**: Clear and compelling title.
-6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.`;
+6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+7. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
 
   try {
       const response = await fetch(url, {
@@ -615,9 +623,10 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
                                   },
                                   "wiki_summary": { "type": "string" },
                                   "blog_title": { "type": "string" },
-                                  "blog_content": { "type": "string" }
+                                  "blog_content": { "type": "string" },
+                                  "category": { "type": "string", "enum": ["AI", "Economics", "Travel", "Politics", "Crypto"] }
                               },
-                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content"],
+                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content", "category"],
                               "additionalProperties": false
                           }
                       }
@@ -637,7 +646,7 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 }
 
 export async function addNewsArticle(article) {
-  await addDoc(collection(db, "news_articles"), article);
+  await addDoc(collection(db, "news_articles"), {...article, used: false});
 }
 
 export async function getExistingArticles(url) {
@@ -646,12 +655,11 @@ export async function getExistingArticles(url) {
 }
 
 export async function getUnusedNewsArticles() {
-  const articles = await getDocs(query(collection(db, "news_articles"), orderBy('dateTime', 'desc')));
-  return articles.docs.map(doc => ({...doc.data(), id: doc.id})).filter(article => !article.used);
+  const articles = await getDocs(query(collection(db, "news_articles"), where("used", "==", false), orderBy('dateTime', 'desc')));
+  return articles.docs.map(doc => ({...doc.data(), id: doc.id}));
 }
 
 export async function updateNewsArticle(articleId, updatedData) {
-  console.log(articleId);
   const articleRef = doc(collection(db, "news_articles"), articleId);
   await updateDoc(articleRef, updatedData);
 }

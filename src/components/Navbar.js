@@ -49,10 +49,10 @@ export default function Navbar() {
                         <Icon icon="typcn:home" />
                         <span>Home</span>
                     </Link>
-                    <Link href="/trending" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/trending' ? "bg-blue  text-white": "")}>
+                    {/* <Link href="/trending" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/trending' ? "bg-blue  text-white": "")}>
                         <Icon icon="mingcute:fire-line" />
                         <span>Headlines</span>
-                    </Link>
+                    </Link> */}
                     <Link href="/blog" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
                         <Icon icon="mi:document" />
                         <span>Through My Eyes</span>
@@ -64,6 +64,10 @@ export default function Navbar() {
                     <Link href="/profile" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/profile' ? "bg-blue  text-white": "")}>
                         <Icon icon="mingcute:user-4-line" />
                         <span>Profile</span>
+                    </Link>
+                    <Link href="/about-us" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-blue  text-white": "")}>
+                        <Icon icon="solar:info-square-linear"/>
+                        <span>About Us</span>
                     </Link>
                     <Link href="/support" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/support' ? "bg-blue  text-white": "")}>
                         <Icon icon="ix:support" />

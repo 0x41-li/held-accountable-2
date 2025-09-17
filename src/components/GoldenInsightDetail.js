@@ -6,17 +6,14 @@ import { marked } from "marked";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { auth } from "../../../../lib/firebase";
+import { auth } from "../../lib/firebase";
 
-export default function GoldenInsightDetail() {
-    const { id } = useParams();
+export default function GoldenInsightDetail({ id, goBack }) {
     const [article, setArticle] = useState(null);
     const [poll, setPoll] = useState(null);
     const [voted, setVoted] = useState([]);
     const router = useRouter();
     const [selectedOptions, setSelectedOptions] = useState([]);
-
-    const goBack = () => router.back();
     
     useEffect(() => {
         getPollById(id).then(poll => {
@@ -49,15 +46,15 @@ export default function GoldenInsightDetail() {
     }
     
   return (
-    <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#3B88E3]'>
-          <div className='flex px-[24px] py-[40px] border-b border-secondary items-start'>
+    <div className='w-full md:h-full overflow-scroll md:overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#3B88E3]'>
+          <div className='flex px-[24px] py-[40px] border-b border-secondary items-start md:max-w-[80%] mx-auto'>
             <div className='flex flex-col gap-[24px] flex-1 text-white'>
               <div className='text-[30px] leading-[38px] font-semibold text-center'>{article.title}</div>
               <div className='text-[16px] leading-[24px] text-center'>{poll.questions[0].question}</div>
             </div>
           </div>
-          <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px] bg-white'>
-            <div className="w-full px-[16px] md:px-[100px] flex flex-col gap-[20px]">
+          <div className='flex-1 flex flex-col w-full h-full h-col gap-[32px] overflow-auto pt-[30px] bg-white'>
+            <div className="w-full px-[16px] md:px-[100px] flex flex-col gap-[20px] md:max-w-[80%] mx-auto">
                 <p className="text-[24px] font-bold">Voting Section</p>
                 <div className="pl-[15px] flex flex-col gap-[12px] w-full text-sm leading-sm font-medium bg-white">
                     {selectedOptions[0] == -1 ? poll.questions[0].options.map((option,i) => <button onClick={()=>handleVote(i)} key={"option" + option.text + i} className="border-secondary border p-[16px] w-full hover:bg-[#E4E7EC] rounded-[12px] cursor-pointer flex">
@@ -101,7 +98,7 @@ export default function GoldenInsightDetail() {
                 <div className="text-[18px] leading-[28px]" dangerouslySetInnerHTML={{ __html: marked(article.content) }}>
                 </div>
             </div>
-            <div className="flex justify-between pb-[30px] gap-[30px] items-center px-[50px]">
+            <div className="w-full flex flex-col md:flex-row justify-between pb-[30px] gap-[30px] items-center px-[50px] md:max-w-[80%] mx-auto">
                 <div className="rounded-full bg-[#3B88E31F] min-w-[114px] h-[22px] flex items-center justify-center text-[#3B88E3] px-[10px]">
                     <span className="text-xs leading-xs font-medium">{poll.topic}</span>
                 </div>

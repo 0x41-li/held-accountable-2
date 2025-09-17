@@ -6,24 +6,16 @@ import { db } from '../../../../lib/firebase'
 export async function GET(req) {
     const short_topics = [
         "AI", 
-        "Health",
         "Economics",
         "Travel",
         "Politics",
-        "Life Style",
-        "Products",
-        "Entertainment",
         "Crypto", 
     ]
     const topics = [
         "dmoz/Computers/Artificial_Intelligence", 
-        "dmoz/Health",
         "news/Business",
         "dmoz/Recreation/Travel",
         "news/Politics",
-        "dmoz/Recreation/Food",
-        "dmoz/Shopping",
-        "news/Arts_and_Entertainment",
         "Cryptocurrency"
     ];
     const last_poll = await getHomePolls(HOME_LATEST, null, 1);
@@ -81,7 +73,7 @@ export async function GET(req) {
 
     if (poll) {
         console.log('Poll generated successfully:', poll)
-        let dataWithSummary = { topic: short_topic, activeDate: {
+        let dataWithSummary = { topic: poll.category, activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",
             },

@@ -5,6 +5,7 @@ import { auth } from "../../../lib/firebase";
 import { addArticleToPoll, getUserById, updateUserById } from "@/services/polls/polls";
 import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
     const [title, setTitle] = useState("");
@@ -12,6 +13,9 @@ export default function Profile() {
     const [content, setContent] = useState("");
     const fileRef = useRef(null);
     const [image, setImage] = useState("");
+    const [isPosting, setIsPosting] = useState(false);
+    const router = useRouter();
+
     const handleUploadImage = (e) => {
         let formData = new FormData();
         formData.append("key", "60d2ec5533289541d56128c844b52204");
@@ -27,6 +31,11 @@ export default function Profile() {
     }
 
     const onSave = async () => {
+        if (isPosting) {
+            return;
+        }
+
+        setIsPosting(true);
         const userDoc = await getUserById(auth.currentUser.uid);
         const createdArticle = await addArticleToPoll(null, {
             title,
@@ -42,7 +51,9 @@ export default function Profile() {
             view_count: 0,
             status:1
         });
-        console.log(createdArticle);
+        toast.success("Successfully created");
+        router.back();
+        setIsPosting(false);
     }
 
     return (
@@ -52,7 +63,7 @@ export default function Profile() {
             <div className='text-[30px] leading-[38px] font-semibold'>New Throuh My Eyes</div>
           </div>
           <div className="flex gap-[10px]  items-center">
-            <button className="bg-blue rounded-[10px] text-white  w-[200px] py-[14px]" onClick={() => onSave()}>Publish</button>
+            <button className="bg-blue rounded-[10px] text-white  w-[200px] py-[14px]" disabled={isPosting} onClick={() => onSave()}>{isPosting?"Publishing...":"Publish"}</button>
           </div>
         </div>
         <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px] pl-[24px]'>
