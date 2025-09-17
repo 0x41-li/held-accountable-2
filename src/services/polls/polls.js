@@ -168,7 +168,7 @@ export const getHomePolls = async (type, start = null, length = 10) => {
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
   } catch (error) {
     console.error("Error fetching polls:", error);
     throw error;
@@ -260,7 +260,7 @@ export const getPollsByTopic = async (topicName, start = null, length = 10) => {
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
   } catch (error) {
     console.error("Error fetching polls by topic:", error);
     throw error;
@@ -646,7 +646,7 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 }
 
 export async function addNewsArticle(article) {
-  await addDoc(collection(db, "news_articles"), article);
+  await addDoc(collection(db, "news_articles"), {...article, used: false});
 }
 
 export async function getExistingArticles(url) {
@@ -655,12 +655,11 @@ export async function getExistingArticles(url) {
 }
 
 export async function getUnusedNewsArticles() {
-  const articles = await getDocs(query(collection(db, "news_articles"), orderBy('dateTime', 'desc')));
-  return articles.docs.map(doc => ({...doc.data(), id: doc.id})).filter(article => !article.used);
+  const articles = await getDocs(query(collection(db, "news_articles"), where("used", "==", false), orderBy('dateTime', 'desc')));
+  return articles.docs.map(doc => ({...doc.data(), id: doc.id}));
 }
 
 export async function updateNewsArticle(articleId, updatedData) {
-  console.log(articleId);
   const articleRef = doc(collection(db, "news_articles"), articleId);
   await updateDoc(articleRef, updatedData);
 }

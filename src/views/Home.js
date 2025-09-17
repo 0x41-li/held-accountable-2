@@ -222,8 +222,9 @@ export default function Home() {
     if (intervalId == -1)
       setIntervalId(setInterval(() => {
         setRemainingSeconds((prev) => {
-          if (prev === 0) {
-            loadNewPolls();
+          if (prev < 0) {
+            if (!loading)
+              loadNewPolls();
             return 0;
           }
           return prev - 1;
@@ -285,7 +286,7 @@ export default function Home() {
             <div className="px-4 py-4 font-bold">
               Live updates <span className="text-red-400">{parseInt(remainingSeconds / 60)} min {remainingSeconds % 60} sec</span> until next breaking news
             </div>
-            <div className="px-4 w-full flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
+            <div className="px-4 w-full mx-auto md:max-w-[80%] flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
               {polls.map((poll) =>
                 poll.questions ? (
                   <Poll key={poll.id + "_poll_component"} poll={poll} showGoldenInsight={setCurrentGoldenInsight} />
