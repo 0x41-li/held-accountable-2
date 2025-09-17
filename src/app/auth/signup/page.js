@@ -17,7 +17,7 @@ import {
   where,
 } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../../../lib/firebase";
-import AuthSlider from "@/components/AuthSlider";
+import AuthSlider from "@/components/common/AuthSlider";
 import Image from "next/image";
 
 const slides = [
