@@ -464,8 +464,15 @@ export const getUsers = async (start = null, length = 10) => {
 
 export const sendContact = async (data) => {
   try {
-    const docRef = await addDoc(collection(db, CONTACTS_COLLECTION), data);
-    return { id: docRef.id, ...data };
+    const FORMSPREE_LINK = "https://formspree.io/f/mpwldrar";
+    let res = await fetch(FORMSPREE_LINK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+    res = await res.json();
   } catch (error) {
     console.error("Error creating contact:", error);
     throw error;
