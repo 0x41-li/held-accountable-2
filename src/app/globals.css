@@ -37,7 +37,7 @@ body {
 .spinner:before,
 .spinner:after {
   position: absolute;
-  content: '';
+  content: "";
 }
 
 .spinner:before {
@@ -89,6 +89,18 @@ body {
     min-width: initial;
   }
 }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
 
 #payment-message {
   color: rgb(105, 115, 134);

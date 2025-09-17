@@ -103,7 +103,7 @@ export default function Poll({poll, showGoldenInsight}) {
                 <span className="text-xs leading-xs font-medium">{curQueId + 1}/{poll.questions.length}</span>
             </div> */}
             {isNew && <span className="text-3xl text-green-500"><Icon icon="mdi:new-box" /></span>}
-            <img src="/images/fire_icon.png" />
+            <img src="/images/fire_icon.png" alt="Top" width={24} height={24}/>
         </div>
         <div className="flex md:hidden gap-[8px]">
             <Link href="/blog" className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white">

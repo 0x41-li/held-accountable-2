@@ -86,7 +86,7 @@ export default function AboutUs() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center mt-10 py-8 lg:py-14 w-full mb-6 lg:mb-20 gap-[60px] lg:gap-[100px]">
+        <div className="flex flex-col items-center mt-10 py-8 lg:py-14 w-full mb-6 lg:mb-20 gap-[60px] md:gap-[100px] lg:gap-[180px]">
           <div className="flex flex-col-reverse xl:flex-row items-center w-full justify-between gap-14 py-15 relative">
             <Image
               src="/images/aboutPage/About1.png"

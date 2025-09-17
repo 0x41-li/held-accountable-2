@@ -14,6 +14,80 @@ import Link from "next/link";
 import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
 import GoldenInsightDetail from "@/components/GoldenInsightDetail";
+import HomeCarousel from "@/components/common/HomeCarousel";
+
+const carousel = [
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image1.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "trend",
+    id: 1,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image2.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "events",
+    id: 2,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image1.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "trend",
+    id: 3,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image2.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "events",
+    id: 4,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image1.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "trend",
+    id: 5,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image2.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "events",
+    id: 6,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image1.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "trend",
+    id: 7,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image2.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "events",
+    id: 8,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image1.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "trend",
+    id: 9,
+  },
+  {
+    title: "Carousel title here and here",
+    img: "/images/homeCarousel/image2.png",
+    descr: "Carousel Subtitle goes here and here",
+    category: "events",
+    id: 10,
+  },
+];
 
 export default function Home() {
   const [viewType, setViewType] = useState(HOME_LATEST);
@@ -162,7 +236,21 @@ export default function Home() {
       <div className={"w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD] " + (currentGoldenInsight ? "hidden": "flex")}>
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 pt-[24px] flex flex-col h-full mt-4">
-            <div className="px-4 w-full flex items-center justify-between flex-col md:flex-row">
+            <div className="flex flex-col items-start">
+              <HomeCarousel
+                title="Trending"
+                data={carousel.filter((item) => item.category === "trend")}
+                speed={30}
+              />
+              <HomeCarousel
+                trend={false}
+                title="Upcoming Event"
+                className="border-[#E4E7EC] border-t-[1px] border-b-[1px]"
+                data={carousel.filter((item) => item.category === "events")}
+                speed={35}
+              />
+            </div>
+            <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row">
               <div className="w-full overflow-auto">
                 <div className="flex rounded-[8px] overflow-hidden border border-primary flex-nowrap w-fit">
                   {trendingTopics.map((topic, i) => (
