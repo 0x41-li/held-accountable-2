@@ -593,7 +593,8 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 3. **answers**: 2 to 4 multiple choice options.
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
 5. **blog_title**: Clear and compelling title.
-6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.`;
+6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+7. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
 
   try {
       const response = await fetch(url, {
@@ -622,9 +623,10 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
                                   },
                                   "wiki_summary": { "type": "string" },
                                   "blog_title": { "type": "string" },
-                                  "blog_content": { "type": "string" }
+                                  "blog_content": { "type": "string" },
+                                  "category": { "type": "string", "enum": ["AI", "Economics", "Travel", "Politics", "Crypto"] }
                               },
-                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content"],
+                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content", "category"],
                               "additionalProperties": false
                           }
                       }

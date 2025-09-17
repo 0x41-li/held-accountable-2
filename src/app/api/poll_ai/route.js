@@ -73,7 +73,7 @@ export async function GET(req) {
 
     if (poll) {
         console.log('Poll generated successfully:', poll)
-        let dataWithSummary = { topic: short_topic, activeDate: {
+        let dataWithSummary = { topic: poll.category, activeDate: {
                 from: "2025-01-01",
                 to: "2025-01-01",
             },
