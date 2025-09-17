@@ -7,8 +7,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function GoldenInsightDetailPage() {
-    const {id} = useParams();
+export default function GoldenInsightDetail({ id, goBack }) {
     const [article, setArticle] = useState(null);
     const [poll, setPoll] = useState(null);
     const router = useRouter();
@@ -26,9 +25,6 @@ export default function GoldenInsightDetailPage() {
         return <></>;
     }
     
-    const goBack = () => {
-        router.back();
-    }
   return (
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>

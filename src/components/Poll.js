@@ -34,7 +34,7 @@ const NARRATIVES = [
         "vote_down": 120
     }
 ]
-export default function Poll({poll}) {
+export default function Poll({poll, showGoldenInsight}) {
     const [curQueId, setCurQueId] = useState(0);
     const [voted, setVoted] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -179,7 +179,7 @@ export default function Poll({poll}) {
             <div className="w-full overflow-auto">
                 <div className="flex w-max gap-[10px]">
                 {
-                    poll.golden_insights.map((narrative, i) => <Link href={"/golden-insights/" + poll.id} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
+                    poll.golden_insights.map((narrative, i) => <div onClick={() => showGoldenInsight(poll.id)} key={i + "_golden_insights"} className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer">
                         <div className="w-[225px] relative">
                             <img src="/images/narrative_detail.png" className="w-[225px] h-[200px]" />
                             <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
@@ -190,7 +190,7 @@ export default function Poll({poll}) {
                             <p className="font-semibold">{narrative.title}</p>
                             <p className="flex-1">{narrative.content.substring(0, 100) + "..."}</p>
                         </div>
-                    </Link>)
+                    </div>)
                 }
                 </div>
             </div>
