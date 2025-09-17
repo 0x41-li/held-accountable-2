@@ -547,7 +547,7 @@ export async function getNewsFromNewsAi(topic) {
               "includeArticleImage": "true",
               "includeArticleShares": "true",
               "includeArticleSentiment": "true",
-              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"weather.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"abc.net.au\"},{\"sourceUri\":\"cbc.ca\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
               "resultType": "articles",
               "articlesSortBy": "date",
               "apiKey": "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
