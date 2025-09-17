@@ -6,24 +6,16 @@ import { db } from '../../../../lib/firebase'
 export async function GET(req) {
     const short_topics = [
         "AI", 
-        "Health",
         "Economics",
         "Travel",
         "Politics",
-        "Life Style",
-        "Products",
-        "Entertainment",
         "Crypto", 
     ]
     const topics = [
         "dmoz/Computers/Artificial_Intelligence", 
-        "dmoz/Health",
         "news/Business",
         "dmoz/Recreation/Travel",
         "news/Politics",
-        "dmoz/Recreation/Food",
-        "dmoz/Shopping",
-        "news/Arts_and_Entertainment",
         "Cryptocurrency"
     ];
     const last_poll = await getHomePolls(HOME_LATEST, null, 1);
