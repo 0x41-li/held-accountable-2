@@ -60,8 +60,8 @@ export default function AboutUs() {
   ];
 
   return (
-    <div className="flex flex-col pt-3 pb-12 lg:pb-24 overflow-x-hidden">
-      <div className="bg-[#FCFCFD border-secondary border-[1px] border-r-0 py-4 lg:pt-8 lg:pb-5 px-6 rounded-tl-[40px] mb-7 md:mb-14">
+    <div className="flex flex-col mt-3 pb-12 lg:pb-24 overflow-x-hidden md:border-l border-t border-secondary md:rounded-tl-[40px]">
+      <div className="bg-[#FCFCFD py-4 lg:pt-8 lg:pb-5 px-6 mb-7 md:mb-14 border-b border-secondary">
         <p className="font-semibold text-xl lg:text-[30px]">About Us</p>
       </div>
       <div className="max-w-[1409px] mx-auto w-full flex flex-col items-center px-4 md:px-8">
