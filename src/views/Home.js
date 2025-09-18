@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Poll from "@/components/Poll";
 import {
   HOME_LATEST,
@@ -102,10 +102,12 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [remainingSeconds, setRemainingSeconds] = useState(300);
-  const [intervalId, setIntervalId] = useState(-1);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentGoldenInsight, setCurrentGoldenInsight] = useState(null);
   const [currentTopic, setCurrentTopic] = useState("All");
+
+  const timerInterval = useRef(null);
+  const pollInterval = useRef(null);
 
   const { ref, inView } = useInView();
 
@@ -130,104 +132,62 @@ export default function Home() {
     }
   };
 
-  // const loadNewPolls = useCallback(async () => {
-  //   if (loading) return;
-  //   setLoading(true);
-  //   try {
-  //     let poll_list = [],
-  //       lastDoc;
+  const loadNewPolls = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      let poll_list = [],
+        lastDoc;
 
-  //     if (currentTopic === "All") {
-  //       const { result } = await getHomePolls(viewType, null);
-  //       poll_list = result;
-  //     } else {
-  //       const { result } = await getPollsByTopic(
-  //         currentTopic,
-  //         null
-  //       );
-  //       poll_list = result;
-  //     }
+      if (currentTopic === "All") {
+        const { result } = await getHomePolls(viewType, null);
+        poll_list = result;
+      } else {
+        const { result } = await getPollsByTopic(currentTopic, null);
+        poll_list = result;
+      }
 
-  //     if (poll_list.length === 0) {
-  //       return;
-  //     }
+      if (poll_list.length === 0) {
+        return;
+      }
 
-  //     if (poll_list.length > 0) {
-  //       setPolls((prevPolls) => [...poll_list.filter(p => !prevPolls.some(p1 => p1.id === p.id)), ...prevPolls]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error loading polls:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [loading, currentTopic, viewType, start]);
+      if (poll_list.length > 0) {
+        setPolls((prevPolls) => [
+          ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id)),
+          ...prevPolls,
+        ]);
+      }
+    } catch (error) {
+      console.error("Error loading polls:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, currentTopic, viewType, start]);
 
-  // const loadPolls = useCallback(async () => {
-  //   if (loading) return;
-  //   setLoading(true);
-  //   try {
-  //     let poll_list = [],
-  //       lastDoc;
+  useEffect(() => {
+    timerInterval.current = setInterval(() => {
+      setRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
 
-  //     if (currentTopic === "All") {
-  //       const { result, lastDoc: last } = await getHomePolls(viewType, start);
-  //       poll_list = result;
-  //       lastDoc = last;
-  //     } else {
-  //       const { result, lastDoc: last } = await getPollsByTopic(
-  //         currentTopic,
-  //         start
-  //       );
-  //       poll_list = result;
-  //       lastDoc = last;
-  //     }
+    // Таймер для загрузки новых опросов
+    pollInterval.current = setInterval(() => {
+      loadNewPolls()
+        .then(() => {
+          setRemainingSeconds(300);
+        })
+        .catch((err) => {
+          console.error("Error loading new polls:", err);
+          setRemainingSeconds(300);
+        });
+    }, 300 * 1000);
 
-  //     if (poll_list.length === 0) {
-  //       setHasMore(false);
-  //       return;
-  //     }
+    setRemainingSeconds(300);
 
-  //     if (poll_list.length > 0) {
-  //       setStart(lastDoc);
-  //       setPolls((prevPolls) => [...prevPolls, ...poll_list]);
-  //     } else {
-  //       setHasMore(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error loading polls:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [loading, currentTopic, viewType, start]);
-
-  // const onRefresh = useCallback(() => {
-  //   setStart(null);
-  //   setHasMore(true);
-  //   setPolls([]);
-  // }, []);
-
-  // useEffect(() => {
-  //   if (polls.length > 0)
-  //     setRemainingSeconds(parseInt(((polls[0].createdAt.seconds + 300) * 1000 - Date.now()) / 1000));
-  // }, [polls]);
-
-  // useEffect(() => {
-  //   if (!loading && inView && hasMore) loadPolls();
-  // }, [inView, loading, hasMore, currentTopic, loadPolls, setIntervalId]);
-
-  // useEffect(() => {
-  //   if (intervalId == -1)
-  //     setIntervalId(setInterval(() => {
-  //       setRemainingSeconds((prev) => {
-  //         if (prev < 0) {
-  //           if (!loading)
-  //             loadNewPolls();
-  //           return 0;
-  //         }
-  //         return prev - 1;
-  //       });
-  //   }, 1000));
-  // }, [setIntervalId, setRemainingSeconds]);
+    return () => {
+      if (timerInterval.current) clearInterval(timerInterval.current);
+      if (pollInterval.current) clearInterval(pollInterval.current);
+    };
+  }, [loadNewPolls]);
 
   const loadPolls = useCallback(async () => {
     if (loading) return;
@@ -279,7 +239,11 @@ export default function Home() {
 
   return (
     <div className="w-full h-full">
-      <div className={`${currentGoldenInsight ? "hidden": "flex"} w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}>
+      <div
+        className={`${
+          currentGoldenInsight ? "hidden" : "flex"
+        } w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}
+      >
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
             <div className="flex flex-col pb-5 pt-5 px-6 border-b border-[#E4E7EC]">
@@ -372,7 +336,11 @@ export default function Home() {
               )} */}
 
               {polls.map((poll) => (
-                <HomePoll data={poll} key={poll.id + "_poll_component"} showGoldenInsight={setCurrentGoldenInsight}/>
+                <HomePoll
+                  data={poll}
+                  key={poll.id + "_poll_component"}
+                  showGoldenInsight={setCurrentGoldenInsight}
+                />
               ))}
 
               {/* Intersection Observer Trigger */}
