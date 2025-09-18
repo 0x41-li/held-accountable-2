@@ -77,13 +77,23 @@ export default function Sidebar() {
               (pathname == "/about-us" ? "bg-blue  text-white" : "")
             }
           >
-            <Icon icon="solar:info-square-linear"/>
+            <Icon icon="solar:info-square-linear" />
             <span>About Us</span>
           </Link>
           {/* <Link href="/manage" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/manage' ? "bg-blue  text-white": "")}>
                     <Icon icon="gravity-ui:square-list-ul" />
                     <span>Poll Management</span>
                 </Link> */}
+          <Link
+            href="/careers"
+            className={
+              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+              (pathname == "/careers" ? "bg-blue  text-white" : "")
+            }
+          >
+            <Icon icon="flowbite:briefcase-outline" />
+            <span>Careers</span>
+          </Link>
           <Link
             href="/profile"
             className={
