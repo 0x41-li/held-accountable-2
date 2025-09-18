@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Poll from "@/components/Poll";
 import {
   HOME_LATEST,
@@ -15,6 +15,8 @@ import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
 import GoldenInsightDetail from "@/components/GoldenInsightDetail";
 import HomeCarousel from "@/components/common/HomeCarousel";
+import HomePoll from "@/components/common/HomePoll";
+import Input from "@/components/ui/Input";
 
 const carousel = [
   {
@@ -89,7 +91,10 @@ const carousel = [
   },
 ];
 
+const navTopic = ["All", "AI", "Economics", "Travel", "Politics", "Crypto"];
+
 export default function Home() {
+  const [searchValue, setSearchValue] = useState("");
   const [viewType, setViewType] = useState(HOME_LATEST);
   const [addPollDialogVisible, setAddPollDialogVisible] = useState(false);
   const router = useRouter();
@@ -97,18 +102,12 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [remainingSeconds, setRemainingSeconds] = useState(300);
-  const [intervalId, setIntervalId] = useState(-1);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentGoldenInsight, setCurrentGoldenInsight] = useState(null);
-  const [trendingTopics, setTrendingTopics] = useState([
-    "All",
-    "AI",
-    "Economics",
-    "Travel",
-    "Politics",
-    "Crypto",
-  ]);
   const [currentTopic, setCurrentTopic] = useState("All");
+
+  const timerInterval = useRef(null);
+  const pollInterval = useRef(null);
 
   const { ref, inView } = useInView();
 
@@ -144,10 +143,7 @@ export default function Home() {
         const { result } = await getHomePolls(viewType, null);
         poll_list = result;
       } else {
-        const { result } = await getPollsByTopic(
-          currentTopic,
-          null
-        );
+        const { result } = await getPollsByTopic(currentTopic, null);
         poll_list = result;
       }
 
@@ -156,7 +152,10 @@ export default function Home() {
       }
 
       if (poll_list.length > 0) {
-        setPolls((prevPolls) => [...poll_list.filter(p => !prevPolls.some(p1 => p1.id === p.id)), ...prevPolls]);
+        setPolls((prevPolls) => [
+          ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id)),
+          ...prevPolls,
+        ]);
       }
     } catch (error) {
       console.error("Error loading polls:", error);
@@ -164,6 +163,31 @@ export default function Home() {
       setLoading(false);
     }
   }, [loading, currentTopic, viewType, start]);
+
+  useEffect(() => {
+    timerInterval.current = setInterval(() => {
+      setRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    // Таймер для загрузки новых опросов
+    pollInterval.current = setInterval(() => {
+      loadNewPolls()
+        .then(() => {
+          setRemainingSeconds(300);
+        })
+        .catch((err) => {
+          console.error("Error loading new polls:", err);
+          setRemainingSeconds(300);
+        });
+    }, 300 * 1000);
+
+    setRemainingSeconds(300);
+
+    return () => {
+      if (timerInterval.current) clearInterval(timerInterval.current);
+      if (pollInterval.current) clearInterval(pollInterval.current);
+    };
+  }, [loadNewPolls]);
 
   const loadPolls = useCallback(async () => {
     if (loading) return;
@@ -210,33 +234,35 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (polls.length > 0)
-      setRemainingSeconds(parseInt(((polls[0].createdAt.seconds + 300) * 1000 - Date.now()) / 1000));
-  }, [polls]);
-
-  useEffect(() => {
     if (!loading && inView && hasMore) loadPolls();
-  }, [inView, loading, hasMore, currentTopic, loadPolls, setIntervalId]);
-
-  useEffect(() => {
-    if (intervalId == -1)
-      setIntervalId(setInterval(() => {
-        setRemainingSeconds((prev) => {
-          if (prev < 0) {
-            if (!loading)
-              loadNewPolls();
-            return 0;
-          }
-          return prev - 1;
-        });
-    }, 1000));
-  }, [setIntervalId, setRemainingSeconds]);
+  }, [inView, loading, hasMore, currentTopic, loadPolls]);
 
   return (
     <div className="w-full h-full">
-      <div className={"w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD] " + (currentGoldenInsight ? "hidden": "flex")}>
+      <div
+        className={`${
+          currentGoldenInsight ? "hidden" : "flex"
+        } w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}
+      >
         <div className="flex-1 flex h-full">
-          <div className="w-full flex-1 pt-[24px] flex flex-col h-full mt-4">
+          <div className="w-full flex-1 flex flex-col h-full">
+            <div className="flex flex-col pb-5 pt-5 px-6 border-b border-[#E4E7EC]">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-3xl font-semibold text-nowrap">
+                  Latest Polls
+                </p>
+                <Input
+                  icon="iconoir:search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Search"
+                />
+              </div>
+              <span className="text-[#7C7C7C]">
+                You can see the latest polls submitted to Poll Mania{" "}
+              </span>
+            </div>
+
             <div className="flex flex-col items-start">
               <HomeCarousel
                 title="Trending"
@@ -251,16 +277,17 @@ export default function Home() {
                 speed={35}
               />
             </div>
-            <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row">
+
+            <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row gap-3">
               <div className="w-full overflow-auto">
                 <div className="flex rounded-[8px] overflow-hidden border border-primary flex-nowrap w-fit">
-                  {trendingTopics.map((topic, i) => (
+                  {navTopic.map((topic, i) => (
                     <div
                       key={topic + "_" + i}
                       className={`py-[8px] px-[16px] cursor-pointer text-nowrap ${
                         currentTopic === topic ? "bg-[#F4F4F4]" : "bg-white"
                       } ${
-                        i != trendingTopics.length - 1
+                        i != navTopic.length - 1
                           ? " border-r border-primary"
                           : ""
                       }`}
@@ -271,51 +298,65 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              {/* <button className='hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap' onClick={() => handleCreatePoll()}>
-                    + Create Poll
-                  </button>
-                  <button className='rounded-full block fixed right-[40px] text-xl bottom-[40px] w-[40px] h-[40px] md:hidden bg-blue text-white' onClick={() => handleCreatePoll()}>
-                    +
-                  </button> */}
+              <button
+                className="hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap"
+                onClick={() => handleCreatePoll()}
+              >
+                + Create Poll
+              </button>
+              <button
+                className="rounded-full block fixed right-[40px] text-xl bottom-[40px] w-[40px] h-[40px] md:hidden bg-blue text-white"
+                onClick={() => handleCreatePoll()}
+              >
+                +
+              </button>
               <CreatePoll
                 show={addPollDialogVisible}
                 hideDialog={() => setAddPollDialogVisible(false)}
                 onRefresh={onRefresh}
               />
             </div>
+
             <div className="px-4 py-4 font-bold">
-              Live updates <span className="text-red-400">{parseInt(remainingSeconds / 60)} min {remainingSeconds % 60} sec</span> until next breaking news
+              Live updates{" "}
+              <span className="text-red-400">
+                {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
+                sec
+              </span>{" "}
+              until next breaking news
             </div>
-            <div className="px-4 w-full mx-auto md:max-w-[80%] flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
-              {polls.map((poll) =>
+
+            <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
+              {/* {polls.map((poll) =>
                 poll.questions ? (
                   <Poll key={poll.id + "_poll_component"} poll={poll} showGoldenInsight={setCurrentGoldenInsight} />
                 ) : (
                   poll
                 )
-              )}
+              )} */}
+
+              {polls.map((poll) => (
+                <HomePoll
+                  data={poll}
+                  key={poll.id + "_poll_component"}
+                  showGoldenInsight={setCurrentGoldenInsight}
+                />
+              ))}
+
               {/* Intersection Observer Trigger */}
               <div ref={ref} className="h-10" />
             </div>
           </div>
-          <div className="border-l border-secondary px-[26px] hidden gap-[24px] flex-col md:flex">
-            <div className="flex items-center pt-[20px]">
-              <div className="text-lg leading-lg font-semibold w-[219px]">
-                Latest Polls
-              </div>
-              <Link
-                href="/"
-                className="text-[#475467] text-[14px] leading-[20px] font-semibold"
-              >
-                View all
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
-      {
-        currentGoldenInsight ? <GoldenInsightDetail id={currentGoldenInsight} goBack={() => setCurrentGoldenInsight(null)} /> : ""
-      }
+      {currentGoldenInsight ? (
+        <GoldenInsightDetail
+          id={currentGoldenInsight}
+          goBack={() => setCurrentGoldenInsight(null)}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }
