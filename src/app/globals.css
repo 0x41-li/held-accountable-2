@@ -90,18 +90,6 @@ body {
   }
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  animation-name: marquee;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-
 #payment-message {
   color: rgb(105, 115, 134);
   font-size: 16px;
