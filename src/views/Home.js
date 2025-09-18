@@ -105,6 +105,7 @@ export default function Home() {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentGoldenInsight, setCurrentGoldenInsight] = useState(null);
   const [currentTopic, setCurrentTopic] = useState("All");
+  const [trendingData, setTrendingData] = useState([]);
 
   const timerInterval = useRef(null);
   const pollInterval = useRef(null);
@@ -171,6 +172,7 @@ export default function Home() {
 
     // Таймер для загрузки новых опросов
     pollInterval.current = setInterval(() => {
+      loadTrendingData();
       loadNewPolls()
         .then(() => {
           setRemainingSeconds(300);
@@ -233,6 +235,21 @@ export default function Home() {
     setPolls([]);
   }, []);
 
+  const loadTrendingData = useCallback(() => {
+    fetch("/api/trending")
+      .then((res) => res.json())
+      .then((data) => {
+        setTrendingData(data.symbols);
+      })
+      .catch((error) => {
+        console.error("Error loading trending data:", error);
+      });
+  }, [setTrendingData]);
+
+  useEffect(() => {
+    loadTrendingData();
+  }, [loadTrendingData]);
+
   useEffect(() => {
     if (!loading && inView && hasMore) loadPolls();
   }, [inView, loading, hasMore, currentTopic, loadPolls]);
@@ -246,27 +263,11 @@ export default function Home() {
       >
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
-            <div className="flex flex-col pb-5 pt-5 px-6 border-b border-[#E4E7EC]">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-3xl font-semibold text-nowrap">
-                  Latest Polls
-                </p>
-                <Input
-                  icon="iconoir:search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder="Search"
-                />
-              </div>
-              <span className="text-[#7C7C7C]">
-                You can see the latest polls submitted to Poll Mania{" "}
-              </span>
-            </div>
 
             <div className="flex flex-col items-start">
               <HomeCarousel
                 title="Trending"
-                data={carousel.filter((item) => item.category === "trend")}
+                data={trendingData}
                 speed={30}
               />
               <HomeCarousel
@@ -298,23 +299,6 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              <button
-                className="hidden md:block rounded-[8px] bg-blue text-white py-[10px] px-[14px] text-nowrap"
-                onClick={() => handleCreatePoll()}
-              >
-                + Create Poll
-              </button>
-              <button
-                className="rounded-full block fixed right-[40px] text-xl bottom-[40px] w-[40px] h-[40px] md:hidden bg-blue text-white"
-                onClick={() => handleCreatePoll()}
-              >
-                +
-              </button>
-              <CreatePoll
-                show={addPollDialogVisible}
-                hideDialog={() => setAddPollDialogVisible(false)}
-                onRefresh={onRefresh}
-              />
             </div>
 
             <div className="px-4 py-4 font-bold">
@@ -327,21 +311,21 @@ export default function Home() {
             </div>
 
             <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
-              {/* {polls.map((poll) =>
+              {polls.map((poll) =>
                 poll.questions ? (
                   <Poll key={poll.id + "_poll_component"} poll={poll} showGoldenInsight={setCurrentGoldenInsight} />
                 ) : (
                   poll
                 )
-              )} */}
+              )}
 
-              {polls.map((poll) => (
+              {/* {polls.map((poll) => (
                 <HomePoll
                   data={poll}
                   key={poll.id + "_poll_component"}
                   showGoldenInsight={setCurrentGoldenInsight}
                 />
-              ))}
+              ))} */}
 
               {/* Intersection Observer Trigger */}
               <div ref={ref} className="h-10" />
