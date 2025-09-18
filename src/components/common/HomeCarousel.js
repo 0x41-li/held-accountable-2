@@ -39,7 +39,8 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
         <div className="pointer-events-none absolute left-0 top-0 h-full w-14 bg-gradient-to-r from-white to-transparent z-10"></div>
         <div className="flex w-max animate-marquee gap-6" style={{ animationDuration: `${speed}s` }}>
           {data.concat(data).map((item, index) => (
-            <div
+              trend ? <p className="flex items-center gap-[4px]">{item.change >= 0 ? <Icon icon="icon-park-solid:up-one" className="text-green-400" />:<Icon icon="icon-park-solid:down-one" className="text-red-400" />} {item.symbol} {item.price}</p>
+            :<div
               key={index}
               className="w-[266px] flex items-center gap-1 shrink-0"
             >
