@@ -170,7 +170,6 @@ export default function Home() {
       setRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
-    // Таймер для загрузки новых опросов
     pollInterval.current = setInterval(() => {
       loadTrendingData();
       loadNewPolls()
@@ -263,13 +262,8 @@ export default function Home() {
       >
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
-
             <div className="flex flex-col items-start">
-              <HomeCarousel
-                title="Trending"
-                data={trendingData}
-                speed={30}
-              />
+              <HomeCarousel title="Trending" data={trendingData} speed={30} />
               <HomeCarousel
                 trend={false}
                 title="Upcoming Event"
@@ -313,7 +307,11 @@ export default function Home() {
             <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
               {polls.map((poll) =>
                 poll.questions ? (
-                  <Poll key={poll.id + "_poll_component"} poll={poll} showGoldenInsight={setCurrentGoldenInsight} />
+                  <Poll
+                    key={poll.id + "_poll_component"}
+                    poll={poll}
+                    showGoldenInsight={setCurrentGoldenInsight}
+                  />
                 ) : (
                   poll
                 )
