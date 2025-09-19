@@ -101,6 +101,7 @@ export default function Home() {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentTopic, setCurrentTopic] = useState("All");
   const [trendingData, setTrendingData] = useState([]);
+  const [eventData, setEventData] = useState([]);
 
   const timerInterval = useRef(null);
   const pollInterval = useRef(null);
@@ -167,6 +168,7 @@ export default function Home() {
 
     pollInterval.current = setInterval(() => {
       loadTrendingData();
+      loadEventData();
       loadNewPolls()
         .then(() => {
           setRemainingSeconds(300);
@@ -240,9 +242,21 @@ export default function Home() {
       });
   }, [setTrendingData]);
 
+  const loadEventData = useCallback(() => {
+    fetch("/api/events")
+      .then((res) => res.json())
+      .then((data) => {
+        setEventData(data.data.filter(ev => ev.title.eng));
+      })
+      .catch((error) => {
+        console.error("Error loading event data:", error);
+      });
+  }, [setEventData]);
+
   useEffect(() => {
     loadTrendingData();
-  }, [loadTrendingData]);
+    loadEventData();
+  }, [loadTrendingData, loadEventData]);
 
   useEffect(() => {
     if (!loading && inView && hasMore) loadPolls();
@@ -259,7 +273,7 @@ export default function Home() {
                 trend={false}
                 title="Upcoming Event"
                 className="border-[#E4E7EC] border-t-[1px] border-b-[1px]"
-                data={carousel.filter((item) => item.category === "events")}
+                data={eventData}
                 speed={35}
               />
             </div>

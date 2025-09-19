@@ -53,17 +53,14 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
                       </div>
             :<div
               key={index}
-              className="w-[266px] flex items-center gap-1 shrink-0 mr-4"
+              className="flex items-center gap-2 shrink-0 mr-4"
             >
-              <Image src={item.img} alt={item.title} width={66} height={44} />
-              <div className="flex flex-col">
-                <p className="truncate w-[155px] text-[#344054] font-[600]">
-                  {item.title}
-                </p>
-                <span className="truncate w-[195px] text-[#7C7C7C] text-sm">
-                  {item.descr}
-                </span>
-              </div>
+              <p className="text-[#344054] font-bold">
+                {item.eventDate}
+              </p>
+              <p className="text-[#344054]">
+                {item.title.eng}
+              </p>
             </div>
           ))}
         </Marquee>
