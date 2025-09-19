@@ -71,8 +71,8 @@ export default function AuthSlider({ slides }) {
   }, [slides.length]);
 
   return (
-    <div className="bg-blue w-full h-full rounded-bl-[40px] md:rounded-2xl flex flex-col justify-center items-center overflow-hidden select-none pt-[20px]">
-      <div
+    <div className="bg-blue w-full h-full rounded-bl-[40px] md:rounded-2xl flex flex-col justify-center items-center overflow-hidden select-none py-[40px] sm:py-[60px]">
+      {/* <div
         className="flex transition-transform duration-500 w-full"
         style={{
           transform: `translateX(-${current * 100}%)`,
@@ -119,8 +119,8 @@ export default function AuthSlider({ slides }) {
             </div>
           </div>
         ))}
-      </div>
-
+      </div> */}
+{/* 
       <div className="mt-[8px] md:mt-[32px] mb-[16px] flex items-center gap-[50px]">
         <button
           onClick={prevSlide}
@@ -144,6 +144,35 @@ export default function AuthSlider({ slides }) {
         >
           ›
         </button>
+      </div> */}
+
+
+      <div className="relative w-[75%] max-w-[800px] aspect-[16/9] mx-auto">
+        <iframe
+          src="https://player.vimeo.com/video/1120069862?autoplay=1&muted=1&loop=1&background=1"
+          className="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+          title="Rebuilding Trust in News"
+        />
+
+        <Image
+          src="/images/authSlider/bgVideo1.png"
+          alt="AI"
+          className="absolute top-[-15%] left-[-10%] w-[40%] z-10"
+          fill={false}
+          style={{ objectFit: "contain" }}
+          width={237}
+          height={98}
+        />
+        <Image
+          src="/images/authSlider/bgVideo2.png"
+          alt="AI"
+          className="absolute bottom-[-15%] right-[-10%] w-[40%] z-10"
+          fill={false}
+          style={{ objectFit: "contain" }}
+          width={237}
+          height={98}
+        />
       </div>
     </div>
   );

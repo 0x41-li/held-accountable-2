@@ -126,6 +126,7 @@ const SignIn = () => {
             unoptimized
             loading="eager"
           />
+          
         </div>
         <div className="flex items-start justify-center m-auto z-10">
           <div className="flex flex-col gap-3 md:gap-8 w-[360px]">

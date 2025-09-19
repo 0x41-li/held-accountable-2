@@ -2,6 +2,7 @@
 
 import CareersCard from "@/components/common/CareersCard";
 import Pagination from "@/components/common/Pagination";
+import SectionTitle from "@/components/common/SectionTitle";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -129,9 +130,7 @@ export default function Careers() {
 
   return (
     <div className="flex flex-col mb-[40px] md:border-l border-t border-[#E4E7EC] mt-3 h-full w-full md:rounded-tl-3xl bg-[#FCFCFD]">
-      <h2 className="pt-8 pb-5 px-5 font-semibold text-3xl border-b border-[#E4E7EC]">
-        Careers
-      </h2>
+      <SectionTitle title='Careers'/>
       <div className="flex flex-col items-start lg:items-center mt-10 w-[95%] lg:w-[90%] mx-auto">
         <div className="flex items-center rounded-full p-1 gap-2 bg-[#3B88E31A] border-[#C1D8F5] cursor-pointer text-[#3B88E3] text-sm font-medium">
           <p className="border-[#C1D8F5] rounded-full bg-white px-2.5 py-1">
