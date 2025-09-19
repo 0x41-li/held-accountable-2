@@ -8,12 +8,11 @@ import {
 } from "@/services/polls/polls";
 import { useRouter } from "next/navigation";
 import { useInView } from "react-intersection-observer";
-import Link from "next/link";
 import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
 import HomeCarousel from "@/components/common/HomeCarousel";
-import HomePoll from "@/components/common/HomePoll";
 import Tabs from "@/components/ui/Tabs";
+import Poll from "@/components/Poll";
 
 const carousel = [
   {
@@ -286,7 +285,7 @@ export default function Home() {
 
             <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
               {polls.map((poll) => (
-                <HomePoll data={poll} key={poll.id} />
+                <Poll poll={poll} key={poll.id} />
               ))}
               {/* Intersection Observer Trigger */}
               <div ref={ref} className="h-10" />
