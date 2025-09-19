@@ -3,8 +3,9 @@ import Image from "next/image";
 import React, { useMemo, useState } from "react";
 import Label from "../ui/Label";
 import { formatDateTime } from "@/utils/date";
+import Link from "next/link";
 
-export default function HomePoll({ data, showGoldenInsight }) {
+export default function HomePoll({ data }) {
   const [like, setLike] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [imgSrc, setImgSrc] = useState(data?.user?.avatar || "");
@@ -45,7 +46,7 @@ export default function HomePoll({ data, showGoldenInsight }) {
           />
           {isNew && (
             <span className="text-3xl text-[#3B88E3]">
-              <Icon icon="mdi:new-box"/>
+              <Icon icon="mdi:new-box" />
             </span>
           )}
           <Label
@@ -114,54 +115,58 @@ export default function HomePoll({ data, showGoldenInsight }) {
                 className="!text-[#175CD3] bg-[#EFF8FF] border border-[#B2DDFF]"
               />
             </div>
-
             <div className="flex items-center gap-6 overflow-x-auto flex-nowrap w-full pb-3">
-              {data.golden_insights.map((item, index) => (
-                <div
-                  className="relative flex items-center gap-4 border border-[#E6E6E6] rounded-2xl flex-shrink-0 h-[140px] md:h-[184px] cursor-pointer group"
-                  key={index}
-                  onClick={() => showGoldenInsight(data.id)}
+              {data.golden_insights.map((item) => (
+                <Link
+                  key={data.id + "_poll_link"}
+                  href={`/narrative-insights/${data.id}`}
                 >
-                  <Image
-                    src={item?.img || "/images/homeCarousel/image1.png"}
-                    alt="Preview"
-                    width={276}
-                    height={184}
-                    className="w-[210px] md:w-[276px] rounded-2xl flex-shrink-0 object-cover"
-                    unoptimized
-                  />
+                  <div className="relative flex items-center gap-4 border border-[#E6E6E6] rounded-2xl flex-shrink-0 h-[140px] md:h-[184px] cursor-pointer group">
+                    <Image
+                      src={item?.img || "/images/homeCarousel/image1.png"}
+                      alt="Preview"
+                      width={276}
+                      height={184}
+                      className="w-[210px] md:w-[276px] rounded-2xl flex-shrink-0 object-cover"
+                      unoptimized
+                    />
 
-                  <div className="absolute top-0 left-0 w-[210px] md:w-[276px] h-full bg-black bg-opacity-0 rounded-2xl flex items-center justify-center text-white font-semibold text-lg transition-all duration-300 group-hover:bg-opacity-50 group-hover:opacity-100 opacity-0">
-                    Read More
-                  </div>
+                    <div className="absolute top-0 left-0 w-[210px] md:w-[276px] h-full bg-black bg-opacity-0 rounded-2xl flex items-center justify-center text-white font-semibold text-lg transition-all duration-300 group-hover:bg-opacity-50 group-hover:opacity-100 opacity-0">
+                      Read More
+                    </div>
 
-                  <div className="flex flex-col py-0 md:py-4 pr-3 flex-1 w-[300px] h-[max-content]">
-                    <p className="font-bold text-[#181D27] line-clamp-1">
-                      {item.title}
-                    </p>
-                    <span className="text-[#535862] text-sm pt-2 line-clamp-3">
-                      {item.content}
-                    </span>
-                    <div className="flex items-center mt-1 md:mt-5 flex-wrap gap-2">
-                      <p className="flex items-center font-medium text-[#C00F06]">
-                        {item?.dislikes ?? 0}{" "}
-                        <Icon icon="iconamoon:dislike" width={20} height={20} />
+                    <div className="flex flex-col py-0 md:py-4 pr-3 flex-1 w-[300px] h-[max-content]">
+                      <p className="font-bold text-[#181D27] line-clamp-1">
+                        {item.title}
                       </p>
-                      <p className="flex items-center font-medium text-[#34C759]">
-                        <Icon icon="iconamoon:like" width={20} height={20} />
-                        {item?.likes ?? 0}{" "}
-                      </p>
-                      <p className="flex items-center font-medium text-[#525252] text-sm ml-auto gap-1">
-                        Click to vote
-                        <Icon
-                          icon="line-md:arrow-right"
-                          width={16}
-                          height={16}
-                        />
-                      </p>
+                      <span className="text-[#535862] text-sm pt-2 line-clamp-3">
+                        {item.content}
+                      </span>
+                      <div className="flex items-center mt-1 md:mt-5 flex-wrap gap-2">
+                        <p className="flex items-center font-medium text-[#C00F06]">
+                          {item?.dislikes ?? 0}{" "}
+                          <Icon
+                            icon="iconamoon:dislike"
+                            width={20}
+                            height={20}
+                          />
+                        </p>
+                        <p className="flex items-center font-medium text-[#34C759]">
+                          <Icon icon="iconamoon:like" width={20} height={20} />
+                          {item?.likes ?? 0}{" "}
+                        </p>
+                        <p className="flex items-center font-medium text-[#525252] text-sm ml-auto gap-1">
+                          Click to vote
+                          <Icon
+                            icon="line-md:arrow-right"
+                            width={16}
+                            height={16}
+                          />
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -171,9 +176,7 @@ export default function HomePoll({ data, showGoldenInsight }) {
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-2">
         <div className="text-sm text-[#949494]">
           <p>
-            {data.totalVotes
-              ? data.totalVotes.toLocaleString("en-US")
-              : 0}{" "}
+            {data.totalVotes ? data.totalVotes.toLocaleString("en-US") : 0}{" "}
             Votes Poll ends {data.activeDate.to}
           </p>
           <p>Posted {formatDateTime(postedDate)}</p>
@@ -188,8 +191,7 @@ export default function HomePoll({ data, showGoldenInsight }) {
               width={20}
               height={20}
             />
-            {data?.likes ? data.likes.toLocaleString("en-US") : 0}{" "}
-            Likes
+            {data?.likes ? data.likes.toLocaleString("en-US") : 0} Likes
           </p>
           <p className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
             <Icon icon="ix:share" width={20} height={20} />
