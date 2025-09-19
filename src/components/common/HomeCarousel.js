@@ -6,7 +6,7 @@ import Marquee from "react-fast-marquee";
 export default function HomeCarousel({ trend = true, title, speed=25, className, data }) {
 
   return (
-    <div className={`flex items-center py-4 gap-3 pl-4 w-full ${className}`}>
+    <div className={`flex items-center py-1 gap-3 pl-6 w-full ${className} text-xs`}>
       <div
         className={`flex items-center justify-center py-0.5 gap-1 w-[160px] rounded-lg border-[1px] ${
           trend
@@ -32,7 +32,7 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
         <p
           className={`${
             trend ? "text-[#B93815]" : "text-[#026AA2]"
-          } font-medium text-sm text-nowrap`}
+          } font-medium text-xs text-nowrap`}
         >
           {title}
         </p>
