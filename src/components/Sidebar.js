@@ -85,14 +85,14 @@ export default function Sidebar() {
                     <span>Poll Management</span>
                 </Link> */}
           <Link
-            href="/snapshots"
+            href="/careers"
             className={
               "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-              (pathname == "/snapshots" ? "bg-blue  text-white" : "")
+              (pathname == "/careers" ? "bg-blue  text-white" : "")
             }
           >
-            <Icon icon="solar:camera-outline" />
-            <span>Snapshots</span>
+            <Icon icon="flowbite:briefcase-outline" />
+            <span>Careers</span>
           </Link>
           <Link
             href="/profile"

@@ -1,11 +1,26 @@
-import { toast } from 'react-toastify';
-import { db } from '../../../lib/firebase'; // Adjust the import based on your Firebase setup
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, runTransaction, serverTimestamp, query, where, orderBy, limit, startAfter } from 'firebase/firestore';
+import { toast } from "react-toastify";
+import { db } from "../../../lib/firebase"; // Adjust the import based on your Firebase setup
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDocs,
+  getDoc,
+  runTransaction,
+  serverTimestamp,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
+} from "firebase/firestore";
 
-const POLLS_COLLECTION = 'polls';
-const TOPIC_COLLECTION = 'topics';
-const ARTICLE_COLLECTION = 'articles';
-const CONTACTS_COLLECTION = 'contacts';
+const POLLS_COLLECTION = "polls";
+const TOPIC_COLLECTION = "topics";
+const ARTICLE_COLLECTION = "articles";
+const CONTACTS_COLLECTION = "contacts";
 
 export const HOME_TRENDING = "HOME_TRENDING";
 export const HOME_LATEST = "HOME_LATEST";
@@ -16,7 +31,9 @@ export const createPoll = async (pollData) => {
   try {
     const topic = pollData.topic;
     // check if topic already exists
-    const topicSnap = await getDocs(query(collection(db, TOPIC_COLLECTION), where("topic", "==", topic)));
+    const topicSnap = await getDocs(
+      query(collection(db, TOPIC_COLLECTION), where("topic", "==", topic))
+    );
     if (topicSnap.empty) {
       await addDoc(collection(db, TOPIC_COLLECTION), {
         topic,
@@ -24,12 +41,11 @@ export const createPoll = async (pollData) => {
         vote_count: 0,
         status: 1,
       });
-    }
-    else {
+    } else {
       console.log(topicSnap);
       const topicRef = doc(db, TOPIC_COLLECTION, topicSnap.docs[0].id);
       await updateDoc(topicRef, {
-        poll_count: topicSnap.docs[0].data().poll_count + 1
+        poll_count: topicSnap.docs[0].data().poll_count + 1,
       });
     }
 
@@ -40,7 +56,7 @@ export const createPoll = async (pollData) => {
     });
     return { id: docRef.id, ...pollData };
   } catch (error) {
-    console.error('Error creating poll:', error);
+    console.error("Error creating poll:", error);
     throw error;
   }
 };
@@ -49,19 +65,19 @@ export const isUserAlreadyVoted = async (pollId, userId, questionId) => {
   try {
     const pollRef = doc(db, POLLS_COLLECTION, pollId);
     const pollSnap = await getDoc(pollRef);
-    if (!pollSnap.exists()) throw new Error('Poll not found');
+    if (!pollSnap.exists()) throw new Error("Poll not found");
 
     let questions = pollSnap.data().questions;
-  
-    if (questions[questionId].users.filter(u => u === userId).length > 0) {
+
+    if (questions[questionId].users.filter((u) => u === userId).length > 0) {
       return true;
     }
     return false;
   } catch (error) {
-    console.error('Error fetching poll:', error);
+    console.error("Error fetching poll:", error);
     throw error;
   }
-}
+};
 
 export const votePoll = async (pollId, userId, questionId, answer) => {
   try {
@@ -69,30 +85,34 @@ export const votePoll = async (pollId, userId, questionId, answer) => {
 
     await runTransaction(db, async (transaction) => {
       const pollSnap = await transaction.get(pollRef);
-      if (!pollSnap.exists()) throw new Error('Poll not found');
+      if (!pollSnap.exists()) throw new Error("Poll not found");
 
       let pollData = pollSnap.data();
       let questions = pollData.questions;
 
-      if (!questions[questionId]) throw new Error('Question not found');
-      if (!questions[questionId].options[answer]) throw new Error('Invalid answer choice');
+      if (!questions[questionId]) throw new Error("Question not found");
+      if (!questions[questionId].options[answer])
+        throw new Error("Invalid answer choice");
 
       // Ensure users array exists
       if (!questions[questionId].users) questions[questionId].users = [];
 
       // Prevent duplicate votes
       if (questions[questionId].users.includes(userId)) {
-        throw new Error('User has already voted on this question');
+        throw new Error("User has already voted on this question");
       }
 
       // Update vote count & add user to voters list
       questions[questionId].options[answer].votes += 1;
-      questions[questionId].totalVotes ++;
+      questions[questionId].totalVotes++;
       questions[questionId].users.push(userId);
 
       const startDate = pollData.activeDate.from?.toDate?.() || new Date(); // Firestore Timestamp to JS Date
       const currentDate = new Date();
-      const daysPassed = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24))); // Avoid division by zero
+      const daysPassed = Math.max(
+        1,
+        Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24))
+      ); // Avoid division by zero
       const totalVotes = (pollData.totalVotes || 0) + 1;
       const trendScore = totalVotes / daysPassed;
 
@@ -100,7 +120,7 @@ export const votePoll = async (pollId, userId, questionId, answer) => {
       transaction.update(pollRef, {
         totalVotes,
         questions,
-        trendScore
+        trendScore,
       });
     });
 
@@ -118,17 +138,19 @@ export const getPolls = async () => {
     const querySnapshot = await getDocs(collection(db, POLLS_COLLECTION));
     return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
-    console.error('Error fetching polls:', error);
+    console.error("Error fetching polls:", error);
     throw error;
   }
 };
 
 export const getPollsByUserId = async (userId) => {
   try {
-    const querySnapshot = await getDocs(query(collection(db, POLLS_COLLECTION), where('user.id', '==', userId)));
+    const querySnapshot = await getDocs(
+      query(collection(db, POLLS_COLLECTION), where("user.id", "==", userId))
+    );
     return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
-    console.error('Error fetching polls:', error);
+    console.error("Error fetching polls:", error);
     throw error;
   }
 };
@@ -141,7 +163,11 @@ export const getHomePolls = async (type, start = null, length = 10) => {
     switch (type) {
       case HOME_TRENDING:
         // Trending polls: Order by trendScore (descending)
-        q = query(pollsCollection, orderBy("trendScore", "desc"), limit(length));
+        q = query(
+          pollsCollection,
+          orderBy("trendScore", "desc"),
+          limit(length)
+        );
         break;
 
       case HOME_LATEST:
@@ -151,7 +177,11 @@ export const getHomePolls = async (type, start = null, length = 10) => {
 
       case HOME_MOST_ANSWERED:
         // Most answered polls: Order by totalVotes (descending)
-        q = query(pollsCollection, orderBy("totalVotes", "desc"), limit(length));
+        q = query(
+          pollsCollection,
+          orderBy("totalVotes", "desc"),
+          limit(length)
+        );
         break;
 
       default:
@@ -163,25 +193,36 @@ export const getHomePolls = async (type, start = null, length = 10) => {
       q = query(q, startAfter(start));
     }
 
-    q = query (q, where('status', '==', 1));
+    q = query(q, where("status", "==", 1));
     const querySnapshot = await getDocs(q);
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
-      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
+      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return {
+      result: querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        golden_insights: doc.data().golden_insights?.map((item) => ({
+          ...item,
+          likes: parseInt(Math.random() * 1000),
+          dislikes: parseInt(Math.random() * 1000),
+        })),
+        likes: parseInt(Math.random() * 1000),
+      })),
+      lastDoc,
+    };
   } catch (error) {
     console.error("Error fetching polls:", error);
     throw error;
   }
 };
 
-
 export const getLatestPolls = async (start = null, length = 10) => {
   try {
     let q;
     const pollsCollection = collection(db, POLLS_COLLECTION);
     q = query(pollsCollection, orderBy("createdAt", "desc"), limit(length));
-    
+
     // Apply pagination if `start` is provided
     if (start) {
       q = query(q, startAfter(start));
@@ -190,8 +231,11 @@ export const getLatestPolls = async (start = null, length = 10) => {
     const querySnapshot = await getDocs(q);
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
-      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return {
+      result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      lastDoc,
+    };
   } catch (error) {
     console.error("Error fetching polls:", error);
     throw error;
@@ -203,10 +247,10 @@ export const getPollById = async (pollId) => {
   try {
     const pollRef = doc(db, POLLS_COLLECTION, pollId);
     const pollSnap = await getDoc(pollRef);
-    if (!pollSnap.exists()) throw new Error('Poll not found');
+    if (!pollSnap.exists()) throw new Error("Poll not found");
     return { id: pollSnap.id, ...pollSnap.data() };
   } catch (error) {
-    console.error('Error fetching poll:', error);
+    console.error("Error fetching poll:", error);
     throw error;
   }
 };
@@ -217,7 +261,7 @@ export const updatePoll = async (pollId, updatedData) => {
     const pollRef = doc(db, POLLS_COLLECTION, pollId);
     await updateDoc(pollRef, updatedData);
   } catch (error) {
-    console.error('Error updating poll:', error);
+    console.error("Error updating poll:", error);
     throw error;
   }
 };
@@ -227,7 +271,7 @@ export const deletePoll = async (pollId) => {
   try {
     await deleteDoc(doc(db, POLLS_COLLECTION, pollId));
   } catch (error) {
-    console.error('Error deleting poll:', error);
+    console.error("Error deleting poll:", error);
     throw error;
   }
 };
@@ -235,7 +279,11 @@ export const deletePoll = async (pollId) => {
 export const getTrendingTopics = async (length = 10) => {
   try {
     const topicsCollection = collection(db, TOPIC_COLLECTION);
-    const q = query(topicsCollection, orderBy("vote_count", "desc"), limit(length));
+    const q = query(
+      topicsCollection,
+      orderBy("vote_count", "desc"),
+      limit(length)
+    );
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -245,28 +293,38 @@ export const getTrendingTopics = async (length = 10) => {
   }
 };
 
-
 export const getPollsByTopic = async (topicName, start = null, length = 10) => {
   try {
     const pollsCollection = collection(db, POLLS_COLLECTION);
-    let q = query(pollsCollection, where("topic", "==", topicName), orderBy("createdAt", "desc"), limit(length));
+    let q = query(
+      pollsCollection,
+      where("topic", "==", topicName),
+      orderBy("createdAt", "desc"),
+      limit(length)
+    );
 
     if (start) {
       q = query(q, startAfter(start));
     }
-    q = query (q, where('status', '==', 1));
+    q = query(q, where("status", "==", 1));
 
     const querySnapshot = await getDocs(q);
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
-      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data(), likes: parseInt(Math.random() * 1000) })), lastDoc};
+      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return {
+      result: querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        likes: parseInt(Math.random() * 1000),
+      })),
+      lastDoc,
+    };
   } catch (error) {
     console.error("Error fetching polls by topic:", error);
     throw error;
   }
 };
-
 
 export const addArticleToPoll = async (pollId, articleData) => {
   try {
@@ -286,7 +344,10 @@ export const addArticleToPoll = async (pollId, articleData) => {
 
 export const getArticlesByPollId = async (pollId) => {
   try {
-    const q = query(collection(db, ARTICLE_COLLECTION), where("pollId", "==", pollId));
+    const q = query(
+      collection(db, ARTICLE_COLLECTION),
+      where("pollId", "==", pollId)
+    );
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -318,24 +379,25 @@ export const deleteArticle = async (articleId) => {
   }
 };
 
-export const getArticlesByTopic = async (topic, start = null, limitCount = 10) => {
+export const getArticlesByTopic = async (
+  topic,
+  start = null,
+  limitCount = 10
+) => {
   try {
-    let q = query(
-      collection(db, ARTICLE_COLLECTION),
-    );
+    let q = query(collection(db, ARTICLE_COLLECTION));
 
     if (topic) {
       q = query(q, where("topic", "==", topic));
     }
 
-    q = query(q, orderBy("createdAt", "desc"),
-      limit(limitCount));
+    q = query(q, orderBy("createdAt", "desc"), limit(limitCount));
     // Apply pagination if a start point exists
     if (start) {
       q = query(q, startAfter(start));
     }
 
-    q = query (q, where('status', '==', 1));
+    q = query(q, where("status", "==", 1));
 
     const querySnapshot = await getDocs(q);
     const articles = querySnapshot.docs.map((doc) => ({
@@ -358,20 +420,21 @@ export const getArticleById = async (id) => {
     const articleRef = doc(db, ARTICLE_COLLECTION, id);
     const articleSnap = await getDoc(articleRef);
     await updateArticle(id, {
-      view_count: articleSnap.data().view_count + 1
+      view_count: articleSnap.data().view_count + 1,
     });
     return articleSnap.data();
   } catch (error) {
     console.error("Error deleting article:", error);
     throw error;
   }
-}
-
+};
 
 export const createTippingHistory = async (data) => {
   try {
-
-    const docRef = await addDoc(collection(db, TIPPING_HISTORY_COLLECTION), data);
+    const docRef = await addDoc(
+      collection(db, TIPPING_HISTORY_COLLECTION),
+      data
+    );
     return { id: docRef.id, ...data };
   } catch (error) {
     console.error("Error creating tipping history:", error);
@@ -379,7 +442,11 @@ export const createTippingHistory = async (data) => {
   }
 };
 
-export const getTippingHistory = async ({ userId = null, start = null, limitCount = 10 }) => {
+export const getTippingHistory = async ({
+  userId = null,
+  start = null,
+  limitCount = 10,
+}) => {
   try {
     let q = collection(db, TIPPING_HISTORY_COLLECTION);
 
@@ -445,7 +512,7 @@ export const getUsers = async (start = null, length = 10) => {
     let q;
     const usersCollection = collection(db, "users");
     q = query(usersCollection, limit(length));
-    
+
     // Apply pagination if `start` is provided
     if (start) {
       q = query(q, startAfter(start));
@@ -454,13 +521,16 @@ export const getUsers = async (start = null, length = 10) => {
     const querySnapshot = await getDocs(q);
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
-      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]
-    return {result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })), lastDoc};
+      lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return {
+      result: querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      lastDoc,
+    };
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;
   }
-}
+};
 
 export const sendContact = async (data) => {
   try {
@@ -468,66 +538,68 @@ export const sendContact = async (data) => {
     let res = await fetch(FORMSPREE_LINK, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
     res = await res.json();
   } catch (error) {
     console.error("Error creating contact:", error);
     throw error;
   }
-}
+};
 
 export async function getWikipediaSummary(title) {
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+    title
+  )}`;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data.extract); // Summary of the topic
-        return data.extract;
-    } catch (error) {
-        console.error("Error fetching Wikipedia summary:", error);
-        return null;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data = await response.json();
+    console.log(data.extract); // Summary of the topic
+    return data.extract;
+  } catch (error) {
+    console.error("Error fetching Wikipedia summary:", error);
+    return null;
+  }
 }
 
 export async function getDescriptionUsingGPT(question) {
-  const openai_api_key = "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";
+  const openai_api_key =
+    "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";
   const url = "https://api.openai.com/v1/responses";
 
   try {
-      const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            "Authorization": "Bearer " + openai_api_key,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            "model": "gpt-4.1",
-            "instructions": "Please write wiki description about question's keyword in 2~3 sentences. don't mention like keyword in the response.",
-            "input": question
-          })
-      });
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.output[0].content[0].text;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + openai_api_key,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1",
+        instructions:
+          "Please write wiki description about question's keyword in 2~3 sentences. don't mention like keyword in the response.",
+        input: question,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.output[0].content[0].text;
   } catch (error) {
-      console.error("Error fetching Wikipedia summary:", error);
-      return null;
+    console.error("Error fetching Wikipedia summary:", error);
+    return null;
   }
 }
 
 // subscription apis
-export async function updateSubscription(userId, subscription) {
-  
-}
+export async function updateSubscription(userId, subscription) {}
 
 // narrative apis
 
@@ -535,50 +607,51 @@ export async function getNewsFromNewsAi(topic) {
   const url = "https://eventregistry.org/api/v1/article/getArticles";
 
   try {
-      let condition = `{\"categoryUri\":\"${topic}\"}`;
+    let condition = `{\"categoryUri\":\"${topic}\"}`;
 
-      if (topic.indexOf("/") < 0) {
-        condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
-      }
+    if (topic.indexOf("/") < 0) {
+      condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
+    }
 
-      const body = JSON.stringify({
-              "articleBodyLen": "300",
-              "articlesCount": "100",
-              "includeArticleImage": "true",
-              "includeArticleShares": "true",
-              "includeArticleSentiment": "true",
-              "query": `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
-              "resultType": "articles",
-              "articlesSortBy": "date",
-              "apiKey": "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
-              "articlesConceptLang": "eng",
-              "includeArticleConcepts": "true",
-              "_origin": "sandbox",
-              "articlesPage": "1"
-          });
+    const body = JSON.stringify({
+      articleBodyLen: "300",
+      articlesCount: "100",
+      includeArticleImage: "true",
+      includeArticleShares: "true",
+      includeArticleSentiment: "true",
+      query: `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+      resultType: "articles",
+      articlesSortBy: "date",
+      apiKey: "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
+      articlesConceptLang: "eng",
+      includeArticleConcepts: "true",
+      _origin: "sandbox",
+      articlesPage: "1",
+    });
 
-      console.log(body);
+    console.log(body);
 
-      const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body
-      });
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
   } catch (error) {
-      console.error("Error fetching news:", error);
-      return null;
+    console.error("Error fetching news:", error);
+    return null;
   }
 }
 
 export async function generatePoll(article_url) {
-  const openai_api_key = "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";
+  const openai_api_key =
+    "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";
   const url = "https://api.openai.com/v1/responses";
 
   const message = `Please create a poll based on this url: ${article_url}
@@ -597,66 +670,87 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 7. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
 
   try {
-      const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            "Authorization": "Bearer " + openai_api_key,
-            "Content-Type": "application/json"
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + openai_api_key,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1",
+        tools: [{ type: "web_search_preview" }],
+        input: message,
+        text: {
+          format: {
+            name: "poll",
+            type: "json_schema",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                headline: { type: "string" },
+                question: { type: "string" },
+                options: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+                wiki_summary: { type: "string" },
+                blog_title: { type: "string" },
+                blog_content: { type: "string" },
+                category: {
+                  type: "string",
+                  enum: ["AI", "Economics", "Travel", "Politics", "Crypto"],
+                },
+              },
+              required: [
+                "headline",
+                "question",
+                "options",
+                "wiki_summary",
+                "blog_title",
+                "blog_content",
+                "category",
+              ],
+              additionalProperties: false,
+            },
           },
-          body: JSON.stringify({
-                  "model": "gpt-4.1",
-                  "tools": [{"type": "web_search_preview"}],
-                  "input": message,
-                  "text": { 
-                      "format": { 
-                          "name": "poll",
-                          "type": "json_schema", 
-                          "strict": true, 
-                          "schema": {
-                              "type": "object",
-                              "properties": {
-                                  "headline": { "type": "string" },
-                                  "question": { "type": "string" },
-                                  "options": {
-                                      "type": "array",
-                                      "items": { "type": "string" }
-                                  },
-                                  "wiki_summary": { "type": "string" },
-                                  "blog_title": { "type": "string" },
-                                  "blog_content": { "type": "string" },
-                                  "category": { "type": "string", "enum": ["AI", "Economics", "Travel", "Politics", "Crypto"] }
-                              },
-                              "required": ["headline", "question", "options", "wiki_summary", "blog_title", "blog_content", "category"],
-                              "additionalProperties": false
-                          }
-                      }
-                  }
-                })
-      });
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log(data);
-      return data.output.length > 1 ? JSON.parse(data.output[1].content[0].text): JSON.parse(data.output[0].content[0].text);
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
+    return data.output.length > 1
+      ? JSON.parse(data.output[1].content[0].text)
+      : JSON.parse(data.output[0].content[0].text);
   } catch (error) {
-      console.error("Error fetching Wikipedia summary:", error);
-      return null;
+    console.error("Error fetching Wikipedia summary:", error);
+    return null;
   }
 }
 
 export async function addNewsArticle(article) {
-  await addDoc(collection(db, "news_articles"), {...article, used: false});
+  await addDoc(collection(db, "news_articles"), { ...article, used: false });
 }
 
 export async function getExistingArticles(url) {
-  const articles = await getDocs(query(collection(db, "news_articles"), where("url", "==", url)));
-  return articles.docs.map(doc => ({...doc.data(), id: doc.id}));
+  const articles = await getDocs(
+    query(collection(db, "news_articles"), where("url", "==", url))
+  );
+  return articles.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 }
 
 export async function getUnusedNewsArticles() {
-  const articles = await getDocs(query(collection(db, "news_articles"), where("used", "==", false), orderBy('dateTime', 'desc')));
-  return articles.docs.map(doc => ({...doc.data(), id: doc.id}));
+  const articles = await getDocs(
+    query(
+      collection(db, "news_articles"),
+      where("used", "==", false),
+      orderBy("dateTime", "desc")
+    )
+  );
+  return articles.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 }
 
 export async function updateNewsArticle(articleId, updatedData) {
@@ -665,16 +759,21 @@ export async function updateNewsArticle(articleId, updatedData) {
 }
 
 export async function getExistingSubscriptionLogForIntentId(intentId) {
-  const logs = await getDocs(query(collection(db, "subscription_logs"), where("intentId", "==", intentId)));
-  return logs.docs.map(doc => doc.data());
+  const logs = await getDocs(
+    query(
+      collection(db, "subscription_logs"),
+      where("intentId", "==", intentId)
+    )
+  );
+  return logs.docs.map((doc) => doc.data());
 }
 
 export async function addSubscriptionLog(userId, amount, intentId) {
   const log = {
-      userId,
-      amount,
-      intentId,
-      createdAt: new Date()
+    userId,
+    amount,
+    intentId,
+    createdAt: new Date(),
   };
   await addDoc(collection(db, "subscription_logs"), log);
 }
@@ -692,15 +791,18 @@ export async function updateUserSubscription(userId, amount, intentId) {
   }
   // extend one month
   if (user.subscripted_at) {
-      user.subscripted_at = new Date(user.subscripted_at);
-      user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
-      await updateUserById(userId, { subscripted_at: user.subscripted_at.getTime() });
-  }
-  else {
+    user.subscripted_at = new Date(user.subscripted_at);
+    user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
+    await updateUserById(userId, {
+      subscripted_at: user.subscripted_at.getTime(),
+    });
+  } else {
     user.subscripted_at = new Date();
     console.log(user.subscripted_at);
     user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
-    await updateUserById(userId, { subscripted_at: user.subscripted_at.getTime() });
+    await updateUserById(userId, {
+      subscripted_at: user.subscripted_at.getTime(),
+    });
   }
   await addSubscriptionLog(userId, amount, intentId);
 }

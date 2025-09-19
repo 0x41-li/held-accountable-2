@@ -15,6 +15,7 @@ export default function GoldenInsightDetail({ id, goBack }) {
     const router = useRouter();
     const [selectedOptions, setSelectedOptions] = useState([]);
     
+    console.log(poll)
     useEffect(() => {
         getPollById(id).then(poll => {
             setArticle(poll.golden_insights[0]);

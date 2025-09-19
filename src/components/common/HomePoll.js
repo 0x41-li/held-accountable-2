@@ -1,33 +1,38 @@
 import { Icon } from "@iconify/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Label from "./Label";
 import { formatDateTime } from "@/utils/date";
 
-export default function HomePoll({ data }) {
+export default function HomePoll({ data, showGoldenInsight }) {
   const [like, setLike] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [imgSrc, setImgSrc] = useState(data?.user?.avatar || "");
+  const postedDate = new Date(data.createdAt.seconds * 1000);
 
-  const postedDate = new Date(data.info.posted * 1000);
-  const endDate = new Date(data.info.pollEnd * 1000);
+  const isNew = useMemo(() => {
+    const created_at = new Date(data.createdAt.seconds * 1000);
+    return created_at > Date.now() - 2 * 60 * 60 * 1000;
+  }, [data]);
 
   return (
     <div className="flex flex-col items-start pt-3 md:pt-6 pb-4 px-3 md:px-6 rounded-lg border border-secondary shadow-xs w-full">
       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 justify-between w-full mb-2 md:mb-0">
         <div className="flex items-center gap-3">
           <Image
-            src={data.author.image}
-            alt={data.author.name}
+            src={imgSrc || "/images/olivar_avatar.png"}
+            alt={data?.user?.fullname || "Aliah Lane"}
             width={32}
             height={32}
             className="rounded-full"
+            onError={() => setImgSrc("/images/olivar_avatar.png")}
           />
           <div className="flex flex-col items-start">
             <p className="text-sm font-medium text-[#101828]">
-              {data.author.name}
+              {data?.user?.fullname || "Aliah Lane"}
             </p>
             <span className="text-[#7C7C7C] text-[12px]">
-              {data.author.username}
+              {data?.user?.username || "@aliahlane_official"}
             </span>
           </div>
         </div>
@@ -38,6 +43,11 @@ export default function HomePoll({ data }) {
             width={24}
             height={24}
           />
+          {isNew && (
+            <span className="text-3xl text-[#3B88E3]">
+              <Icon icon="mdi:new-box"/>
+            </span>
+          )}
           <Label
             icon="mingcute:document-fill"
             text={data.topic}
@@ -49,20 +59,20 @@ export default function HomePoll({ data }) {
             className="bg-[#34C759] border border-[#25B048] cursor-pointer select-none"
             onClick={() => console.log("tip")}
           />
-          {data.questions.length > 0 && (
+          {/* {data.questions.length > 0 && (
             <Label
               text={data.questions.length}
               className="bg-[#3B88E3] !px-3.5"
             />
-          )}
+          )} */}
           <Image src="/images/fire_icon.png" alt="Top" width={24} height={24} />
         </div>
       </div>
 
       <div className="flex flex-col py-1 md:py-5 px1 md:px-4 w-full">
         <div className="flex flex-col">
-          <p className="font-medium leading-7">{data.title}</p>
-          {data.descr ? (
+          <p className="font-medium leading-7">{data.questions[0].headline}</p>
+          {data.questions[0] ? (
             <button
               className="text-blue flex gap-[2px] items-center mt-1"
               onClick={() => setShowMore(!showMore)}
@@ -84,13 +94,13 @@ export default function HomePoll({ data }) {
           >
             <div className="px-3">
               <div className="rounded-lg border-l-2 border-[#3B88E3] bg-[#3B88E326] text-blue p-[14px]">
-                {data.descr}
+                {data.questions[0].summary}
               </div>
             </div>
           </div>
         </div>
 
-        {data.questions.length > 0 && (
+        {data.golden_insights.length > 0 && (
           <div className="mt-8 flex flex-col items-start gap-3 w-full">
             <div className="flex items-center gap-3">
               <Icon
@@ -106,13 +116,14 @@ export default function HomePoll({ data }) {
             </div>
 
             <div className="flex items-center gap-6 overflow-x-auto flex-nowrap w-full pb-3">
-              {data.questions.map((item) => (
+              {data.golden_insights.map((item, index) => (
                 <div
                   className="relative flex items-center gap-4 border border-[#E6E6E6] rounded-2xl flex-shrink-0 h-[140px] md:h-[184px] cursor-pointer group"
-                  key={item.id}
+                  key={index}
+                  onClick={() => showGoldenInsight(data.id)}
                 >
                   <Image
-                    src={item.img}
+                    src={item?.img || "/images/homeCarousel/image1.png"}
                     alt="Preview"
                     width={276}
                     height={184}
@@ -123,21 +134,22 @@ export default function HomePoll({ data }) {
                   <div className="absolute top-0 left-0 w-[210px] md:w-[276px] h-full bg-black bg-opacity-0 rounded-2xl flex items-center justify-center text-white font-semibold text-lg transition-all duration-300 group-hover:bg-opacity-50 group-hover:opacity-100 opacity-0">
                     Read More
                   </div>
+
                   <div className="flex flex-col py-0 md:py-4 pr-3 flex-1 w-[300px] h-[max-content]">
                     <p className="font-bold text-[#181D27] line-clamp-1">
-                      {item.question}
+                      {item.title}
                     </p>
                     <span className="text-[#535862] text-sm pt-2 line-clamp-3">
-                      {item.descr}
+                      {item.content}
                     </span>
                     <div className="flex items-center mt-1 md:mt-5 flex-wrap gap-2">
                       <p className="flex items-center font-medium text-[#C00F06]">
-                        {item.dislikes ?? 0}{" "}
+                        {item?.dislikes ?? 0}{" "}
                         <Icon icon="iconamoon:dislike" width={20} height={20} />
                       </p>
                       <p className="flex items-center font-medium text-[#34C759]">
                         <Icon icon="iconamoon:like" width={20} height={20} />
-                        {item.likes ?? 0}{" "}
+                        {item?.likes ?? 0}{" "}
                       </p>
                       <p className="flex items-center font-medium text-[#525252] text-sm ml-auto gap-1">
                         Click to vote
@@ -159,10 +171,10 @@ export default function HomePoll({ data }) {
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-2">
         <div className="text-sm text-[#949494]">
           <p>
-            {data.info.votesCount
-              ? data.info.votesCount.toLocaleString("en-US")
+            {data.totalVotes
+              ? data.totalVotes.toLocaleString("en-US")
               : 0}{" "}
-            Votes Poll ends {formatDateTime(endDate)}
+            Votes Poll ends {data.activeDate.to}
           </p>
           <p>Posted {formatDateTime(postedDate)}</p>
         </div>
@@ -176,7 +188,7 @@ export default function HomePoll({ data }) {
               width={20}
               height={20}
             />
-            {data.info.likes ? data.info.likes.toLocaleString("en-US") : 0}{" "}
+            {data?.likes ? data.likes.toLocaleString("en-US") : 0}{" "}
             Likes
           </p>
           <p className="text-[#404040] flex items-center cursor-pointer select-none gap-1">

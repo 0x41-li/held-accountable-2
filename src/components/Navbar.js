@@ -32,7 +32,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className="flex p-4 md:hidden items-center h-[60px] w-full">
+    <div className="flex p-4 md:hidden items-center h-[60px] w-full border-b border-[#E4E7EC]">
       <div className="flex flex-1 items-center pl-[23px]">
         <img src="/images/logo.png" width={50} />
         <span className="text-[24px] leading-[38px] font-medium">
@@ -87,6 +87,16 @@ export default function Navbar() {
               >
                 <Icon icon="mingcute:user-4-line" />
                 <span>Profile</span>
+              </Link>
+              <Link
+                href="/careers"
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/careers" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="flowbite:briefcase-outline" />
+                <span>Careers</span>
               </Link>
               <Link
                 href="/about-us"

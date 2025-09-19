@@ -198,7 +198,7 @@ export default function Poll({poll, showGoldenInsight}) {
         <div className="flex items-center gap-5 text-[#404040] font-medium text-[12px] ml-auto">
             <p
             className="flex items-center gap-1 cursor-pointer select-none"
-            onClick={() => setLike(!like)}
+            // onClick={() => setLike(!like)}
             >
             <Icon
                 icon="icon-park-outline:like"
