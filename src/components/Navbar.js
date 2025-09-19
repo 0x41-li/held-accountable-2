@@ -109,6 +109,26 @@ export default function Navbar() {
                 <span>About Us</span>
               </Link>
               <Link
+                href="/viral-detection"
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="solar:camera-outline" />
+                <span>Viral Detection</span>
+              </Link>
+              <Link
+                href="/snapshots"
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/snapshots" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="solar:camera-outline" />
+                <span>Snapshots</span>
+              </Link>
+              <Link
                 href="/support"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +

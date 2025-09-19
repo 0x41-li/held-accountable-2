@@ -2,6 +2,8 @@
 
 import CareersCard from "@/components/common/CareersCard";
 import Pagination from "@/components/common/Pagination";
+import SectionTitle from "@/components/common/SectionTitle";
+import Tabs from "@/components/ui/Tabs";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -129,9 +131,7 @@ export default function Careers() {
 
   return (
     <div className="flex flex-col mb-[40px] md:border-l border-t border-[#E4E7EC] mt-3 h-full w-full md:rounded-tl-3xl bg-[#FCFCFD]">
-      <h2 className="pt-8 pb-5 px-5 font-semibold text-3xl border-b border-[#E4E7EC]">
-        Careers
-      </h2>
+      <SectionTitle title='Careers'/>
       <div className="flex flex-col items-start lg:items-center mt-10 w-[95%] lg:w-[90%] mx-auto">
         <div className="flex items-center rounded-full p-1 gap-2 bg-[#3B88E31A] border-[#C1D8F5] cursor-pointer text-[#3B88E3] text-sm font-medium">
           <p className="border-[#C1D8F5] rounded-full bg-white px-2.5 py-1">
@@ -164,8 +164,8 @@ export default function Careers() {
       </div>
 
       <div className="flex flex-col w-[95%] lg:w-[85%] mx-auto mt-6">
-        <div className="w-[95%] overflow-auto mb-6">
-          <div className="flex overflow-hidden flex-nowrap w-[max-content] border border-primary rounded-[8px]">
+        <div className="mb-6">
+          {/* <div className="flex overflow-hidden flex-nowrap w-[max-content] border border-primary rounded-[8px]">
             {filters.map((item, index) => (
               <div
                 key={index}
@@ -179,7 +179,8 @@ export default function Careers() {
                 {item}
               </div>
             ))}
-          </div>
+          </div> */}
+          <Tabs options={filters} activeTab={activeFilter} setActiveTab={handleFilterChange}/>
         </div>
         <div className="flex flex-col gap-6 mb-10">
           {paginatedData.map((item, index) => (

@@ -1,22 +1,19 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Poll from "@/components/Poll";
 import {
   HOME_LATEST,
   getHomePolls,
   getPollsByTopic,
   getUserById,
 } from "@/services/polls/polls";
-import CreatePoll from "@/components/CreatePoll";
 import { useRouter } from "next/navigation";
 import { useInView } from "react-intersection-observer";
 import Link from "next/link";
 import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
-import GoldenInsightDetail from "@/components/GoldenInsightDetail";
 import HomeCarousel from "@/components/common/HomeCarousel";
 import HomePoll from "@/components/common/HomePoll";
-import Input from "@/components/ui/Input";
+import Tabs from "@/components/ui/Tabs";
 
 const carousel = [
   {
@@ -103,7 +100,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
-  const [currentGoldenInsight, setCurrentGoldenInsight] = useState(null);
   const [currentTopic, setCurrentTopic] = useState("All");
   const [trendingData, setTrendingData] = useState([]);
 
@@ -163,7 +159,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, viewType, start]);
+  }, [loading, currentTopic, viewType]);
 
   useEffect(() => {
     timerInterval.current = setInterval(() => {
@@ -255,11 +251,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-full">
-      <div
-        className={`${
-          currentGoldenInsight ? "hidden" : "flex"
-        } w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}
-      >
+      <div className="flex w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]">
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
             <div className="flex flex-col items-start">
@@ -275,23 +267,11 @@ export default function Home() {
 
             <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row gap-3">
               <div className="w-full overflow-auto">
-                <div className="flex rounded-[8px] overflow-hidden border border-primary flex-nowrap w-fit">
-                  {navTopic.map((topic, i) => (
-                    <div
-                      key={topic + "_" + i}
-                      className={`py-[8px] px-[16px] cursor-pointer text-nowrap ${
-                        currentTopic === topic ? "bg-[#F4F4F4]" : "bg-white"
-                      } ${
-                        i != navTopic.length - 1
-                          ? " border-r border-primary"
-                          : ""
-                      }`}
-                      onClick={() => changeTopic(topic)}
-                    >
-                      {topic}
-                    </div>
-                  ))}
-                </div>
+                <Tabs
+                  options={navTopic}
+                  activeTab={currentTopic}
+                  setActiveTab={changeTopic}
+                />
               </div>
             </div>
 
@@ -305,40 +285,15 @@ export default function Home() {
             </div>
 
             <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
-              {polls.map((poll) =>
-                poll.questions ? (
-                  <Poll
-                    key={poll.id + "_poll_component"}
-                    poll={poll}
-                    showGoldenInsight={setCurrentGoldenInsight}
-                  />
-                ) : (
-                  poll
-                )
-              )}
-
-              {/* {polls.map((poll) => (
-                <HomePoll
-                  data={poll}
-                  key={poll.id + "_poll_component"}
-                  showGoldenInsight={setCurrentGoldenInsight}
-                />
-              ))} */}
-
+              {polls.map((poll) => (
+                <HomePoll data={poll} key={poll.id} />
+              ))}
               {/* Intersection Observer Trigger */}
               <div ref={ref} className="h-10" />
             </div>
           </div>
         </div>
       </div>
-      {currentGoldenInsight ? (
-        <GoldenInsightDetail
-          id={currentGoldenInsight}
-          goBack={() => setCurrentGoldenInsight(null)}
-        />
-      ) : (
-        ""
-      )}
     </div>
   );
 }
