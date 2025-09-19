@@ -1,8 +1,10 @@
 import { Icon } from "@iconify/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import Marquee from "react-fast-marquee";
 
 export default function HomeCarousel({ trend = true, title, speed=25, className, data }) {
+
   return (
     <div className={`flex items-center py-4 gap-3 pl-4 w-full ${className}`}>
       <div
@@ -37,11 +39,21 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
       </div>
       <div className="relative w-full overflow-hidden">
         <div className="pointer-events-none absolute left-0 top-0 h-full w-14 bg-gradient-to-r from-white to-transparent z-10"></div>
-        <div className="flex w-max animate-marquee gap-6" style={{ animationDuration: `${speed}s` }}>
+        <Marquee speed={speed}>
           {data.concat(data).map((item, index) => (
-            <div
+              trend ? <div key={index} className="flex shrink-0 items-center gap-2 mr-4">
+                        {item.change >= 0?<Icon icon="icon-park-solid:up-one" className="text-green-400" />:<Icon icon="icon-park-solid:down-one" className="text-red-400" />}
+                        <span>{item.symbol}</span>
+                        <span>
+                        {item.price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                        </span>
+                      </div>
+            :<div
               key={index}
-              className="w-[266px] flex items-center gap-1 shrink-0"
+              className="w-[266px] flex items-center gap-1 shrink-0 mr-4"
             >
               <Image src={item.img} alt={item.title} width={66} height={44} />
               <div className="flex flex-col">
@@ -54,7 +66,7 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
               </div>
             </div>
           ))}
-        </div>
+        </Marquee>
       </div>
     </div>
   );

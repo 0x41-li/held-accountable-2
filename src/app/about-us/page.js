@@ -72,13 +72,12 @@ export default function AboutUs() {
           />
           <div className="max-h-[536px] h-full w-[90%] relative aspect-video">
             <iframe
+              src="https://player.vimeo.com/video/1120069891?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479;muted=1&amp;loop=1&amp;autoplay=1&amp;background=1"
               width="100%"
               height="100%"
-              src="https://www.youtube.com/embed/0I0wwZSl5lg?autoplay=1&mute=1"
-              title="YouTube video player"
-              allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
-            ></iframe>
+              title="Truth in Every Headline_ Transparency You Can Trust"
+            />
           </div>
         </div>
 

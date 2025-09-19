@@ -23,10 +23,12 @@
     "nookies": "^2.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-fast-marquee": "^1.6.5",
     "react-firebase-hooks": "^5.1.1",
     "react-intersection-observer": "^9.16.0",
     "react-toastify": "^11.0.5",
-    "stripe": "^18.2.1"
+    "stripe": "^18.2.1",
+    "yahoo-finance2": "^2.13.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
