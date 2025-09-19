@@ -1,15 +1,16 @@
 "use client";
-import { votePoll } from "@/services/polls/polls";
+import { updatePoll, votePoll } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
 import { auth } from "../../lib/firebase";
 import Image from "next/image";
+import { arrayRemove, arrayUnion, increment } from "firebase/firestore";
 
 export default function GoldenInsightDetail({
   id,
   article,
-  poll,
+  poll: initialPoll,
   selectedOptions: initialSelectedOptions,
   voted: initialVoted,
 }) {
@@ -18,9 +19,18 @@ export default function GoldenInsightDetail({
     initialSelectedOptions
   );
   const [copied, setCopied] = useState(false);
-
-  console.log("article prop:", article);
-  console.log("poll prop:", poll);
+  const [poll, setPoll] = useState({
+    ...initialPoll,
+    likes: initialPoll.likes ?? 0,
+    like_users: initialPoll.like_users ?? [],
+    dislikes: initialPoll.dislikes ?? 0,
+    dislike_users: initialPoll.dislike_users ?? [],
+  });
+  const [canLike, setCanLike] = useState(false);
+  const [canDislike, setCanDislike] = useState(false);
+  const url = `https://held-accountable.com/golden-insights/${id}`;
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(article.title);
 
   useEffect(() => {}, [id]);
 
@@ -40,12 +50,96 @@ export default function GoldenInsightDetail({
     }
   };
 
+  const handleLike = async () => {
+    setCanLike(false);
+    if (poll.like_users.includes(auth.currentUser.uid)) return;
+    let additionalChange = {};
+
+    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            dislikes: increment(-1),
+            dislike_users: arrayRemove(auth.currentUser.uid)
+        };
+    }
+
+    await updatePoll(poll.id, {
+      likes: increment(1),
+      like_users: arrayUnion(auth.currentUser.uid),
+      ...additionalChange
+    });
+
+    additionalChange = {};
+    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            dislikes: poll.dislikes - 1,
+            dislike_users: poll.dislike_users.filter(uid => uid !== auth.currentUser.uid)
+        };
+    }
+
+    setPoll({
+        ...poll,
+        likes: poll.likes + 1,
+        like_users: [
+            ...poll.like_users,
+            auth.currentUser.uid
+        ],
+        ...additionalChange
+    });
+  }
+
+  const handleDislike = async () => {
+    setCanDislike(false);
+    if (poll.dislike_users.includes(auth.currentUser.uid)) return;
+    let additionalChange = {};
+
+    if (poll.like_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            likes: increment(-1),
+            like_users: arrayRemove(auth.currentUser.uid)
+        };
+    }
+    
+    await updatePoll(poll.id, {
+      dislikes: increment(1),
+      dislike_users: arrayUnion(auth.currentUser.uid),
+      ...additionalChange
+    });
+
+    additionalChange = {};
+    if (poll.like_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            likes: poll.likes - 1,
+            like_users: poll.like_users.filter(uid => uid !== auth.currentUser.uid)
+        };
+    }
+    setPoll({
+        ...poll,
+        dislikes: poll.dislikes + 1,
+        dislike_users: [
+            ...poll.dislike_users,
+            auth.currentUser.uid
+        ],
+        ...additionalChange
+    });
+  }
+
+  useEffect(() => {
+    return auth.onIdTokenChanged(async (user) => {
+      if (user) {
+        setCanLike(auth.currentUser ? !poll.like_users.includes(auth.currentUser.uid): false);
+        setCanDislike(auth.currentUser ? !poll.dislike_users.includes(auth.currentUser.uid): false);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    setCanLike(auth.currentUser ? !poll.like_users.includes(auth.currentUser.uid): false);
+    setCanDislike(auth.currentUser ? !poll.dislike_users.includes(auth.currentUser.uid): false);
+  }, [poll]);
+
   if (!article) {
     return <></>;
   }
-
-  console.log("article:", article);
-  console.log("poll:", poll);
 
   return (
     <div className="w-full md:h-full overflow-scroll md:overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#3B88E3]">
@@ -68,9 +162,6 @@ export default function GoldenInsightDetail({
               className="rounded-full object-cover border border-[#E4E7EC]"
             />
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-base">
-                {poll.user?.fullname || "Author"}
-              </span>
               <span className="text-white text-xs opacity-80">
                 {poll.createdAt &&
                   new Date(poll.createdAt).toLocaleDateString("en-GB", {
@@ -82,16 +173,7 @@ export default function GoldenInsightDetail({
             </div>
           </div>
           <div className="flex gap-2 mt-2 md:mt-0">
-            <button className="border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
-              <Icon
-                icon="mdi:hand-coin-outline"
-                width={18}
-                height={18}
-                style={{ color: "#a4a7ae" }}
-              />{" "}
-              Donate Author
-            </button>
-            <button className="border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
+            <button disabled={!canDislike} onClick={handleDislike} className="disabled:bg-[#E4E7EC] border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
               <Icon
                 icon="ic:baseline-thumb-down-alt"
                 width={18}
@@ -100,7 +182,7 @@ export default function GoldenInsightDetail({
               />{" "}
               Dislike
             </button>
-            <button className="border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
+            <button disabled={!canLike} onClick={handleLike} className="disabled:bg-[#E4E7EC] border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
               <Icon
                 icon="ic:baseline-thumb-up-alt"
                 width={18}
@@ -198,25 +280,35 @@ export default function GoldenInsightDetail({
                   : "text-[#667085]"
               }`}
               onClick={() => {
-                if (typeof window !== "undefined") {
-                  navigator.clipboard.writeText(window.location.href);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1500);
-                }
+                navigator.clipboard.writeText(url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
               }}
             >
               <Icon icon="mdi:link-variant" width={16} height={16} />
               {copied ? "Copied" : "Copy link"}
             </button>
-            <button className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+            <a 
+                href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
               <Icon icon="ri:twitter-x-fill" width={18} height={18} />
-            </button>
-            <button className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+            </a>
+            <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
               <Icon icon="ic:baseline-facebook" width={18} height={18} />
-            </button>
-            <button className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+            </a>
+            <a
+                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
               <Icon icon="mdi:linkedin" width={18} height={18} />
-            </button>
+            </a>
           </div>
         </div>
       </div>

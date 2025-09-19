@@ -145,7 +145,7 @@ export default function Home() {
               <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>User perspectives on Breaking News.</div>
             </div>
             {shouldShowNewButton && <div className="flex gap-[10px]  items-center">
-              <Link href="/new-narrative" className="text-center bg-blue rounded-[10px] text-white  w-[200px] py-[14px]">New</Link>
+              <Link href="/new-blog" className="text-center bg-blue rounded-[10px] text-white  w-[200px] py-[14px]">New</Link>
             </div>}
           </div>
           <div className='flex-1 flex h-full'>
