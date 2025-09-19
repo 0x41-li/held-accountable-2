@@ -277,7 +277,7 @@ export default function Home() {
                 speed={35}
               />
             </div>
-
+{/* 
             <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row gap-3">
               <div className="w-full overflow-auto">
                 <Tabs
@@ -286,7 +286,7 @@ export default function Home() {
                   setActiveTab={changeTopic}
                 />
               </div>
-            </div>
+            </div> */}
 
             <div className="px-4 py-4 font-bold">
               Live updates{" "}

@@ -72,7 +72,7 @@ export default function AboutUs() {
           />
           <div className="max-h-[536px] h-full w-[90%] relative aspect-video">
             <iframe
-              src="https://player.vimeo.com/video/1120069891?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479;muted=1&amp;loop=1&amp;autoplay=1&amp;background=1"
+              src="https://player.vimeo.com/video/1120069891?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;loop=1&amp;autoplay=1&amp;background=1"
               width="100%"
               height="100%"
               referrerPolicy="strict-origin-when-cross-origin"

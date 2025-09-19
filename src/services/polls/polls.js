@@ -826,7 +826,7 @@ export async function getEventsFromNewsAi(topic) {
     const formattedNextMonth = nextMonth.toISOString().split("T")[0];
 
     const body = JSON.stringify({
-      query: `{\"$query\":{\"$and\":[{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
+      query: `{\"$query\":{\"$and\":[{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
       eventsSortBy: "date",
       eventsSortByAsc: true,
       apiKey: "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",

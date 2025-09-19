@@ -115,10 +115,10 @@ export default function Poll({ poll }) {
                     key={i + "_golden_insights"}
                     className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer"
                   >
-                    <div className="w-[170px] relative">
+                    <div className="w-[140px] relative">
                       <img
                         src="/images/narrative_detail.png"
-                        className="w-[170px] h-[170px]"
+                        className="w-[140px] h-[140px]"
                       />
                       <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
                         <p className="text-white hidden group-hover:block">
@@ -126,10 +126,10 @@ export default function Poll({ poll }) {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-[10px] max-w-[350px] p-[10px]">
+                    <div className="flex flex-col gap-[10px] max-w-[360px] p-[10px]">
                       <p className="font-semibold">{insight.title}</p>
                       <p className="flex-1">
-                        {insight.content.substring(0, 100) + "..."}
+                        {insight.content.substring(0, 70) + "..."}
                       </p>
                     </div>
                   </div>
