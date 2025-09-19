@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React, { useMemo, useState } from "react";
-import Label from "./Label";
+import Label from "../ui/Label";
 import { formatDateTime } from "@/utils/date";
 
 export default function HomePoll({ data, showGoldenInsight }) {

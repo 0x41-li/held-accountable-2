@@ -3,6 +3,7 @@
 import CareersCard from "@/components/common/CareersCard";
 import Pagination from "@/components/common/Pagination";
 import SectionTitle from "@/components/common/SectionTitle";
+import Tabs from "@/components/ui/Tabs";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -163,8 +164,8 @@ export default function Careers() {
       </div>
 
       <div className="flex flex-col w-[95%] lg:w-[85%] mx-auto mt-6">
-        <div className="w-[95%] overflow-auto mb-6">
-          <div className="flex overflow-hidden flex-nowrap w-[max-content] border border-primary rounded-[8px]">
+        <div className="mb-6">
+          {/* <div className="flex overflow-hidden flex-nowrap w-[max-content] border border-primary rounded-[8px]">
             {filters.map((item, index) => (
               <div
                 key={index}
@@ -178,7 +179,8 @@ export default function Careers() {
                 {item}
               </div>
             ))}
-          </div>
+          </div> */}
+          <Tabs options={filters} activeTab={activeFilter} setActiveTab={handleFilterChange}/>
         </div>
         <div className="flex flex-col gap-6 mb-10">
           {paginatedData.map((item, index) => (
