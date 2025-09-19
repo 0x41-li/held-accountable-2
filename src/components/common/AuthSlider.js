@@ -149,7 +149,7 @@ export default function AuthSlider({ slides }) {
 
       <div className="relative w-[75%] max-w-[800px] aspect-[16/9] mx-auto">
         <iframe
-          src="https://player.vimeo.com/video/1120069862?autoplay=1&loop=1&background=1"
+          src="https://player.vimeo.com/video/1120069862?autoplay=1&muted=0&loop=1&background=1"
           className="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
           allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
           title="Rebuilding Trust in News"
