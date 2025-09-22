@@ -622,7 +622,7 @@ export async function getNewsFromNewsAi(topic) {
       query: `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
       resultType: "articles",
       articlesSortBy: "date",
-      apiKey: "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
+      apiKey: process.env.NEWSAPI_KEY,
       articlesConceptLang: "eng",
       includeArticleConcepts: "true",
       _origin: "sandbox",
@@ -805,4 +805,49 @@ export async function updateUserSubscription(userId, amount, intentId) {
     });
   }
   await addSubscriptionLog(userId, amount, intentId);
+}
+
+export async function getEventsFromNewsAi(topic) {
+  const url = "https://eventregistry.org/api/v1/event/getEvents";
+
+  try {
+    let condition = `{\"categoryUri\":\"${topic}\"}`;
+
+    if (topic.indexOf("/") < 0) {
+      condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
+    }
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const formattedTomorrow = tomorrow.toISOString().split("T")[0];
+
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    const formattedNextMonth = nextMonth.toISOString().split("T")[0];
+
+    const body = JSON.stringify({
+      query: `{\"$query\":{\"$and\":[{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
+      eventsSortBy: "date",
+      eventsSortByAsc: true,
+      apiKey: process.env.NEWSAPI_KEY,
+      _origin: "sandbox",
+      eventsPage: "1",
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return null;
+  }
 }
