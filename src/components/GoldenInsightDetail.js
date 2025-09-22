@@ -178,16 +178,16 @@ export default function GoldenInsightDetail({
                 icon="ic:baseline-thumb-down-alt"
                 width={18}
                 height={18}
-                style={{ color: "#a4a7ae" }}
+                style={{ color: (canDislike ? "#a4a7ae": "#3B88E3") }}
               />{" "}
               Dislike
             </button>
-            <button disabled={!canLike} onClick={handleLike} className="disabled:bg-[#E4E7EC] border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
+            <button disabled={!canLike} onClick={handleLike} className="border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-[#414651] text-sm bg-white hover:bg-[#F2F4F7] transition font-medium">
               <Icon
                 icon="ic:baseline-thumb-up-alt"
                 width={18}
                 height={18}
-                style={{ color: "#a4a7ae" }}
+                style={{ color: (canLike ? "#a4a7ae": "#3B88E3") }}
               />{" "}
               Like
             </button>
