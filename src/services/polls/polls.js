@@ -203,11 +203,12 @@ export const getHomePolls = async (type, start = null, length = 10) => {
         id: doc.id,
         ...doc.data(),
         golden_insights: doc.data().golden_insights?.map((item) => ({
-          ...item,
-          likes: parseInt(Math.random() * 1000),
-          dislikes: parseInt(Math.random() * 1000),
+          ...item
         })),
-        likes: parseInt(Math.random() * 1000),
+        likes: doc.data().likes ?? 0,
+        like_users: doc.data().like_users ?? [],
+        dislikes: doc.data().dislikes ?? 0,
+        dislike_users: doc.data().dislike_users ?? []
       })),
       lastDoc,
     };
@@ -316,7 +317,10 @@ export const getPollsByTopic = async (topicName, start = null, length = 10) => {
       result: querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        likes: parseInt(Math.random() * 1000),
+        likes: doc.data().likes ?? 0,
+        like_users: doc.data().like_users ?? [],
+        dislikes: doc.data().dislikes ?? 0,
+        dislike_users: doc.data().dislike_users ?? []
       })),
       lastDoc,
     };
@@ -808,6 +812,7 @@ export async function updateUserSubscription(userId, amount, intentId) {
 }
 
 export async function getEventsFromNewsAi(topic) {
+  console.log("api key for events", process.env.NEWSAPI_KEY);
   const url = "https://eventregistry.org/api/v1/event/getEvents";
 
   try {
