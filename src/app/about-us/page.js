@@ -67,7 +67,7 @@ export default function AboutUs() {
         <div className="flex flex-col items-center text-center w-full">
           <Title
             title="Our Story"
-            subtitle="We’re a 100% remote team spread all across the world. Join us!"
+            subtitle=""
             className="mb-6 md:mb-10"
           />
           <CustomPlayer video="https://player.vimeo.com/video/1120069891?autoplay=1&loop=1&muted=0&controls=0" />
@@ -100,22 +100,6 @@ export default function AboutUs() {
                 title="Our Vision"
                 subtitle="To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape their future."
               />
-
-              <ul className="mt-2">
-                {ourVision.map((item, index) => (
-                  <li key={index} className="flex items-center mt-2 gap-2">
-                    <Icon
-                      icon="material-symbols:done"
-                      width="20"
-                      height="20"
-                      className="text-[#00C34B]"
-                    />
-                    <span className="text-sm lg:text-xl text-[#535862]">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
             </div>
             <Image
               src="/images/aboutPage/About2.png"
