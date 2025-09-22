@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Poll({ poll }) {
   const [showSummary, setShowSummary] = useState(false);
-
+  const [like, setLike] = useState(false);
   if (!poll.questions) return "";
 
   const handleShowSummary = () => {
@@ -145,8 +145,13 @@ export default function Poll({ poll }) {
       <div className="flex items-center gap-5 text-[#404040] font-medium text-[12px] ml-auto">
         <p
           className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => setLike(!like)}
         >
-          <Icon icon="icon-park-outline:like" width={20} height={20} />
+          <Icon
+            icon={like ? "flat-color-icons:like" : "icon-park-outline:like"}
+            width={20}
+            height={20}
+          />
           {poll.likes} Likes
         </p>
         <p className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
