@@ -3,16 +3,12 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Player from "@vimeo/player";
 
-export default function CustomPlayer({
-  video,
-  className,
-  videoClass,
-}) {
+export default function CustomPlayer({ video, className, videoClass }) {
   const iframeRef = useRef(null);
   const [player, setPlayer] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [sliderValue, setSliderValue] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [sliderValue, setSliderValue] = useState(100);
   const [showCenterButton, setShowCenterButton] = useState(false);
 
   const togglePlay = () => {
@@ -52,9 +48,10 @@ export default function CustomPlayer({
         setIsPlaying(false);
       });
       vimeoPlayer.on("volumechange", (data) => {
+        console.log(data)
         setIsMuted(data.muted);
         if (data.volume === 0) setIsMuted(true);
-        if (data.muted === true) {
+        if (data.muted) {
           setSliderValue(0);
         } else {
           setSliderValue(data.volume * 100);
@@ -95,11 +92,13 @@ export default function CustomPlayer({
           icon={isPlaying ? "solar:play-bold" : "basil:pause-solid"}
           width={40}
           height={40}
-          className="text-white"
+          className="text-white cursor-pointer"
         />
       </div>
 
-      <div className={`absolute bottom-0 left-0 p-3 py-2 flex items-center gap-4 mt-4 select-none text-white w-full bg-[#101828]/30 opacity-0 rounded-3xl transition-opacity duration-300 group-hover:opacity-100`}>
+      <div
+        className={`absolute bottom-0 left-0 p-3 py-2 flex items-center gap-4 mt-4 select-none text-white w-full bg-[#101828]/30 opacity-0 rounded-3xl transition-opacity duration-300 group-hover:opacity-100`}
+      >
         <Icon
           icon={isPlaying ? "basil:pause-solid" : "solar:play-bold"}
           onClick={togglePlay}
