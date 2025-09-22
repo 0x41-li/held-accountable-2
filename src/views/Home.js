@@ -167,16 +167,12 @@ export default function Home() {
     }, 1000);
 
     pollInterval.current = setInterval(() => {
+      setRemainingSeconds(300);
       loadTrendingData();
       loadEventData();
-      loadNewPolls()
-        .then(() => {
-          setRemainingSeconds(300);
-        })
-        .catch((err) => {
-          console.error("Error loading new polls:", err);
-          setRemainingSeconds(300);
-        });
+      loadNewPolls().catch((err) => {
+        console.error("Error loading new polls:", err);
+      });
     }, 300 * 1000);
 
     setRemainingSeconds(300);
@@ -246,7 +242,7 @@ export default function Home() {
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
-        setEventData(data.data.filter(ev => ev.title.eng));
+        setEventData(data.data.filter((ev) => ev.title.eng));
       })
       .catch((error) => {
         console.error("Error loading event data:", error);
@@ -277,7 +273,7 @@ export default function Home() {
                 speed={35}
               />
             </div>
-{/* 
+            {/* 
             <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row gap-3">
               <div className="w-full overflow-auto">
                 <Tabs
