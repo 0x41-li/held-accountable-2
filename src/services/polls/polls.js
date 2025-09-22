@@ -622,7 +622,7 @@ export async function getNewsFromNewsAi(topic) {
       query: `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
       resultType: "articles",
       articlesSortBy: "date",
-      apiKey: "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
+      apiKey: process.env.NEWSAPI_KEY,
       articlesConceptLang: "eng",
       includeArticleConcepts: "true",
       _origin: "sandbox",
@@ -829,7 +829,7 @@ export async function getEventsFromNewsAi(topic) {
       query: `{\"$query\":{\"$and\":[{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
       eventsSortBy: "date",
       eventsSortByAsc: true,
-      apiKey: "cc50ad1b-0c65-4164-bb94-3ae9e5e45cd0",
+      apiKey: process.env.NEWSAPI_KEY,
       _origin: "sandbox",
       eventsPage: "1",
     });
