@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import React from "react";
 import { Icon } from "@iconify/react";
 import SectionTitle from "@/components/common/SectionTitle";
+import CustomPlayer from "@/components/common/CustomPlayer";
 
 function Title({ title, subtitle, className }) {
   const [firstWord, ...restWords] = title.split(" ");
@@ -19,50 +19,50 @@ function Title({ title, subtitle, className }) {
   );
 }
 
+const ourVision = [
+  "Vision title for future.",
+  "Vision title number 2 for future.",
+  "Vision title goes here.",
+  "Vision title number 4 for future.",
+];
+
+const coreValues = [
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+  {
+    icon: "hugeicons:message-multiple-02",
+    title: "Share team inboxes",
+    descr: "Whether you have a team of 2, our shared team inboxes.",
+  },
+];
+
 export default function AboutUs() {
-  const ourVision = [
-    "Vision title for future.",
-    "Vision title number 2 for future.",
-    "Vision title goes here.",
-    "Vision title number 4 for future.",
-  ];
-
-  const coreValues = [
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-    {
-      icon: "hugeicons:message-multiple-02",
-      title: "Share team inboxes",
-      descr: "Whether you have a team of 2, our shared team inboxes.",
-    },
-  ];
-
   return (
     <div className="flex flex-col mt-3 pb-12 lg:pb-24 overflow-x-hidden md:border-l border-t border-secondary md:rounded-tl-[40px]">
-      <SectionTitle title='About Us'/>
+      <SectionTitle title="About Us" />
       <div className="max-w-[1409px] mx-auto w-full flex flex-col items-center px-4 md:px-8 mt-7 mt:mb-14">
         <div className="flex flex-col items-center text-center w-full">
           <Title
@@ -70,15 +70,7 @@ export default function AboutUs() {
             subtitle="We’re a 100% remote team spread all across the world. Join us!"
             className="mb-6 md:mb-10"
           />
-          <div className="max-h-[536px] h-full w-[90%] relative aspect-video">
-            <iframe
-              src="https://player.vimeo.com/video/1120069891?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;muted=0&amp;loop=1&amp;autoplay=1&amp;background=1"
-              width="100%"
-              height="100%"
-              referrerPolicy="strict-origin-when-cross-origin"
-              title="Truth in Every Headline_ Transparency You Can Trust"
-            />
-          </div>
+          <CustomPlayer video="https://player.vimeo.com/video/1120069891?autoplay=1&loop=1&muted=0&controls=0" />
         </div>
 
         <div className="flex flex-col items-center mt-10 py-8 lg:py-14 w-full mb-6 lg:mb-20 gap-[60px] md:gap-[100px] lg:gap-[180px]">
@@ -91,7 +83,7 @@ export default function AboutUs() {
               className="max-w-[80%] xl:!max-w-[50%] !w-full"
             />
             <div className="flex flex-col xl:max-w-[409px] w-full text-left">
-              <SectionTitle
+              <Title
                 title="Our Mission"
                 subtitle="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
                 pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur
@@ -107,7 +99,7 @@ export default function AboutUs() {
 
           <div className="flex flex-col xl:flex-row items-center w-full justify-between gap-14 py-15 relative">
             <div className="flex flex-col xl:max-w-[409px] w-full text-left">
-              <SectionTitle
+              <Title
                 title="Our Vision"
                 subtitle="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
                 pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur
@@ -145,7 +137,7 @@ export default function AboutUs() {
         </div>
 
         <div className="flex flex-col items-center text-center w-full mt-4 lg:mt-14">
-          <SectionTitle
+          <Title
             title="Core Values"
             subtitle="We’re a 100% remote team spread all across the world. Join us!"
           />

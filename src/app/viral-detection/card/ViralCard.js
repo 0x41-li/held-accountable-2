@@ -31,7 +31,7 @@ export default function ViralCard({ data }) {
             >
               <Label
                 text="Instagram"
-                className="bg-[#FDF2FA] border border-[#FCCEEE] text-[#C11574] !py-[2px]"
+                className="bg-[#FDF2FA] border border-[#FCCEEE] !text-[#C11574] !py-[2px]"
               />
             </Link>
           )}

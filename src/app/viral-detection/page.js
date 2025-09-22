@@ -92,7 +92,6 @@ export default function Snapshots() {
     )
   );
 
-  console.log(displayedTopics)
   return (
     <div className="flex flex-col md:mt-3 border-l border-t border-[#E4E7EC] md:rounded-tl-3xl h-full">
       <SectionTitle
