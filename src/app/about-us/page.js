@@ -85,10 +85,7 @@ export default function AboutUs() {
             <div className="flex flex-col xl:max-w-[409px] w-full text-left">
               <Title
                 title="Our Mission"
-                subtitle="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
-                pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit"
+                subtitle="Held Accountable’s mission is to provide a holistic perspective on news and public information, so that everyone can make informed opinions and decisions, whether that is financial, political, or personal, regardless of their background or knowledge."
               />
             </div>
 
@@ -101,10 +98,7 @@ export default function AboutUs() {
             <div className="flex flex-col xl:max-w-[409px] w-full text-left">
               <Title
                 title="Our Vision"
-                subtitle="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
-                pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Lorem ipsum dolor sit amet consectetur
-                adipisicing elit"
+                subtitle="To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape their future."
               />
 
               <ul className="mt-2">

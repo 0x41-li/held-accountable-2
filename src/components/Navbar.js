@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="fixed left-0 top-[60px] bottom-0 right-0 bg-[#000000cc] flex border-t z-[999]">
           <div className="w-1/3" onClick={() => setShow(false)}></div>
           <div className="w-2/3 bg-white pt-[20px]">
-            <div className="flex flex-col px-[16px] gap-[4px] h-full">
+            <div className="flex flex-col px-[16px] gap-[4px] h-full overflow-scroll">
               <Link
                 href="/"
                 className={

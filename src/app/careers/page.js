@@ -9,96 +9,15 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 const data = [
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Development",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Design",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Operation",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Finance",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Marketing",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Operation",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Design",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Operation",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Marketing",
-  },
-  {
-    vacancy: "Senior UX Designer - AI Products",
-    descr:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-    location: "Remote",
-    type: "Full-time",
-    salary: "$80 - $100k",
-    industry: "Marketing",
-  },
+  // {
+  //   vacancy: "Senior UX Designer - AI Products",
+  //   descr:
+  //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
+  //   location: "Remote",
+  //   type: "Full-time",
+  //   salary: "$80 - $100k",
+  //   industry: "Marketing",
+  // },
 ];
 
 export default function Careers() {
