@@ -48,7 +48,6 @@ export default function CustomPlayer({ video, className, videoClass }) {
         setIsPlaying(false);
       });
       vimeoPlayer.on("volumechange", (data) => {
-        console.log(data)
         setIsMuted(data.muted);
         if (data.volume === 0) setIsMuted(true);
         if (data.muted) {
