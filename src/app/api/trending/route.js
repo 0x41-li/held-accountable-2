@@ -21,7 +21,7 @@ export async function GET(req) {
     let data = [];
     if (fs.existsSync("trending_dump")) {
         const dump = JSON.parse(fs.readFileSync("trending_dump"));
-        if (dump.last_timestamp - Date.now() > 300 * 1000) {
+        if (Date.now() - dump.last_timestamp > 300 * 1000) {
             data = await getTrendingData();
             fs.writeFileSync("trending_dump", JSON.stringify({ last_timestamp: Date.now(), data }));
         } else {
