@@ -142,29 +142,37 @@ export default function Navbar() {
                         <Icon icon="mi:document" />
                         <span>Blog</span>
                     </Link> */}
+              <button
+                onClick={() => {
+                  auth.signOut();
+                  router.push("/auth/signin");
+                }}
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/support" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="material-symbols:logout-rounded" />
+                <span>Logout</span>
+              </button>
               <div className="flex-1"></div>
               {user && (
-                <div className="flex flex-col gap-[20px]">
-                  <div className="flex items-center gap-[10px] justify-center px-[20px] mx-[10px] border rounded-full">
-                    <Link
-                      href="/profile"
-                      className="flex flex-1 flex-col border-r px-[14px] justify-center items-center"
-                    >
-                      <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                        {user.fullname}
-                      </span>
-                      <span className="text-tertiary-600">
-                        @{user.username}
-                      </span>
-                    </Link>
-                    <div className="flex items-center justify-center">
-                      <button
-                        onClick={() => {
-                          auth.signOut();
-                          router.push("/auth/signin");
-                        }}
-                      >
-                        <Icon icon="material-symbols:logout-rounded" />
+                <div className="flex flex-col gap-[10px]">
+                  <div className="p-[10px] w-full">
+                    <div className="rounded-[12px] p-[16px] border border-secondary w-full gap-[8px] flex flex-col">
+                      <div className="flex w-full justify-between">
+                        <div className="flex gap-[8px] items-center">
+                          <img src="/images/sub_avatars.png" />
+                          <button className="w-[24px] h-[24px] rounded-full border border-primary bg-[#FAFAFA] flex items-center justify-center text-[#717680]">
+                            <Icon icon="ic:baseline-plus" />
+                          </button>
+                        </div>
+                        <button className="text-xl">
+                          <Icon icon="material-symbols:close" />
+                        </button>
+                      </div>
+                      <button className="rounded-[8px] bg-blue text-white w-full p-[8px]">
+                        Upgrade Now
                       </button>
                     </div>
                   </div>
