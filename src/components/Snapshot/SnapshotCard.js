@@ -1,6 +1,7 @@
 import { formatDate } from "@/utils/date";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, deleteSnapshot }) {
   return (
@@ -83,7 +84,7 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
             {showManage && <button className="text-sm font-medium leading-[143%] flex items-center gap-1 text-red-600" onClick={() => {deleteSnapshot(snapshot.id)}}>
               <Icon icon="tabler:trash" /> Delete
             </button> }
-            <button className="flex items-center gap-1">
+            <Link href={"/snapshots/" + snapshot.id} className="flex items-center gap-1">
               <p className="text-sm font-medium leading-[143%] text-[#525252]">
                 Read More
               </p>
@@ -92,7 +93,7 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
                 className={"transition-transform duration-300 rotate-90"}
                 style={{ color: "#525252" }}
               />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
