@@ -930,3 +930,22 @@ export async function deleteSnapshot(snapshotId) {
   const ref = doc(db, SNAPSHOT_COLLECTION, snapshotId);
   await deleteDoc(ref);
 }
+
+export async function updateSnapshot(snapshotId, data) {
+  const ref = doc(db, SNAPSHOT_COLLECTION, snapshotId);
+  await updateDoc(ref, data);
+}
+
+export const getSnapshotById = async (id) => {
+  try {
+    const articleRef = doc(db, SNAPSHOT_COLLECTION, id);
+    const articleSnap = await getDoc(articleRef);
+    await updateSnapshot(id, {
+      view_count: articleSnap.data().view_count + 1,
+    });
+    return articleSnap.data();
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    throw error;
+  }
+};
