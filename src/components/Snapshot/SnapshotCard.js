@@ -2,25 +2,23 @@ import { formatDate } from "@/utils/date";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 
-export function SnapshotCard({ snapshot }) {
+export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, deleteSnapshot }) {
   return (
     <div
       key={snapshot.id}
       className="flex flex-col lg:flex-row sm:w-[80%] lg:w-full mx-auto gap-6 lg:gap-0 lg:items-center border border-[#e9eaeb] rounded-2xl overflow-hidden"
     >
-      <Image
-        src={snapshot.snapshotUrl}
+      <img
+        src={snapshot.image.length > 0 ? snapshot.image : "/images/snapshot/SnapshotCardImage.png"}
         alt={`Snapshot ${snapshot.id}`}
-        width={320}
-        height={240}
-        className="h-full w-auto rounded-bl-none rounded-br-none rounded-tr-2xl rounded-tl-2xl lg:rounded-bl-2xl lg:rounded-tl-2xl lg:rounded-tr-none lg:rounded-br-none lg:max-w-[15.625rem] xl:max-w-[20rem]"
+        className="h-full w-full md:w-[320px] md:h-[240px] rounded-bl-none rounded-br-none rounded-tr-2xl rounded-tl-2xl lg:rounded-bl-2xl lg:rounded-tl-2xl lg:rounded-tr-none lg:rounded-br-none lg:max-w-[15.625rem] xl:max-w-[20rem]"
       />
       <div className="flex flex-col px-6 pb-6 lg:pb-6 lg:pt-9 w-full">
         <div className="flex items-center justify-between w-full gap-2 mt-6 lg:mt-0">
           <div className="flex gap-[0.625rem] items-center">
             <div className="rounded-full overflow-hidden">
-              <Image
-                src="/images/snapshot/AlishLane.png"
+              <img
+                src={snapshot.user.avatar ?? "/images/snapshot/AlishLane.png"}
                 width={32}
                 height={32}
                 alt="Author Avatar"
@@ -53,38 +51,49 @@ export function SnapshotCard({ snapshot }) {
           {snapshot.title}
         </p>
         <p className="text-[#535862] text-base leading-[150%] mt-1 line-clamp-2">
-          {snapshot.subtitle}
+            {snapshot.content.substring(0, 100) +
+              (snapshot.content.length > 100 ? "..." : "")}
         </p>
 
-        <div className="flex items-center gap-2 w-full mt-6 mb-6 lg:mb-0">
-          {snapshot.topics.map((topic, index) => (
+        <div className="flex items-center w-full mt-6 mb-6 lg:mb-0 justify-between flex-col md:flex-row gap-4">
+          <div className="flex items-center gap-2">
+          {snapshot.tags.map((tag, index) => (
             <div
               key={index}
               className={`rounded-full border  flex justify-center items-center px-3 py-1 ${
-                topic.type === 0
+                index === 0
                   ? "border-[#e9d7fe] bg-[#F9F5FF]"
                   : "border-[#c7d7fe] bg-[#eef4ff]"
               }`}
             >
               <p
                 className={`leading-[143%] text-sm font-medium ${
-                  topic.type === 0 ? "text-[#6941C6]" : "text-[#3538cd]"
+                  index === 0 ? "text-[#6941C6]" : "text-[#3538cd]"
                 }`}
               >
-                {topic.title}
+                {tag}
               </p>
             </div>
           ))}
-          <button className="flex items-center gap-1 ml-auto">
-            <p className="text-sm font-medium leading-[143%] text-[#525252]">
-              Read More
-            </p>
-            <Icon
-              icon="line-md:arrow-up"
-              className={"transition-transform duration-300 rotate-90"}
-              style={{ color: "#525252" }}
-            />
-          </button>
+          </div>
+          <div className="flex items-center gap-4">
+            {showManage && <button className="text-sm font-medium leading-[143%] flex items-center" onClick={() => {changeSnapshotStatus(snapshot)}}>
+              {snapshot.enabled ? <span className="text-sm inline-flex items-center gap-1 text-green-600"><Icon icon="streamline-sharp:visible" /> Enabled</span> : <span className="text-sm inline-flex items-center gap-1 text-red-600"><Icon icon="streamline-flex:invisible-1" /> Disabled</span>}
+            </button>}
+            {showManage && <button className="text-sm font-medium leading-[143%] flex items-center gap-1 text-red-600" onClick={() => {deleteSnapshot(snapshot.id)}}>
+              <Icon icon="tabler:trash" /> Delete
+            </button> }
+            <button className="flex items-center gap-1">
+              <p className="text-sm font-medium leading-[143%] text-[#525252]">
+                Read More
+              </p>
+              <Icon
+                icon="line-md:arrow-up"
+                className={"transition-transform duration-300 rotate-90"}
+                style={{ color: "#525252" }}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </div>

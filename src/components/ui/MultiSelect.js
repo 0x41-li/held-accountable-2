@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 
-export function MultiSelect({ options, selectedValues, onChange }) {
+export function MultiSelect({ options, selectedValues, onChange, placeholder }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleOption = (option) => {
@@ -66,7 +66,7 @@ export function MultiSelect({ options, selectedValues, onChange }) {
               opacity: selectedValues.length === 0 ? 1 : 0,
             }}
           >
-            Filter Topics
+            {placeholder}
           </div>
         </div>
       </div>

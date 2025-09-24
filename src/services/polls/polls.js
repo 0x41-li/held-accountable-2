@@ -21,6 +21,7 @@ const POLLS_COLLECTION = "polls";
 const TOPIC_COLLECTION = "topics";
 const ARTICLE_COLLECTION = "articles";
 const CONTACTS_COLLECTION = "contacts";
+const SNAPSHOT_COLLECTION = 'snapshots';
 
 export const HOME_TRENDING = "HOME_TRENDING";
 export const HOME_LATEST = "HOME_LATEST";
@@ -855,4 +856,77 @@ export async function getEventsFromNewsAi(topic) {
     console.error("Error fetching events:", error);
     return null;
   }
+}
+
+export const createSnapshot = async (snapshotData) => {
+  try {
+    const data = {
+      ...snapshotData,
+      enabled: true,
+      createdAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(collection(db, SNAPSHOT_COLLECTION), data);
+    return { id: docRef.id, ...data, enabled: true };
+  } catch (error) {
+    console.error("Error adding snapshot:", error);
+    throw error;
+  }
+};
+
+export const getSnapshots = async (start = null, length = 10, date_start = null, date_end = null, tag_filter = [], enabled_filter = true) => {
+  try {
+    const constraints = [];
+
+    // ✅ Tag filter
+    if (tag_filter.length > 0) {
+      constraints.push(where("tags", "array-contains-any", tag_filter));
+    }
+
+    // ✅ Date range filter (optional)
+    if (date_start) {
+      constraints.push(where("post_date", ">=", date_start));
+    }
+    if (date_end) {
+      constraints.push(where("post_date", "<=", date_end));
+    }
+
+    constraints.push(orderBy("post_date", "desc"));
+    constraints.push(limit(length));
+
+    if (enabled_filter)
+      constraints.push(where("enabled", "==", true));
+
+    if (start) {
+      constraints.push(startAfter(start));
+    }
+
+    const q = query(collection(db, SNAPSHOT_COLLECTION), ...constraints);
+
+    const snapshot = await getDocs(q);
+
+    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return {
+      results,
+      lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
+    };
+  } catch (error) {
+    console.error("Error fetching snapshots:", error);
+    throw error;
+  }
+};
+
+export async function enableSnapshot(snapshotId) {
+  const ref = doc(db, SNAPSHOT_COLLECTION, snapshotId);
+  await updateDoc(ref, { enabled: true });
+}
+
+export async function disableSnapshot(snapshotId) {
+  const ref = doc(db, SNAPSHOT_COLLECTION, snapshotId);
+  await updateDoc(ref, { enabled: false });
+}
+
+export async function deleteSnapshot(snapshotId) {
+  const ref = doc(db, SNAPSHOT_COLLECTION, snapshotId);
+  await deleteDoc(ref);
 }

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 export default function usersAdminPage() {
-    const [preview, setPreview] = useState(null);
     const [users, setUsers] = useState([]);
     const [start, setStart] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -32,24 +31,11 @@ export default function usersAdminPage() {
       setLoading(false);
     }
 
-    const getStatusText = (status) => {
-        if (status == 1) {
-            return "Enabled";
-        }
-        else
-            return "Disabled";
-    }
-
-    const changeStatus = (p) => {
-        let status = p.status;
-        if (status == 1)
-            status = 0;
-        else
-            status = 1;
-        setUsers(users.map(user => user.id === p.id ? {...p, status}: user));
-        updateUserById(p.id, {
-            ...p,
-            status
+    const changeRole = (uid, role) => {
+        setUsers(users.map(user => user.id === uid ? {...user, role}: user));
+        updateUserById(uid, {
+            ...users.find(user => user.id === uid),
+            role
         });
     }
   
@@ -73,7 +59,7 @@ export default function usersAdminPage() {
                         Username
                     </th>
                     <th className="p-4">
-                        Status
+                        Role
                     </th>
                 </tr>
             </thead>
@@ -83,7 +69,15 @@ export default function usersAdminPage() {
                         <td className="p-4">{user.fullname}</td>
                         <td className="p-4">{user.email}</td>
                         <td className="p-4">{user.username}</td>
-                        <td className="p-4"><button onClick={() => changeStatus(user)} className={"rounded-full px-2 py-1 text-white text-xs " + (user.status == 1 ? ' bg-[#00ff00]': 'bg-[#ff0000]')}>{getStatusText(user.status)}</button></td>
+                        <td className="p-4">
+                            <select onChange={(e) => changeRole(user.id, e.target.value)} value={user.role ?? "user"}>
+                                <option value="admin">Admin</option>
+                                <option value="writer">Write Manager</option>
+                                <option value="snapshot-writer">Snapshot Writer</option>
+                                <option value="through-my-eyes-writer">Through My Eyes Writer</option>
+                                <option value="user">User</option>
+                            </select>
+                        </td>
                     </tr>)
                 }
             </tbody>
