@@ -4,14 +4,7 @@ import { useState } from "react";
 import { DatePicker } from "../ui/DatePicker";
 import { MultiSelect } from "../ui/MultiSelect";
 
-export function SnapshotFilters() {
-  const [selectedDate, setSelectedDate] = useState({
-    startDate: null,
-    endDate: null,
-  });
-
-  const [selectedTopics, setSelectedTopics] = useState([]);
-
+export function SnapshotFilters({setSelectedDate, setSelectedTopics, selectedDate, selectedTopics}) {
   return (
     <div className="flex flex-row flex-wrap gap-3 items-center">
       <div className="w-full sm:w-[20rem]">
@@ -32,6 +25,7 @@ export function SnapshotFilters() {
             "Design",
             "Research",
           ]}
+          placeholder="Filter Topics"
           selectedValues={selectedTopics}
           onChange={setSelectedTopics}
         />

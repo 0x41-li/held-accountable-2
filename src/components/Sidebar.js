@@ -138,6 +138,18 @@ export default function Sidebar() {
                     <Icon icon="mi:document" />
                     <span>Blog</span>
                 </Link> */}
+          {user && user.role == "admin" &&
+          <Link
+            href="/admin/users"
+            className={
+              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+              (pathname == "/admin/users" ? "bg-blue  text-white" : "")
+            }
+          >
+            <Icon icon="mdi:users" />
+            <span>User Management</span>
+          </Link>
+          }
         </div>
       </div>
       {user && (

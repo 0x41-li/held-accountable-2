@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import Poll from '@/components/Poll';
 import Sidebar from '@/components/Sidebar';
 import { Icon } from '@iconify/react';
-import { HOME_LATEST, getHomePolls, getTrendingTopics, getPollsByTopic, getArticlesByTopic } from '@/services/polls/polls';
+import { HOME_LATEST, getHomePolls, getTrendingTopics, getPollsByTopic, getArticlesByTopic, getUserById } from '@/services/polls/polls';
 import CreatePoll from '@/components/CreatePoll';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { auth } from '../../../lib/firebase';
 import { useInView } from 'react-intersection-observer';
@@ -68,6 +68,7 @@ export default function Home() {
   const [start, setStart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [user, setUser] = useState();
   const [shouldShowNewButton, setShouldShowNewButton] = useState(false);
 
   const [trendingTopics, setTrendingTopics] = useState([
@@ -130,9 +131,23 @@ export default function Home() {
     if (!loading && inView && hasMore)
       loadBlogs();
   }, [inView, loading, hasMore, currentTopic]);
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push("/auth/signin");
+        return;
+      }
+      if (currentUser) {
+        getUserById(auth.currentUser.uid).then((u) => setUser(u));
+      }
+    });
 
-  if (auth.currentUser && !shouldShowNewButton) {
-    if (auth.currentUser.email == 'ramy@vtslabs.com' || auth.currentUser.email == 'jessicacmatthews25@gmail.com' || auth.currentUser.email == 'ahura0901@gmail.com' || auth.currentUser.email == 'foundaryrs@gmail.com') {
+    return () => unsubscribe();
+  }, []);
+
+  if (user && !shouldShowNewButton) {
+    if (user.role && user.role != 'user' && user.role != "snapshot-writer") {
       setShouldShowNewButton(true);
     }
   }
