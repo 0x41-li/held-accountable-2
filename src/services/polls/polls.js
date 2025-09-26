@@ -22,6 +22,7 @@ const TOPIC_COLLECTION = "topics";
 const ARTICLE_COLLECTION = "articles";
 const CONTACTS_COLLECTION = "contacts";
 const SNAPSHOT_COLLECTION = 'snapshots';
+const VIRAL_DETECTIONS_COLLECTION = 'viral_detections';
 
 export const HOME_TRENDING = "HOME_TRENDING";
 export const HOME_LATEST = "HOME_LATEST";
@@ -834,6 +835,7 @@ export async function getEventsFromNewsAi(topic) {
     const body = JSON.stringify({
       query: `{\"$query\":{\"$and\":[{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
       eventsSortBy: "date",
+      eventsConceptLang: "eng",
       eventsSortByAsc: true,
       apiKey: process.env.NEWSAPI_KEY,
       _origin: "sandbox",
@@ -949,3 +951,164 @@ export const getSnapshotById = async (id) => {
     throw error;
   }
 };
+
+export const createViralDetection = async (data) => {
+  try {
+    const docRef = await addDoc(collection(db, VIRAL_DETECTIONS_COLLECTION), {
+      ...data,
+      createdAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...data };
+  } catch (error) {
+    console.error("Error creating viral detection:", error);
+    throw error;
+  }
+}
+
+export const getViralDetections = async (start_date = null, end_date = null) => {
+  try {
+    const constraints = [];
+    if (start_date) {
+      constraints.push(where("post_date", ">=", start_date));
+    }
+    if (end_date) {
+      constraints.push(where("post_date", "<=", end_date));
+    }
+
+    const q = query(collection(db, VIRAL_DETECTIONS_COLLECTION), ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error fetching viral detections:", error);
+    throw error;
+  }
+}
+
+export async function getEventsWithSocialScoreFromNewsAi() {
+  console.log("api key for events", process.env.NEWSAPI_KEY);
+  const url = "https://eventregistry.org/api/v1/event/getEvents";
+  const today = (new Date(Date.now() - 24*60*60*1000)).toISOString().substring(0, 10);
+
+  try {
+    const body = JSON.stringify({
+      query: `{\"$query\":{\"$and\":[{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"lang\": \"eng\"},{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}]}}`,
+      eventsConceptLang: "eng",
+      eventsCount: "50",
+      eventsPage: "1",
+      eventsSortBy: "socialScore",
+      includeEventInfoArticle: "true",
+      includeEventSentiment: "true",
+      includeEventSocialScore: "true",
+      apiKey: process.env.NEWSAPI_KEY,
+      _origin: "sandbox",
+      resultType: "events",
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      console.log(await response.text());
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return null;
+  }
+}
+
+export async function generateViralDetectionUsingGPT(event) {
+  const openai_api_key =
+    "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";
+  const url = "https://api.openai.com/v1/responses";
+
+  const message = `Please create an professional analysis article based on following event.
+
+### Event Details ###
+
+Event Title:
+${event.title.eng}
+Event Summary:
+${event.summary.eng}
+
+### Output:
+1. **title**: Clear and compelling title.
+2. **content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+3. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + openai_api_key,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1",
+        tools: [{ type: "web_search_preview" }],
+        input: message,
+        text: {
+          format: {
+            name: "poll",
+            type: "json_schema",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                content: { type: "string" },
+                category: {
+                  type: "string",
+                  enum: ["AI", "Economics", "Travel", "Politics", "Crypto"],
+                },
+              },
+              required: [
+                "title",
+                "content",
+                "category",
+              ],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    return data.output.length > 1
+      ? JSON.parse(data.output[1].content[0].text)
+      : JSON.parse(data.output[0].content[0].text);
+  } catch (error) {
+    console.error("Error generating article using gpt:", error);
+    return null;
+  }
+}
+
+export async function clearTodayEvents() {
+  const today = (new Date(Date.now() - 24*60*60*1000)).toISOString().substring(0, 10);
+  const data = await getViralDetections(today, today);
+  for (const ev of data){
+    const ref = doc(db, VIRAL_DETECTIONS_COLLECTION, ev.id);
+    await deleteDoc(ref);
+  }
+}
+
+export const getViralDetectionById = async (id) => {
+  try {
+    const articleRef = doc(db, VIRAL_DETECTIONS_COLLECTION, id);
+    const articleSnap = await getDoc(articleRef);
+    return articleSnap.data();
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    throw error;
+  }
+}
