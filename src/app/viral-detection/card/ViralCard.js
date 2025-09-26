@@ -19,7 +19,7 @@ export default function ViralCard({ data }) {
       <div className="flex flex-col items-start px-6 w-full">
         <div className="flex items-center justify-between w-full gap-2">
           <p className="text-lg font-semibold line-clamp-1">{data.title}</p>
-          <span className="text-[10px] text-[#667085] text-nowrap w-[max-content]">{formatDateTime(postedDate)}</span>
+          <span className="text-[10px] text-[#667085] text-nowrap w-[max-content]">{formatDateTime(new Date(data.createdAt?.seconds * 1000 ?? Date.now()))}</span>
         </div>
         <span className="text-[#535862] line-clamp-2 mt-1">{data.content.substring(0, 100)}</span>
         <div className="flex items-center gap-2 w-full mt-6 mb-6 lg:mb-0">
