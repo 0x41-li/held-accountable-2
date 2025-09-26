@@ -4,7 +4,7 @@ import fs from 'fs';
 import { getEventsFromNewsAi } from '@/services/polls/polls';
 
 const getEventsData = async () => {
-    const events = await getEventsFromNewsAi("dmoz/Computers/Artificial_Intelligence");
+    const events = await getEventsFromNewsAi();
     return events;
 }
 export async function GET(req) {

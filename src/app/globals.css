@@ -98,3 +98,25 @@ body {
   padding-top: 12px;
   text-align: center;
 }
+
+.golden-insight-detail-content > h2 {
+  font-size: 1.2em;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.golden-insight-detail-content > ul {
+  list-style: circle;
+  margin: 30px;
+}
+
+.golden-insight-detail-content > h3 {
+  margin-top: 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.golden-insight-detail-content > h4 {
+  margin-top: 20px;
+  font-weight: bold;
+}

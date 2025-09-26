@@ -87,7 +87,7 @@ const carousel = [
   },
 ];
 
-const navTopic = ["All", "AI", "Economics", "Travel", "Politics", "Crypto"];
+const navTopic = ["All", "AI", "Finance", "Politics", "Crypto"];
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
@@ -104,7 +104,6 @@ export default function Home() {
   const [eventData, setEventData] = useState([]);
 
   const timerInterval = useRef(null);
-  const pollInterval = useRef(null);
 
   const { ref, inView } = useInView();
 
@@ -161,25 +160,28 @@ export default function Home() {
     }
   }, [loading, currentTopic, viewType]);
 
+  const updateRemainingSeconds = useCallback(() => {
+    if (polls.length > 0) {
+      const rs = 300 - parseInt((Date.now() - polls[0].createdAt.seconds * 1000) / 1000);
+      if (rs <= 0 && !loading) {
+        loadTrendingData();
+        loadEventData();
+        loadNewPolls().catch((err) => {
+          console.error("Error loading new polls:", err);
+        });
+      }
+      setRemainingSeconds(rs > 0 ? rs : 0);
+      return;
+    }
+    setRemainingSeconds(0);
+  }, [setRemainingSeconds, polls, loading]);
   useEffect(() => {
     timerInterval.current = setInterval(() => {
-      setRemainingSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+      updateRemainingSeconds();
     }, 1000);
-
-    pollInterval.current = setInterval(() => {
-      setRemainingSeconds(300);
-      loadTrendingData();
-      loadEventData();
-      loadNewPolls().catch((err) => {
-        console.error("Error loading new polls:", err);
-      });
-    }, 300 * 1000);
-
-    setRemainingSeconds(300);
 
     return () => {
       if (timerInterval.current) clearInterval(timerInterval.current);
-      if (pollInterval.current) clearInterval(pollInterval.current);
     };
   }, [loadNewPolls]);
 
@@ -273,16 +275,6 @@ export default function Home() {
                 speed={35}
               />
             </div>
-            {/* 
-            <div className="px-4 pt-4 w-full flex items-center justify-between flex-col md:flex-row gap-3">
-              <div className="w-full overflow-auto">
-                <Tabs
-                  options={navTopic}
-                  activeTab={currentTopic}
-                  setActiveTab={changeTopic}
-                />
-              </div>
-            </div> */}
 
             <div className="px-4 py-4 font-bold">
               Live updates{" "}

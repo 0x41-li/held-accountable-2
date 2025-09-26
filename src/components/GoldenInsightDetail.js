@@ -263,7 +263,7 @@ export default function GoldenInsightDetail({
           <p className="text-[24px] font-bold mt-6">Introduction</p>
           {/* <img src={article.image} /> */}
           <div
-            className="text-base font-normal text-[#535862] leading-[28px]"
+            className="golden-insight-detail-content text-base font-normal text-[#535862] leading-[28px]"
             style={{ fontFamily: "'Inter', Arial, Helvetica, sans-serif" }}
             dangerouslySetInnerHTML={{ __html: marked(article.content) }}
           ></div>

@@ -42,3 +42,4 @@ next-env.d.ts
 
 /trending_dump
 /upcoming_events
+database.db

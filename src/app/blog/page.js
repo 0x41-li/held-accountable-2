@@ -74,8 +74,7 @@ export default function Home() {
   const [trendingTopics, setTrendingTopics] = useState([
     "All", 
     "AI", 
-    "Economics",
-    "Travel",
+    "Finance",
     "Politics",
     "Crypto", 
   ]);

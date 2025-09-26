@@ -609,23 +609,18 @@ export async function updateSubscription(userId, subscription) {}
 
 // narrative apis
 
-export async function getNewsFromNewsAi(topic) {
+export async function getNewsFromNewsAi(condition) {
   const url = "https://eventregistry.org/api/v1/article/getArticles";
+  const today = (new Date()).toISOString().substring(0, 10);
 
   try {
-    let condition = `{\"categoryUri\":\"${topic}\"}`;
-
-    if (topic.indexOf("/") < 0) {
-      condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
-    }
-
     const body = JSON.stringify({
       articleBodyLen: "300",
       articlesCount: "100",
       includeArticleImage: "true",
       includeArticleShares: "true",
       includeArticleSentiment: "true",
-      query: `{\"$query\":{\"$and\":[${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+      query: `{\"$query\":{\"$and\":[{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}, ${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
       resultType: "articles",
       articlesSortBy: "date",
       apiKey: process.env.NEWSAPI_KEY,
@@ -634,8 +629,6 @@ export async function getNewsFromNewsAi(topic) {
       _origin: "sandbox",
       articlesPage: "1",
     });
-
-    console.log(body);
 
     const response = await fetch(url, {
       method: "POST",
@@ -672,8 +665,11 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
 3. **answers**: 2 to 4 multiple choice options.
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
 5. **blog_title**: Clear and compelling title.
-6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
-7. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
+6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
+Always include analytics (stats, trends, or charts).
+Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet section at the end, or both. Use judgment to maximize clarity and impact.
+Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
+7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
 
   try {
     const response = await fetch(url, {
@@ -705,7 +701,7 @@ The **headline** must end with the outlet in parentheses using this format: (Reu
                 blog_content: { type: "string" },
                 category: {
                   type: "string",
-                  enum: ["AI", "Economics", "Travel", "Politics", "Crypto"],
+                  enum: ["AI", "Finance", "Politics", "Crypto"],
                 },
               },
               required: [
@@ -813,17 +809,11 @@ export async function updateUserSubscription(userId, amount, intentId) {
   await addSubscriptionLog(userId, amount, intentId);
 }
 
-export async function getEventsFromNewsAi(topic) {
+export async function getEventsFromNewsAi() {
   console.log("api key for events", process.env.NEWSAPI_KEY);
   const url = "https://eventregistry.org/api/v1/event/getEvents";
 
   try {
-    let condition = `{\"categoryUri\":\"${topic}\"}`;
-
-    if (topic.indexOf("/") < 0) {
-      condition = `{\"conceptUri\":\"http://en.wikipedia.org/wiki/${topic}\"}`;
-    }
-
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const formattedTomorrow = tomorrow.toISOString().split("T")[0];
@@ -984,16 +974,16 @@ export const getViralDetections = async (start_date = null, end_date = null) => 
   }
 }
 
-export async function getEventsWithSocialScoreFromNewsAi() {
+export async function getEventsWithSocialScoreFromNewsAi(condition) {
   console.log("api key for events", process.env.NEWSAPI_KEY);
   const url = "https://eventregistry.org/api/v1/event/getEvents";
   const today = (new Date(Date.now() - 24*60*60*1000)).toISOString().substring(0, 10);
 
   try {
     const body = JSON.stringify({
-      query: `{\"$query\":{\"$and\":[{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"lang\": \"eng\"},{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}]}}`,
+      query: `{\"$query\":{\"$and\":[${condition}, {\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"lang\": \"eng\"},{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}]}}`,
       eventsConceptLang: "eng",
-      eventsCount: "50",
+      eventsCount: "5",
       eventsPage: "1",
       eventsSortBy: "socialScore",
       includeEventInfoArticle: "true",
@@ -1040,7 +1030,7 @@ ${event.summary.eng}
 ### Output:
 1. **title**: Clear and compelling title.
 2. **content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
-3. **category**: category of the article. It should be one of these values - ["AI", "Economics", "Travel", "Politics", "Crypto]`;
+3. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
 
   try {
     const response = await fetch(url, {
@@ -1065,7 +1055,7 @@ ${event.summary.eng}
                 content: { type: "string" },
                 category: {
                   type: "string",
-                  enum: ["AI", "Economics", "Travel", "Politics", "Crypto"],
+                  enum: ["AI", "Finance", "Politics", "Crypto"],
                 },
               },
               required: [

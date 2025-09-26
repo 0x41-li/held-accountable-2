@@ -77,13 +77,8 @@ export default function Profile() {
                     <span className="w-[160px]">Targeted Topic</span>
                     <select className="border border-primary outline-none rounded-[8px] w-[448px] py-[10px] px-[14px]" placeholder="Enter the topic name" value={topic} onChange={(e) => setTopic(e.target.value)} >
                         <option value="AI">Artificial Intelligence</option>
-                        <option value="Health">Health and Wellness</option>
-                        <option value="Economics">Economic Outlook</option>
-                        <option value="Travel">Travel, Hotels, and Navigation</option>
+                        <option value="Finance">Finance</option>
                         <option value="Politics">Politics</option>
-                        <option value="Life Style">Food and Life style</option>
-                        <option value="Products">Products and Shopping</option>
-                        <option value="Entertainment">Entertainment, Streaming, and Pop Culture</option>
                         <option value="Crypto">Digital Assets & Crypto</option>
                     </select>
                 </div>

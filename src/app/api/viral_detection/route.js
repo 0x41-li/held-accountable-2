@@ -2,8 +2,27 @@ import { NextResponse } from 'next/server'
 import { createViralDetection, generateViralDetectionUsingGPT, getEventsWithSocialScoreFromNewsAi, getViralDetections } from '@/services/polls/polls';
 
 const getEventsData = async () => {
-    const events = await getEventsWithSocialScoreFromNewsAi();
-    return events;
+    const topics = [
+        "{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"}", 
+        "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Finance\"}",
+        "{\"categoryUri\":\"news/Politics\"}",
+        "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Cryptocurrency\"}"
+    ];
+
+    let results = [], topic_id = 0;
+
+    while (results.length < 5) {
+        const {events: {results: events}} = await getEventsWithSocialScoreFromNewsAi(topics[topic_id]);
+        console.log(events);
+        if (events.length > 0) {
+            const data = events.filter(ev => !results.some(ev1 => ev.uri == ev1.uri));
+            if (data.length > 0) {
+                results.push(data[0]);
+            }
+        }
+        topic_id = (topic_id + 1) % topics.length;
+    }
+    return results;
 }
 
 const getTodayEvents = async () => {
@@ -14,7 +33,7 @@ const getTodayEvents = async () => {
 export async function GET(req) {
     let data = await getTodayEvents();
     if (data.length == 0) {
-        const { events: { results } } = await getEventsData();
+        const results = await getEventsData();
         const end = Math.min(5, results.length);
         for (const event of results.slice(0, end)) {
             console.log(event);
