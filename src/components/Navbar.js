@@ -33,12 +33,12 @@ export default function Navbar() {
 
   return (
     <div className="flex p-4 md:hidden items-center h-[60px] w-full border-b border-[#E4E7EC]">
-      <div className="flex flex-1 items-center pl-[23px]">
+      <Link href="/" className="flex flex-1 items-center pl-[23px]">
         <img src="/images/logo.png" width={50} />
         <span className="text-[24px] leading-[38px] font-medium">
           Held Accountable
         </span>
-      </div>
+      </Link>
       <button
         className="rounded-[8px] w-[40px] h-[40px] border border-primary flex items-center justify-center"
         onClick={() => setShow(!show)}
@@ -60,10 +60,16 @@ export default function Navbar() {
                 <Icon icon="typcn:home" />
                 <span>Home</span>
               </Link>
-              {/* <Link href="/trending" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/trending' ? "bg-blue  text-white": "")}>
-                        <Icon icon="mingcute:fire-line" />
-                        <span>Headlines</span>
-                    </Link> */}
+              <Link
+                href="/viral-detection"
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="solar:camera-outline" />
+                <span>Viral Detection</span>
+              </Link>
               <Link
                 href="/blog"
                 className={
@@ -72,21 +78,35 @@ export default function Navbar() {
                 }
               >
                 <Icon icon="mi:document" />
-                <span>Through My Eyes</span>
+                <span>Thought Leadership</span>
               </Link>
+              <Link
+                href="/snapshots"
+                className={
+                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+                  (pathname == "/snapshots" ? "bg-blue  text-white" : "")
+                }
+              >
+                <Icon icon="solar:camera-outline" />
+                <span>Snapshots</span>
+              </Link>
+              {/* <Link href="/trending" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/trending' ? "bg-blue  text-white": "")}>
+                        <Icon icon="mingcute:fire-line" />
+                        <span>Headlines</span>
+                    </Link> */}
               {/* <Link href="/manage" className={"rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " + (pathname == '/manage' ? "bg-blue  text-white": "")}>
                         <Icon icon="gravity-ui:square-list-ul" />
                         <span>Poll Management</span>
                     </Link> */}
               <Link
-                href="/profile"
+                href="/about-us"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/profile" ? "bg-blue  text-white" : "")
+                  (pathname == "/about-us" ? "bg-blue  text-white" : "")
                 }
               >
-                <Icon icon="mingcute:user-4-line" />
-                <span>Profile</span>
+                <Icon icon="solar:info-square-linear" />
+                <span>About Us</span>
               </Link>
               <Link
                 href="/careers"
@@ -99,34 +119,14 @@ export default function Navbar() {
                 <span>Careers</span>
               </Link>
               <Link
-                href="/about-us"
+                href="/profile"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/blog" ? "bg-blue  text-white" : "")
+                  (pathname == "/profile" ? "bg-blue  text-white" : "")
                 }
               >
-                <Icon icon="solar:info-square-linear" />
-                <span>About Us</span>
-              </Link>
-              <Link
-                href="/viral-detection"
-                className={
-                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
-                }
-              >
-                <Icon icon="solar:camera-outline" />
-                <span>Viral Detection</span>
-              </Link>
-              <Link
-                href="/snapshots"
-                className={
-                  "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/snapshots" ? "bg-blue  text-white" : "")
-                }
-              >
-                <Icon icon="solar:camera-outline" />
-                <span>Snapshots</span>
+                <Icon icon="mingcute:user-4-line" />
+                <span>Profile</span>
               </Link>
               <Link
                 href="/support"
@@ -149,7 +149,7 @@ export default function Navbar() {
                 }}
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/support" ? "bg-blue  text-white" : "")
+                  (pathname == "/logout" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="material-symbols:logout-rounded" />
@@ -171,9 +171,9 @@ export default function Navbar() {
                           <Icon icon="material-symbols:close" />
                         </button>
                       </div>
-                      <button className="rounded-[8px] bg-blue text-white w-full p-[8px]">
+                      <Link href="/subscription" className="rounded-[8px] bg-blue text-white w-full p-[8px] text-center">
                         Upgrade Now
-                      </button>
+                      </Link>
                     </div>
                   </div>
                   <div className="text-md leading-md h-[34px] w-full text-[#A7A7A7] text-center">

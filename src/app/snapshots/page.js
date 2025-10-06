@@ -73,7 +73,7 @@ export default function Snapshot() {
 
   const loadData = async (from) => {
     setLoading(true);
-    const { results, lastDoc } = await getSnapshots(from, 10, selectedDate.startDate ? selectedDate.startDate.toISOString().substring(0, 10) : null, selectedDate.endDate ? selectedDate.endDate.toISOString().substring(0, 10) : null, selectedTopics, !shouldShowNewButton);
+    const { results, lastDoc } = await getSnapshots(from, 10, selectedDate.startDate ? selectedDate.startDate.toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10) : null, selectedDate.endDate ? selectedDate.endDate.toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10) : null, selectedTopics, !shouldShowNewButton);
     if (results.length == 0) {
       setHasMore(false);
     }
@@ -83,7 +83,6 @@ export default function Snapshot() {
   };
 
   useEffect(() => {
-    console.log(loading, inView, hasMore);
     if (!loading && inView && hasMore)
       loadData(start);
   }, [loading, inView, hasMore, selectedTopics, selectedDate, shouldShowNewButton]);

@@ -44,7 +44,6 @@ export const createPoll = async (pollData) => {
         status: 1,
       });
     } else {
-      console.log(topicSnap);
       const topicRef = doc(db, TOPIC_COLLECTION, topicSnap.docs[0].id);
       await updateDoc(topicRef, {
         poll_count: topicSnap.docs[0].data().poll_count + 1,
@@ -125,8 +124,6 @@ export const votePoll = async (pollId, userId, questionId, answer) => {
         trendScore,
       });
     });
-
-    console.log("Vote recorded successfully");
     return true;
   } catch (error) {
     toast.error(error);
@@ -566,7 +563,6 @@ export async function getWikipediaSummary(title) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
-    console.log(data.extract); // Summary of the topic
     return data.extract;
   } catch (error) {
     console.error("Error fetching Wikipedia summary:", error);
@@ -611,16 +607,15 @@ export async function updateSubscription(userId, subscription) {}
 
 export async function getNewsFromNewsAi(condition) {
   const url = "https://eventregistry.org/api/v1/article/getArticles";
-  const today = (new Date()).toISOString().substring(0, 10);
+  const today = (new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
 
   try {
     const body = JSON.stringify({
-      articleBodyLen: "300",
       articlesCount: "100",
       includeArticleImage: "true",
       includeArticleShares: "true",
       includeArticleSentiment: "true",
-      query: `{\"$query\":{\"$and\":[{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}, ${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"abcnews.go.com\"},{\"sourceUri\":\"cbsnews.com\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"dataType\":[\"news\",\"blog\"]}}`,
+      query: `{\"$query\":{\"$and\":[{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}, ${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"},{\"sourceUri\":\"bbc24news.com\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"coindesk.com\"},{\"sourceUri\":\"cointelegraph.com\"},{\"sourceUri\":\"coingeek.com\"},{\"sourceUri\":\"binance.com\"},{\"sourceUri\":\"blog.coinbase.com\"},{\"sourceUri\":\"coingape.com\"},{\"sourceUri\":\"decrypt.co\"},{\"sourceUri\":\"bitcoinmagazine.com\"},{\"sourceUri\":\"livebitcoinnews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"isDuplicate\":\"skipDuplicates\",\"dataType\":[\"news\",\"blog\"]}}`,
       resultType: "articles",
       articlesSortBy: "date",
       apiKey: process.env.NEWSAPI_KEY,
@@ -648,28 +643,55 @@ export async function getNewsFromNewsAi(condition) {
   }
 }
 
-export async function generatePoll(article_url) {
+export async function generatePoll(article_url, article_title, article_body) {
   const openai_api_key =
     "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";
   const url = "https://api.openai.com/v1/responses";
 
-  const message = `Please create a poll based on this url: ${article_url}
+  const message = `Create a short "Breaking News" card from this url: ${article_url}
+  
+If you can not access please reference following content:
+### Article Title ###
+${article_title}
 
-### Rules:
-The **headline** must end with the outlet in parentheses using this format: (Reuters, publisher verified).
+### Article Body Start ###
+${article_body}
+### Article Body End ###
 
+### Non-negotiable rules (internal; do not print):
+- Parse ONLY from the article's own page:
+  - outlet_name (must match URL domain), publish_datetime (ISO), location, the main H1 headline text, and the first 1–2 sentences.
+- If the H1 contains a hard number (e.g., casualties, % move, count), KEEP the same number (or "at least X" if that is how it appears).
+- Dates:
+  - Prefer the article's publish date UNLESS the H1 explicitly includes an absolute event date (e.g., "on Sept. 28, 2025"). Do NOT invent or convert relative dates (e.g., "Sunday")—omit the date from the headline if you can't resolve it to an absolute date on the page.
+- Leaders/administrations (U.S. guardrail by event date):
+  - 2017‑01‑20 → 2021‑01‑20 = Trump
+  - 2021‑01‑20 → 2025‑01‑20 = Biden
+  - 2025‑01‑20 → present = Trump
+  If uncertain, use neutral phrasing ("the U.S. administration"). Never guess.
+- Outlet lock: The parenthetical MUST match the URL's news brand (e.g., reuters.com → Reuters; bbc.com → BBC News; abcnews.go.com → ABC News).
+- No embellishment or inference. If a number/date is unclear, omit it rather than inventing it.
+- All results should be English.
 
 ### Output:
-1. **headline**: One-sentence summary in your own words, ending with the outlet name in parentheses.
+1. **headline**: Start with "Breaking News — " and write ONE crisp sentence that closely mirrors the H1, preserving all hard facts (numbers, places). End with "(Outlet, publisher verified)"
 2. **question**: A balanced poll question based on the article's core issue.
 3. **answers**: 2 to 4 multiple choice options.
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
 5. **blog_title**: Clear and compelling title.
 6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
 Always include analytics (stats, trends, or charts).
-Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet section at the end, or both. Use judgment to maximize clarity and impact.
+Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
 Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
-7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
+7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]
+
+
+### Final self-audit (internal; do not print):
+- Outlet parenthetical matches URL domain.
+- No invented dates. If no absolute date in H1/lede, none appears in title.
+- If H1 has a number, identical number appears in the title.
+- No administration mislabel; if uncertain → neutral phrasing.
+- Title and headline length ≤ 160 characters; no duplicate with existing items (by normalized fingerprint: outlet + main nouns/proper nouns + numbers).`;
 
   try {
     const response = await fetch(url, {
@@ -723,7 +745,6 @@ Style whole blog content well with headings, subheadings, and bullet points for 
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
-    console.log(data);
     return data.output.length > 1
       ? JSON.parse(data.output[1].content[0].text)
       : JSON.parse(data.output[0].content[0].text);
@@ -783,7 +804,6 @@ export async function addSubscriptionLog(userId, amount, intentId) {
 export async function updateUserSubscription(userId, amount, intentId) {
   let logs = await getExistingSubscriptionLogForIntentId(intentId);
   if (logs.length > 0) {
-    console.log("already exists");
     return;
   }
   const user = await getUserById(userId);
@@ -800,7 +820,6 @@ export async function updateUserSubscription(userId, amount, intentId) {
     });
   } else {
     user.subscripted_at = new Date();
-    console.log(user.subscripted_at);
     user.subscripted_at.setMonth(user.subscripted_at.getMonth() + duration);
     await updateUserById(userId, {
       subscripted_at: user.subscripted_at.getTime(),
@@ -810,20 +829,19 @@ export async function updateUserSubscription(userId, amount, intentId) {
 }
 
 export async function getEventsFromNewsAi() {
-  console.log("api key for events", process.env.NEWSAPI_KEY);
   const url = "https://eventregistry.org/api/v1/event/getEvents";
 
   try {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const formattedTomorrow = tomorrow.toISOString().split("T")[0];
+    const formattedTomorrow = tomorrow.toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
 
     const nextMonth = new Date();
     nextMonth.setMonth(nextMonth.getMonth() + 1);
-    const formattedNextMonth = nextMonth.toISOString().split("T")[0];
+    const formattedNextMonth = nextMonth.toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
 
     const body = JSON.stringify({
-      query: `{\"$query\":{\"$and\":[{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
+      query: `{\"$query\":{\"$and\":[{\"lang\":\"eng\"},{\"$or\":[{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"},{\"categoryUri\":\"news/Politics\"}]},{\"locationUri\":\"http://en.wikipedia.org/wiki/United_States\"},{\"dateStart\":\"${formattedTomorrow}\",\"dateEnd\":\"${formattedNextMonth}\"}]}}`,
       eventsSortBy: "date",
       eventsConceptLang: "eng",
       eventsSortByAsc: true,
@@ -975,9 +993,8 @@ export const getViralDetections = async (start_date = null, end_date = null) => 
 }
 
 export async function getEventsWithSocialScoreFromNewsAi(condition) {
-  console.log("api key for events", process.env.NEWSAPI_KEY);
   const url = "https://eventregistry.org/api/v1/event/getEvents";
-  const today = (new Date(Date.now() - 24*60*60*1000)).toISOString().substring(0, 10);
+  const today = (new Date(Date.now() - 24*60*60*1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
 
   try {
     const body = JSON.stringify({
@@ -1002,7 +1019,6 @@ export async function getEventsWithSocialScoreFromNewsAi(condition) {
       body,
     });
     if (!response.ok) {
-      console.log(await response.text());
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const data = await response.json();
@@ -1030,6 +1046,7 @@ ${event.summary.eng}
 ### Output:
 1. **title**: Clear and compelling title.
 2. **content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
 3. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
 
   try {
@@ -1084,7 +1101,7 @@ ${event.summary.eng}
 }
 
 export async function clearTodayEvents() {
-  const today = (new Date(Date.now() - 24*60*60*1000)).toISOString().substring(0, 10);
+  const today = (new Date(Date.now() - 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
   const data = await getViralDetections(today, today);
   for (const ev of data){
     const ref = doc(db, VIRAL_DETECTIONS_COLLECTION, ev.id);
@@ -1097,6 +1114,16 @@ export const getViralDetectionById = async (id) => {
     const articleRef = doc(db, VIRAL_DETECTIONS_COLLECTION, id);
     const articleSnap = await getDoc(articleRef);
     return articleSnap.data();
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    throw error;
+  }
+}
+
+export async function deleteViralDetection(id) {
+  try {
+    const articleRef = doc(db, VIRAL_DETECTIONS_COLLECTION, id);
+    await deleteDoc(articleRef);
   } catch (error) {
     console.error("Error deleting article:", error);
     throw error;

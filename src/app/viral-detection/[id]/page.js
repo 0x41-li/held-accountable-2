@@ -2,6 +2,7 @@
 import Sidebar from "@/components/Sidebar";
 import { getViralDetectionById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
+import { marked } from "marked";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -30,11 +31,11 @@ export default function BlogDetail() {
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
               <div className='text-[30px] leading-[38px] font-semibold'>Viral Detection</div>
-              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>The latest trends around the world, right in your sight.</div>
+              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Top 5 most trending topics today!</div>
             </div>
           </div>
-          <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px]'>
-            <div className="text-center text-[48px] leading-[60px]">
+          <div className='flex-1 flex flex-col w-full md:w-auto h-full h-col gap-[32px] overflow-auto md:pt-[30px]'>
+            <div className="text-center text-[32px] md:text-[48px] md:leading-[60px] ">
                 {article.title}
             </div>
             <div className="flex justify-center gap-[10px]">
@@ -57,8 +58,8 @@ export default function BlogDetail() {
                     </div>
                 ))}
             </div>
-            <div className="w-full px-[100px] flex flex-col gap-[20px]">
-                <div className="text-[18px] leading-[28px]" dangerouslySetInnerHTML={{ __html: article.content.replace("\n", "<br />")}}>
+            <div className="w-full px-[20px] md:px-[100px] flex flex-col gap-[20px]">
+                <div className="text-[18px] leading-[28px] golden-insight-detail-content" dangerouslySetInnerHTML={{ __html: marked(article.content)}}>
                 </div>
             </div>
             <div className="flex justify-center pb-[30px]">

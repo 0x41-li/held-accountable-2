@@ -4,27 +4,27 @@ import { createPoll, generatePoll, getHomePolls, getNewsFromNewsAi, HOME_LATEST 
 import db from '../../../../lib/sqlite'
 
 function deleteOldNewsArticles() {
-    return db.prepare("DELETE FROM news_articles WHERE date < ?").run((new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 10));
+    return db.prepare("DELETE FROM news_articles WHERE date < ?").run((new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10));
 }
 
-function getExistingArticles(url) {
-    return db.prepare("SELECT * FROM news_articles WHERE url = ?").get(url) ?? []
+function getExistingArticles(url, title) {
+    return db.prepare("SELECT * FROM news_articles WHERE url = ? OR title = ?").get(url, title) ?? []
 }
 
 function addNewsArticle(article) {
-    return db.prepare("INSERT INTO news_articles (title, url, date) VALUES (?, ?, ?)").run(article.title, article.url, article.date)
+    return db.prepare("INSERT INTO news_articles (title, url, date, body) VALUES (?, ?, ?, ?)").run(article.title, article.url, article.date, article.body)
 }
 
-function updateNewsArticle(id, updates) {
+function updateNewsArticle(url, updates) {
     const setClause = Object.keys(updates)
         .map(key => `${key} = ?`)
         .join(", ");
     const values = Object.values(updates);
-    return db.prepare(`UPDATE news_articles SET ${setClause} WHERE id = ?`).run(...values, id);
+    return db.prepare(`UPDATE news_articles SET ${setClause} WHERE url = ?`).run(...values, url);
 }
 
 function getUnusedNewsArticles() {
-    return db.prepare("SELECT * FROM news_articles WHERE used IS NULL AND date = ?").all((new Date()).toISOString().substring(0, 10));
+    return db.prepare("SELECT * FROM news_articles WHERE used IS NULL AND date = ?").all((new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10));
 }
 
 export async function GET(req) {
@@ -41,7 +41,7 @@ export async function GET(req) {
             "{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"}", 
             "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Finance\"}",
             "{\"categoryUri\":\"news/Politics\"}",
-            "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Cryptocurrency\"}"
+            "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Blockchain\"}"
         ];
 
         const last_poll = await getHomePolls(HOME_LATEST, null, 1);
@@ -52,43 +52,63 @@ export async function GET(req) {
             }
         }
         
-        const topic = topics[topicId];
+        let topic = topics[topicId];
 
-        let { articles: { results } } = await getNewsFromNewsAi(topic);
+        let results = [];
+
         let article_url = "";
-        
-        for (const article of results) {
-            if (article.date != (new Date()).toISOString().substring(0, 10))
+        let article_title = "";
+        let article_body = "";
+        let iteration = 0;
+
+        while (iteration < topics.length && article_url.length == 0) {
+            iteration ++;
+            let { articles: { results: res_data } } = await getNewsFromNewsAi(topic);
+            results = res_data;
+            if (results.length == 0) {
+                topicId = (topicId + 1) % topics.length;
+                topic = topics[topicId];
                 continue;
+            }
 
-            const existingArticles = getExistingArticles(article.url);
+            for (const article of results) {
+                if (article.date != (new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10))
+                    continue;
 
-            if (existingArticles.length == 0) {
-                let newArticle = { topic: short_topics[topicId], ...article };
-                if (article_url.length == 0) {
-                    article_url = article.url;
+                const existingArticles = getExistingArticles(article.url, article.title);
+
+                if (existingArticles.length == 0) {
+                    let newArticle = { topic: short_topics[topicId], ...article };
+                    if (article_url.length == 0) {
+                        article_url = article.url;
+                        article_title = article.title;
+                        article_body = article.body;
+                    }
+                    addNewsArticle(newArticle);
+                    continue;
                 }
-                addNewsArticle(newArticle);
-                continue;
+            }
+
+            if (article_url.length == 0) {
+                const articles = getUnusedNewsArticles();
+                if (articles.length == 0) {
+                    topicId = (topicId + 1) % topics.length;
+                    topic = topics[topicId];
+                    continue;
+                }
+
+                article_url = articles[0].url;
+                article_title = articles[0].title;
+                article_body = articles[0].body;
             }
         }
 
-        if (article_url.length == 0) {
-            const articles = getUnusedNewsArticles();
-            if (articles.length == 0) {
-                return NextResponse.json({ message: 'Failed', error: "No news available for generation" }, { status: 500 })
-            }
-
-            article_url = articles[0].url;
-        }
-        
         console.log("Generate poll for this url: ", article_url);
 
-        const poll = await generatePoll(article_url) // random topic
+        const poll = await generatePoll(article_url, article_title, article_body) // random topic
 
         if (poll) {
             updateNewsArticle(article_url, { used: 1 });
-            console.log('Poll generated successfully:', poll)
             let dataWithSummary = { topic: poll.category, activeDate: {
                     from: "2025-01-01",
                     to: "2025-01-01",

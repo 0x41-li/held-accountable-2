@@ -153,25 +153,6 @@ export default function AuthSlider({ slides }) {
           className="!w-full"
           videoClass="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
         />
-
-        <Image
-          src="/images/authSlider/bgVideo1.png"
-          alt="AI"
-          className="absolute top-[-15%] left-[-10%] w-[40%] z-10"
-          fill={false}
-          style={{ objectFit: "contain" }}
-          width={237}
-          height={98}
-        />
-        <Image
-          src="/images/authSlider/bgVideo2.png"
-          alt="AI"
-          className="absolute bottom-[-15%] right-[-10%] w-[40%] z-10"
-          fill={false}
-          style={{ objectFit: "contain" }}
-          width={237}
-          height={98}
-        />
       </div>
     </div>
   );

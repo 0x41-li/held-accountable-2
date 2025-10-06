@@ -40,7 +40,6 @@ export default function usersAdminPage() {
     }
   
     useEffect(() => {
-      console.log(loading, inView)
       if (!loading && inView && hasMore)
         loadusers();
     }, [inView, loading, hasMore]);
@@ -74,7 +73,7 @@ export default function usersAdminPage() {
                                 <option value="admin">Admin</option>
                                 <option value="writer">Write Manager</option>
                                 <option value="snapshot-writer">Snapshot Writer</option>
-                                <option value="through-my-eyes-writer">Through My Eyes Writer</option>
+                                <option value="through-my-eyes-writer">Thought Leadership Writer</option>
                                 <option value="user">User</option>
                             </select>
                         </td>

@@ -33,12 +33,12 @@ export default function Sidebar() {
   return (
     <div className="hidden md:flex flex-col justify-between w-[312px]">
       <div className="flex flex-col gap-[24px] pt-[32px] ">
-        <div className="flex items-center pl-[23px]">
+        <Link href="/" className="flex items-center pl-[23px]">
           <img src="/images/logo.png" width={50} />
           <span className="text-[24px] leading-[38px] font-medium">
             Held Accountable
           </span>
-        </div>
+        </Link>
         <div className="flex flex-col px-[16px] gap-[4px]">
           <Link
             href="/"
@@ -49,6 +49,16 @@ export default function Sidebar() {
           >
             <Icon icon="typcn:home" />
             <span>Home</span>
+          </Link>
+          <Link
+            href="/viral-detection"
+            className={
+              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+              (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
+            }
+          >
+            <Icon icon="solar:camera-outline" />
+            <span>Viral Detection</span>
           </Link>
           {/* <Link
             href="/trending"
@@ -68,7 +78,17 @@ export default function Sidebar() {
             }
           >
             <Icon icon="mi:document" />
-            <span>Through My Eyes</span>
+            <span>Thought Leadership</span>
+          </Link>
+          <Link
+            href="/snapshots"
+            className={
+              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+              (pathname == "/snapshots" ? "bg-blue  text-white" : "")
+            }
+          >
+            <Icon icon="solar:camera-outline" />
+            <span>Snapshots</span>
           </Link>
           <Link
             href="/about-us"
@@ -84,26 +104,6 @@ export default function Sidebar() {
                     <Icon icon="gravity-ui:square-list-ul" />
                     <span>Poll Management</span>
                 </Link> */}
-          <Link
-            href="/viral-detection"
-            className={
-              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-              (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
-            }
-          >
-            <Icon icon="solar:camera-outline" />
-            <span>Viral Detection</span>
-          </Link>
-          <Link
-            href="/snapshots"
-            className={
-              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-              (pathname == "/snapshots" ? "bg-blue  text-white" : "")
-            }
-          >
-            <Icon icon="solar:camera-outline" />
-            <span>Snapshots</span>
-          </Link>
           <Link
             href="/careers"
             className={

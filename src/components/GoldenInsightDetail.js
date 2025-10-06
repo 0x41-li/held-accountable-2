@@ -13,6 +13,7 @@ export default function GoldenInsightDetail({
   poll: initialPoll,
   selectedOptions: initialSelectedOptions,
   voted: initialVoted,
+  back
 }) {
   const [voted, setVoted] = useState(initialVoted);
   const [selectedOptions, setSelectedOptions] = useState(
@@ -164,7 +165,7 @@ export default function GoldenInsightDetail({
             <div className="flex flex-col">
               <span className="text-white text-xs opacity-80">
                 {poll.createdAt &&
-                  new Date(poll.createdAt).toLocaleDateString("en-GB", {
+                  new Date(poll.createdAt * 1000).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",
@@ -250,13 +251,7 @@ export default function GoldenInsightDetail({
                   ? poll.questions[0].totalVotes + 1
                   : poll.questions[0].totalVotes
                 ).toLocaleString()}{" "}
-                Votes · Poll ends{" "}
-                {poll.activeDate?.to &&
-                  new Date(poll.activeDate.to).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                Votes
               </span>
             </div>
           </div>
@@ -272,43 +267,48 @@ export default function GoldenInsightDetail({
           <div className="rounded-full bg-[#3B88E31F] min-w-[114px] h-[22px] flex items-center justify-center text-[#3B88E3] px-[10px]">
             <span className="text-xs leading-xs font-medium">{poll.topic}</span>
           </div>
-          <div className="flex gap-2 items-center">
-            <button
-              className={`border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-sm bg-white transition-colors duration-200 ${
-                copied
-                  ? "text-[#3B88E3] border-[#3B88E3] bg-[#F2F4F7]"
-                  : "text-[#667085]"
-              }`}
-              onClick={() => {
-                navigator.clipboard.writeText(url);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1500);
-              }}
-            >
-              <Icon icon="mdi:link-variant" width={16} height={16} />
-              {copied ? "Copied" : "Copy link"}
-            </button>
-            <a 
-                href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
-              <Icon icon="ri:twitter-x-fill" width={18} height={18} />
-            </a>
-            <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
-              <Icon icon="ic:baseline-facebook" width={18} height={18} />
-            </a>
-            <a
-                href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
-              <Icon icon="mdi:linkedin" width={18} height={18} />
-            </a>
+          <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
+            <div className="flex gap-2 items-center">
+              <button
+                className={`border border-[#E4E7EC] rounded-lg px-3 py-2 flex items-center gap-2 text-sm bg-white transition-colors duration-200 ${
+                  copied
+                    ? "text-[#3B88E3] border-[#3B88E3] bg-[#F2F4F7]"
+                    : "text-[#667085]"
+                }`}
+                onClick={() => {
+                  navigator.clipboard.writeText(url);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }}
+              >
+                <Icon icon="mdi:link-variant" width={16} height={16} />
+                {copied ? "Copied" : "Copy link"}
+              </button>
+              <a 
+                  href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+                <Icon icon="ri:twitter-x-fill" width={18} height={18} />
+              </a>
+              <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+                <Icon icon="ic:baseline-facebook" width={18} height={18} />
+              </a>
+              <a
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-[#E4E7EC] rounded-lg w-8 h-8 flex items-center justify-center bg-white text-[#667085]">
+                <Icon icon="mdi:linkedin" width={18} height={18} />
+              </a>
+            </div>
+            {back && <button onClick={() => back()} className="border border-[#E4E7EC] rounded-lg py-1 px-6 flex items-center gap-1 text-[#667085]">
+              <Icon icon='lets-icons:back' />Back
+            </button>}
           </div>
         </div>
       </div>

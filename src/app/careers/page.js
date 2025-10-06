@@ -4,30 +4,18 @@ import CareersCard from "@/components/common/CareersCard";
 import Pagination from "@/components/common/Pagination";
 import SectionTitle from "@/components/common/SectionTitle";
 import Tabs from "@/components/ui/Tabs";
+import { CAREERS_DATA } from "@/services/const";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React, { useState } from "react";
 
-const data = [
-  // {
-  //   vacancy: "Senior UX Designer - AI Products",
-  //   descr:
-  //     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit",
-  //   location: "Remote",
-  //   type: "Full-time",
-  //   salary: "$80 - $100k",
-  //   industry: "Marketing",
-  // },
-];
 
 export default function Careers() {
   const filters = [
     "View All",
-    "Development",
-    "Design",
-    "Operation",
-    "Finance",
+    "AI/ML",
     "Marketing",
+    "Engineering",
   ];
   const [activeFilter, setActiveFilter] = useState("View All");
   const [page, setPage] = useState(1);
@@ -35,8 +23,8 @@ export default function Careers() {
 
   const filteredData =
     activeFilter === "View All"
-      ? data
-      : data.filter((item) => item.industry === activeFilter);
+      ? CAREERS_DATA
+      : CAREERS_DATA.filter((item) => item.industry === activeFilter);
   const totalPages = Math.ceil(filteredData.length / itmsToShow);
   const paginatedData = filteredData.slice(
     (page - 1) * itmsToShow,
@@ -103,7 +91,7 @@ export default function Careers() {
         </div>
         <div className="flex flex-col gap-6 mb-10">
           {paginatedData.map((item, index) => (
-            <CareersCard data={item} key={index} />
+            <CareersCard data={{...item, id: index}} key={index} />
           ))}
         </div>
 

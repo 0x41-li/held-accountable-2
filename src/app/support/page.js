@@ -71,7 +71,6 @@ export default function Support() {
     }
 
     const handleSend = async () => {
-        console.log(agreeRef.current.checked, agreeRef.current.value);
         if (!agreeRef.current.checked) {
             toast.error("You need to agree our friendly privacy policy first by checking the box");
             return;

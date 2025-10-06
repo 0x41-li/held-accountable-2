@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 
 export function MultiSelect({ options, selectedValues, onChange, placeholder }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const timeoutRef = useRef(null);
 
   const toggleOption = (option) => {
     if (selectedValues.includes(option)) {
@@ -15,6 +16,32 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder }) 
   const removeTag = (option) => {
     onChange(selectedValues.filter((value) => value !== option));
   };
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const resetTimer = () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setDropdownOpen(false);
+      }, 5000); // 5 seconds of inactivity
+    };
+
+    resetTimer();
+
+    const handleActivity = () => resetTimer();
+
+    // Desktop and mobile interaction events
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+
+    events.forEach((evt) => window.addEventListener(evt, handleActivity, { passive: true }));
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      events.forEach((evt) => window.removeEventListener(evt, handleActivity));
+    };
+  }, [dropdownOpen]);
+
 
   return (
     <div className="w-full relative">

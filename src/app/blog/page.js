@@ -103,7 +103,6 @@ export default function Home() {
             blogList = result;
             lastDoc = last;
         }
-        console.log(blogList);
 
         if (blogList.length === 0) {
             setLoading(false);
@@ -126,7 +125,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log(loading, inView)
     if (!loading && inView && hasMore)
       loadBlogs();
   }, [inView, loading, hasMore, currentTopic]);
@@ -155,7 +153,7 @@ export default function Home() {
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
-              <div className='text-[30px] leading-[38px] font-semibold'>Through My Eyes</div>
+              <div className='text-[30px] leading-[38px] font-semibold'>Thought Leadership</div>
               <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>User perspectives on Breaking News.</div>
             </div>
             {shouldShowNewButton && <div className="flex gap-[10px]  items-center">

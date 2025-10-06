@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import HomeCarousel from "@/components/common/HomeCarousel";
 import Tabs from "@/components/ui/Tabs";
 import Poll from "@/components/Poll";
+import GoldenInsightDetail from "@/components/GoldenInsightDetail";
+import GoldenInsightDetailPage from "@/app/golden-insights/[id]/page";
 
 const carousel = [
   {
@@ -90,9 +92,7 @@ const carousel = [
 const navTopic = ["All", "AI", "Finance", "Politics", "Crypto"];
 
 export default function Home() {
-  const [searchValue, setSearchValue] = useState("");
   const [viewType, setViewType] = useState(HOME_LATEST);
-  const [addPollDialogVisible, setAddPollDialogVisible] = useState(false);
   const router = useRouter();
   const [polls, setPolls] = useState([]);
   const [start, setStart] = useState(null);
@@ -102,31 +102,11 @@ export default function Home() {
   const [currentTopic, setCurrentTopic] = useState("All");
   const [trendingData, setTrendingData] = useState([]);
   const [eventData, setEventData] = useState([]);
+  const [detailId,  setDetailId] = useState(-1);
 
   const timerInterval = useRef(null);
 
   const { ref, inView } = useInView();
-
-  const changeTopic = useCallback((t) => {
-    setCurrentTopic(t);
-    setStart(null);
-    setHasMore(true);
-    setPolls([]);
-  }, []);
-
-  const handleCreatePoll = () => {
-    if (auth.currentUser) {
-      getUserById(auth.currentUser.uid).then((u) => {
-        if (u.status === 1) {
-          setAddPollDialogVisible(true);
-        } else {
-          toast.error("You are not eligible to create a poll at this time.");
-        }
-      });
-    } else {
-      router.push("/auth/signin");
-    }
-  };
 
   const loadNewPolls = useCallback(async () => {
     if (loading) return;
@@ -262,7 +242,7 @@ export default function Home() {
 
   return (
     <div className="w-full h-full">
-      <div className="flex w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]">
+      <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}>
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
             <div className="flex flex-col items-start">
@@ -287,7 +267,7 @@ export default function Home() {
 
             <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
               {polls.map((poll) => (
-                <Poll poll={poll} key={poll.id} />
+                <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
               ))}
               {/* Intersection Observer Trigger */}
               <div ref={ref} className="h-10" />
@@ -295,6 +275,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {
+        detailId != -1 && <GoldenInsightDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
+      }
     </div>
   );
 }

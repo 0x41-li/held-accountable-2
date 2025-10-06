@@ -9,17 +9,12 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
       key={snapshot.id}
       className="flex flex-col lg:flex-row sm:w-[80%] lg:w-full mx-auto gap-6 lg:gap-0 lg:items-center border border-[#e9eaeb] rounded-2xl overflow-hidden"
     >
-      <img
-        src={snapshot.image.length > 0 ? snapshot.image : "/images/snapshot/SnapshotCardImage.png"}
-        alt={`Snapshot ${snapshot.id}`}
-        className="h-full w-full md:w-[320px] md:h-[240px] rounded-bl-none rounded-br-none rounded-tr-2xl rounded-tl-2xl lg:rounded-bl-2xl lg:rounded-tl-2xl lg:rounded-tr-none lg:rounded-br-none lg:max-w-[15.625rem] xl:max-w-[20rem]"
-      />
       <div className="flex flex-col px-6 pb-6 lg:pb-6 lg:pt-9 w-full">
         <div className="flex items-center justify-between w-full gap-2 mt-6 lg:mt-0">
           <div className="flex gap-[0.625rem] items-center">
             <div className="rounded-full overflow-hidden">
               <img
-                src={snapshot.user.avatar ?? "/images/snapshot/AlishLane.png"}
+                src={snapshot.user?.avatar ?? "/images/snapshot/AlishLane.png"}
                 width={32}
                 height={32}
                 alt="Author Avatar"
@@ -52,7 +47,7 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
           {snapshot.title}
         </p>
         <p className="text-[#535862] text-base leading-[150%] mt-1 line-clamp-2">
-            {snapshot.content.substring(0, 100) +
+            {snapshot.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 100) +
               (snapshot.content.length > 100 ? "..." : "")}
         </p>
 

@@ -1,24 +1,17 @@
+"use client";
 import GoldenInsightDetail from "@/components/GoldenInsightDetail";
 import { getPollById } from "@/services/polls/polls";
+import { useEffect, useState } from "react";
 
-export default async function Page({ params }) {
-  const { id } = await params;
+export default function GoldenInsightDetailPage({ params, data }) {
+  const [id, setId] = useState(-1);
+  const [poll, setPoll] = useState(null);
 
-  let article = null;
-  let poll = null;
-  let selectedOptions = [];
-  let voted = [];
-
-  await getPollById(id)
+  const loadPoll = async () => {
+    await getPollById(id)
     .then((receivedPoll) => {
-      article = receivedPoll.golden_insights[0];
-      poll = {
-        ...receivedPoll,
-        createdAt: receivedPoll.createdAt?.seconds
-          ? new Date(receivedPoll.createdAt.seconds * 1000).toISOString()
-          : null,
-      };
-      selectedOptions = receivedPoll.questions.map((q) =>
+      let article = receivedPoll.golden_insights[0];
+      let selectedOptions = receivedPoll.questions.map((q) =>
         q.users
           ? q.users.findIndex((u) => u === auth.currentUser.uid) >= 0
             ? 1
@@ -26,19 +19,47 @@ export default async function Page({ params }) {
           : -1
       );
 
-      voted = receivedPoll.questions.map((q) => -1);
+      let voted = receivedPoll.questions.map((q) => -1);
+      setPoll({
+        ...receivedPoll,
+        createdAt: receivedPoll.createdAt?.seconds,
+        article,
+        selectedOptions,
+        voted
+      });
     })
     .catch((error) => {
       console.log(error);
     });
+  }
+
+  useEffect(() => {
+    if (params) {
+      setId(params.id);
+    }
+    else {
+      setId(data.id);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (id !== -1) {
+      loadPoll();
+    }
+  }, [id]);
+  
+  if (id == -1 || !poll) {
+    return <></>;
+  }
 
   return (
     <GoldenInsightDetail
       id={id}
-      article={article}
+      article={poll.article}
       poll={poll}
-      selectedOptions={selectedOptions}
-      voted={voted}
+      selectedOptions={poll.selectedOptions}
+      voted={poll.voted}
+      back={data?.back}
     />
   );
 }

@@ -1,14 +1,19 @@
 "use client";
-import { votePoll } from "@/services/polls/polls";
+import { updatePoll, votePoll } from "@/services/polls/polls";
 import { formatDate, formatDateTime } from "@/utils/date";
 import { Icon } from "@iconify/react";
 import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../lib/firebase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { arrayUnion, increment } from "firebase/firestore";
+import ShareModal from "./ShareModal";
 
-export default function Poll({ poll }) {
+export default function Poll({ poll: initialPoll, showDetail }) {
+  const [poll, setPoll] = useState(initialPoll);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const router = useRouter();
   const [showSummary, setShowSummary] = useState(false);
-  const [like, setLike] = useState(false);
   if (!poll.questions) return "";
 
   const handleShowSummary = () => {
@@ -19,6 +24,55 @@ export default function Poll({ poll }) {
     const created_at = new Date(poll.createdAt.seconds * 1000);
     return created_at > Date.now() - 2 * 60 * 60 * 1000;
   }, [poll]);
+
+  const like = useMemo(() => {
+    return poll.like_users.includes(auth.currentUser.uid);
+  }, [poll]);
+
+  const onDetail = (id) => {
+    console.log(id);
+    if (!showDetail) {
+      router.push(`/golden-insights/${id}`);
+      return;
+    }
+    showDetail(id);
+  }
+  
+  const handleLike = async () => {
+    if (poll.like_users.includes(auth.currentUser.uid)) return;
+    let additionalChange = {};
+
+    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            dislikes: increment(-1),
+            dislike_users: arrayRemove(auth.currentUser.uid)
+        };
+    }
+
+    await updatePoll(poll.id, {
+      likes: increment(1),
+      like_users: arrayUnion(auth.currentUser.uid),
+      ...additionalChange
+    });
+
+    additionalChange = {};
+    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+        additionalChange = {
+            dislikes: poll.dislikes - 1,
+            dislike_users: poll.dislike_users.filter(uid => uid !== auth.currentUser.uid)
+        };
+    }
+
+    setPoll({
+        ...poll,
+        likes: poll.likes + 1,
+        like_users: [
+            ...poll.like_users,
+            auth.currentUser.uid
+        ],
+        ...additionalChange
+    });
+  }
 
   return (
     <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white">
@@ -75,7 +129,7 @@ export default function Poll({ poll }) {
       <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
         {poll.questions[0].headline && (
           <p className="font-bold">
-            Breaking News - {poll.questions[0].headline}
+            {poll.questions[0].headline}
           </p>
         )}
         {poll.questions[0].summary ? (
@@ -107,8 +161,8 @@ export default function Poll({ poll }) {
           <div className="w-full overflow-auto">
             <div className="flex w-max gap-[10px]">
               {poll.golden_insights.map((insight, i) => (
-                <Link
-                  href={`/golden-insights/${poll.id}`}
+                <button
+                  onClick={() => onDetail(poll.id)}
                   key={insight.id + "_poll_link"}
                 >
                   <div
@@ -129,11 +183,11 @@ export default function Poll({ poll }) {
                     <div className="flex flex-col gap-[10px] max-w-[360px] p-[10px]">
                       <p className="font-semibold">{insight.title}</p>
                       <p className="flex-1">
-                        {insight.content.substring(0, 70) + "..."}
+                        {insight.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 70) + "..."}
                       </p>
                     </div>
                   </div>
-                </Link>
+                </button>
               ))}
             </div>
           </div>
@@ -145,7 +199,7 @@ export default function Poll({ poll }) {
       <div className="flex items-center gap-5 text-[#404040] font-medium text-[12px] ml-auto">
         <p
           className="flex items-center gap-1 cursor-pointer select-none"
-          onClick={() => setLike(!like)}
+          onClick={() => handleLike()}
         >
           <Icon
             icon={like ? "flat-color-icons:like" : "icon-park-outline:like"}
@@ -154,11 +208,12 @@ export default function Poll({ poll }) {
           />
           {poll.likes} Likes
         </p>
-        <p className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
+        <button onClick={()=>setShowShareModal(true)} className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
           <Icon icon="ix:share" width={20} height={20} />
           Share
-        </p>
+        </button>
       </div>
+      <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
     </div>
   );
 }

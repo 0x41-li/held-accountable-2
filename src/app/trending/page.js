@@ -66,7 +66,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log(loading, inView)
     if (!loading && inView && hasMore)
       loadPolls();
   }, [inView, loading, hasMore]);

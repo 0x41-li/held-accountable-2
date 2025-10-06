@@ -15,7 +15,7 @@ export default function NewSnapshotPage() {
     const fileRef = useRef(null);
     const [image, setImage] = useState("");
     const [isPosting, setIsPosting] = useState(false);
-    const [postDate, setPostDate] = useState((new Date()).toISOString().substring(0, 10));
+    const [postDate, setPostDate] = useState((new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10));
     const router = useRouter();
 
     const handleUploadImage = (e) => {
@@ -27,7 +27,6 @@ export default function NewSnapshotPage() {
             body: formData
         }).then(res => res.json())
         .then(res => {
-            console.log(res);
             setImage(res.data.image.url);
         });
     }

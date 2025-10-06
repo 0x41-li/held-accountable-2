@@ -30,32 +30,32 @@ const coreValues = [
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We relentlessly pursue excellence by holding ourselves and our work to the highest standards, never settling for 'good enough’.",
   },
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We approach every challenge with curiosity and rigor, digging beneath the surface to fully understand the details",
   },
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We move quickly and decisively, taking initiative to turn ideas into results and solve problems without waiting for perfect conditions.",
   },
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We empower ourselves to take initiative and drive change without hesitation",
   },
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We are accountable for meeting commitments and consistently delivering high-impact outcomes that drive success for our team, customers, and stakeholders.",
   },
   {
     icon: "hugeicons:message-multiple-02",
     title: "Share team inboxes",
-    descr: "Whether you have a team of 2, our shared team inboxes.",
+    descr: "We act like owners—taking responsibility, making decisions with care, and holding ourselves accountable for results",
   },
 ];
 
@@ -133,9 +133,9 @@ export default function AboutUs() {
                     height={24}
                   />
                 </div>
-                <p className="font-semibold text-lg text-[#181D27] mt-2 lg:mt-4 mb-2">
+                {/* <p className="font-semibold text-lg text-[#181D27] mt-2 lg:mt-4 mb-2">
                   {item.title}
-                </p>
+                </p> */}
                 <span className="text-md text-[#535862]">{item.descr}</span>
               </div>
             ))}

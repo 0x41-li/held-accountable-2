@@ -2,6 +2,7 @@
 import Sidebar from "@/components/Sidebar";
 import { getSnapshotById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
+import { marked } from "marked";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -29,8 +30,8 @@ export default function BlogDetail() {
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
           <div className='flex px-[24px] pb-[20px] border-b border-secondary items-start'>
             <div className='flex flex-col gap-[4px] flex-1'>
-              <div className='text-[30px] leading-[38px] font-semibold'>Through My Eyes</div>
-              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>The latest industry news, interviews, technologies, and resources.</div>
+              <div className='text-[30px] leading-[38px] font-semibold'>Snapshots</div>
+              <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>See what were discussed in previous days.</div>
             </div>
           </div>
           <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px]'>
@@ -57,9 +58,9 @@ export default function BlogDetail() {
                     </div>
                 ))}
             </div>
-            <div className="w-full px-[100px] flex flex-col gap-[20px]">
+            <div className="w-full px-[20px] md:px-[100px] flex flex-col gap-[20px]">
                 <img src={article.image} />
-                <div className="text-[18px] leading-[28px]" dangerouslySetInnerHTML={{ __html: article.content.replace("\n", "<br />")}}>
+                <div className="text-[18px] leading-[28px] golden-insight-detail-content" dangerouslySetInnerHTML={{ __html: marked(article.content)}}>
                 </div>
             </div>
             <div className="flex justify-center pb-[30px]">

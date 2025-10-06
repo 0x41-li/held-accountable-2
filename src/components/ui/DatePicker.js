@@ -191,7 +191,7 @@ export function DatePicker({
                   const selected = isSelected(day);
                   return (
                     <button
-                      key={day.toISOString()}
+                      key={day.toLocaleString("en-CA", { timeZone: "America/New_York" })}
                       type="button"
                       onClick={() => handleDateSelect(day)}
                       className={[

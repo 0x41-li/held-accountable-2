@@ -17,13 +17,10 @@ export function SnapshotFilters({setSelectedDate, setSelectedTopics, selectedDat
       <div className="w-full sm:w-[20rem]">
         <MultiSelect
           options={[
-            "Gaming",
-            "Technology",
-            "Health",
-            "Science",
-            "Education",
-            "Design",
-            "Research",
+            "AI",
+            "Crypto",
+            "Politics",
+            "Finance",
           ]}
           placeholder="Filter Topics"
           selectedValues={selectedTopics}

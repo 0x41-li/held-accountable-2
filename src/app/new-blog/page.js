@@ -25,7 +25,6 @@ export default function Profile() {
             body: formData
         }).then(res => res.json())
         .then(res => {
-            console.log(res);
             setImage(res.data.image.url);
         });
     }
@@ -60,7 +59,7 @@ export default function Profile() {
     <div className='w-full h-full overflow-hidden md:rounded-tl-[40px] pt-[32px] border border-secondary flex flex-col bg-[#FCFCFD]'>
         <div className='flex flex-col md:flex-row gap-[10px] px-[24px] pb-[20px] border-b border-secondary items-start'>
           <div className='flex flex-col gap-[4px] flex-1'>
-            <div className='text-[30px] leading-[38px] font-semibold'>New Throuh My Eyes</div>
+            <div className='text-[30px] leading-[38px] font-semibold'>New Thought Leadership</div>
           </div>
           <div className="flex gap-[10px]  items-center">
             <button className="bg-blue rounded-[10px] text-white  w-[200px] py-[14px]" disabled={isPosting} onClick={() => onSave()}>{isPosting?"Publishing...":"Publish"}</button>

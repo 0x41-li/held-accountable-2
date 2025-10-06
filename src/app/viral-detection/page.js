@@ -11,7 +11,7 @@ import { getViralDetections } from "@/services/polls/polls";
 export default function Snapshots() {
   const [viralData, setViralData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [activeTab, setActiveTab] = useState("Last Month");
+  const [activeTab, setActiveTab] = useState("24 Hours");
   const [platform, setPlatform] = useState("");
   const [platforms, setPlatforms] = useState(["All"]);
   const tabs = ["24 Hours", "Last Week", "Last Month"];
@@ -20,19 +20,19 @@ export default function Snapshots() {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   useEffect(() => {
-    const now = Date.now() - 24 * 60 * 60 * 1000;
-    let endDate = (new Date(Date.now() - 24 * 60 * 60 * 1000)).toISOString().substring(0, 10);
-    let startDate = endDate;
+    // const now = Date.now() - 24 * 60 * 60 * 1000;
+    // let endDate = (new Date(Date.now() - 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
+    // let startDate = endDate;
 
-    if (activeTab === "24 Hours") {
-      startDate = endDate;
-    } else if (activeTab === "Last Week") {
-      startDate = (new Date(now - 7 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 10);
-    } else if (activeTab === "Last Month") {
-      startDate = (new Date(now - 30 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 10);
-    }
+    // if (activeTab === "24 Hours") {
+    //   startDate = endDate;
+    // } else if (activeTab === "Last Week") {
+    //   startDate = (new Date(now - 7 * 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
+    // } else if (activeTab === "Last Month") {
+    //   startDate = (new Date(now - 30 * 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
+    // }
 
-    getViralDetections(startDate, endDate).then(d => setViralData(d));
+    getViralDetections().then(d => setViralData(d));
   }, [activeTab]);
 
   useEffect(() => {
@@ -51,14 +51,11 @@ export default function Snapshots() {
     <div className="flex flex-col md:mt-3 border-l border-t border-[#E4E7EC] md:rounded-tl-3xl h-full">
       <SectionTitle
         title="Viral Detection"
-        subtitle="The latest trends around the world, right in your sight."
-        input
-        value={searchValue}
-        setValue={setSearchValue}
+        subtitle="Top 5 most trending topics today!"
       />
       <div className="flex flex-col-reverse xl:flex-row w-full">
         <div className="flex flex-col py-6 px-4 w-full">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          {/* <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <Tabs
               options={tabs}
               activeTab={activeTab}
@@ -71,7 +68,7 @@ export default function Snapshots() {
               placeholder="Select Category"
               className="min-w-[170px]"
             />
-          </div>
+          </div> */}
           <div className="flex flex-col items-center gap-6 mt-6">
             {viralData.length > 0? 
                   <div className="flex flex-col gap-6">
@@ -82,8 +79,6 @@ export default function Snapshots() {
             )}
           </div>
         </div>
-
-        <ViralSidebar platforms={platforms} viralData={viralData} />
       </div>
     </div>
   );
