@@ -665,9 +665,9 @@ ${article_body}
 - Dates:
   - Prefer the article's publish date UNLESS the H1 explicitly includes an absolute event date (e.g., "on Sept. 28, 2025"). Do NOT invent or convert relative dates (e.g., "Sunday")—omit the date from the headline if you can't resolve it to an absolute date on the page.
 - Leaders/administrations (U.S. guardrail by event date):
-  - 2017‑01‑20 → 2021‑01‑20 = Trump
-  - 2021‑01‑20 → 2025‑01‑20 = Biden
-  - 2025‑01‑20 → present = Trump
+  - 2017-01-20 → 2021-01-20 = Trump
+  - 2021-01-20 → 2025-01-20 = Biden
+  - 2025-01-20 → present = Trump
   If uncertain, use neutral phrasing ("the U.S. administration"). Never guess.
 - Outlet lock: The parenthetical MUST match the URL's news brand (e.g., reuters.com → Reuters; bbc.com → BBC News; abcnews.go.com → ABC News).
 - No embellishment or inference. If a number/date is unclear, omit it rather than inventing it.
@@ -680,10 +680,17 @@ ${article_body}
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
 5. **blog_title**: Clear and compelling title.
 6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
-Always include analytics (stats, trends, or charts).
-Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
-Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
-7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]
+   Always include analytics (stats, trends, or charts).
+   Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
+   Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be **bolded** for emphasis.
+   **At the end of the Big Picture analysis, add a sources list titled "### Big Picture — Sources" with 3–6 bullet points naming the organization and the dataset/report/page title actually used. Use only open sources (e.g., Wikipedia, World Bank, IMF, UN, government statistical agencies); do not include the news article itself.**
+   **Format example (placeholders shown):**
+   ### Big Picture — Sources
+   - Wikipedia — [Topic/Page Title]
+   - World Bank — [Dataset or "Commodity Markets Outlook (Year)"]
+   - U.S. Federal Reserve (FRED) — [Series name/code]
+   - IMF — [Report/Dataset Title (Year)]
+7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto"]
 
 
 ### Final self-audit (internal; do not print):
