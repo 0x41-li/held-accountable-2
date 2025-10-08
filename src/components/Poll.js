@@ -37,6 +37,15 @@ export default function Poll({ poll: initialPoll, showDetail }) {
     }
     showDetail(id);
   }
+
+  const getHeadline = (headline) => {
+    let str = headline.split("(")[1].split(")")[0];
+    headline = headline.replace("(" + str + ")", "");
+    return [
+      headline,
+      <span style={{ color: "#1f65ceff"}}>{"(" + str.replace("publisher verified", "").replace(",", "").trim() + ")"}</span>
+    ]
+  }
   
   const handleLike = async () => {
     if (poll.like_users.includes(auth.currentUser.uid)) return;
@@ -129,7 +138,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
         {poll.questions[0].headline && (
           <p className="font-bold">
-            {poll.questions[0].headline}
+            {getHeadline(poll.questions[0].headline)}
           </p>
         )}
         {poll.questions[0].summary ? (

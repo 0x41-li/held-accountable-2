@@ -246,10 +246,10 @@ export default function Home() {
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
             <div className="flex flex-col items-start">
-              <HomeCarousel title="Trending" data={trendingData} speed={30} />
+              <HomeCarousel title="" data={trendingData} speed={30} />
               <HomeCarousel
                 trend={false}
-                title="Upcoming Event"
+                title=""
                 className="border-[#E4E7EC] border-t-[1px] border-b-[1px]"
                 data={eventData}
                 speed={35}

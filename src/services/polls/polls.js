@@ -674,7 +674,7 @@ ${article_body}
 - All results should be English.
 
 ### Output:
-1. **headline**: Start with "Breaking News — " and write ONE crisp sentence that closely mirrors the H1, preserving all hard facts (numbers, places). End with "(Outlet, publisher verified)"
+1. **headline**: Start with "Breaking News — " and write ONE crisp sentence that closely mirrors the H1, preserving all hard facts (numbers, places). End with "(Outlet)"
 2. **question**: A balanced poll question based on the article's core issue.
 3. **answers**: 2 to 4 multiple choice options.
 4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.

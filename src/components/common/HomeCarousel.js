@@ -7,7 +7,7 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
 
   return (
     <div className={`flex items-center py-1 gap-3 pl-6 w-full ${className} text-xs`}>
-      <div
+      {/* <div
         className={`flex items-center justify-center py-0.5 gap-1 w-[160px] rounded-lg border-[1px] ${
           trend
             ? "border-[#F9DBAF] bg-[#FEF6EE]"
@@ -36,7 +36,7 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
         >
           {title}
         </p>
-      </div>
+      </div> */}
       <div className="relative w-full overflow-hidden">
         <div className="pointer-events-none absolute left-0 top-0 h-full w-14 bg-gradient-to-r from-white to-transparent z-10"></div>
         <Marquee speed={speed}>
