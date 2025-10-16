@@ -24,7 +24,7 @@ function updateNewsArticle(url, updates) {
 }
 
 function getUnusedNewsArticles() {
-    return db.prepare("SELECT * FROM news_articles WHERE used IS NULL AND date = ?").all((new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10));
+    return db.prepare("SELECT * FROM news_articles WHERE used IS NULL ORDER BY date DESC").all();
 }
 
 export async function GET(req) {

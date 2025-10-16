@@ -12,14 +12,14 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
       <div className="flex flex-col px-6 pb-6 lg:pb-6 lg:pt-9 w-full">
         <div className="flex items-center justify-between w-full gap-2 mt-6 lg:mt-0">
           <div className="flex gap-[0.625rem] items-center">
-            <div className="rounded-full overflow-hidden">
+            {/* <div className="rounded-full overflow-hidden">
               <img
                 src={snapshot.user?.avatar ?? "/images/snapshot/AlishLane.png"}
                 width={32}
                 height={32}
                 alt="Author Avatar"
               />
-            </div>
+            </div> */}
             <div className="flex flex-col gap-0">
               <p className="font-medium text-[#101828] text-sm">
                 {snapshot.user ? snapshot.user.fullname : ""}

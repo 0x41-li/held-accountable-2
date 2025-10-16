@@ -191,11 +191,11 @@ const SignIn = () => {
         <div className="flex items-center justify-center md:justify-between w-full pb-[12px] md:pb-[32px] px-[30px] text-[#A4A7AE] text-[14px]">
           <p className="mt-[24px] md:mt-0">© 2025 Held-Accountable</p>
           <a
-            href="mailto:info@held-accountable.com"
+            href="mailto:contact@held-accountable.com"
             className="hidden md:flex items-center gap-[4px] hover:opacity-80"
           >
             <Icon icon="tabler:mail" className="w-[16px] h-[16px]" />
-            <p>info@held-accountable.com</p>
+            <p>contact@held-accountable.com</p>
           </a>
         </div>
       </div>
