@@ -36,7 +36,7 @@ Remote-friendly with flexible collaboration hours. We value clear writing, measu
 - Publish a prompt style guide and decision log adopted by partner teams.
 
 ## How to apply
-Send your resume/portfolio (prompt samples/eval reports welcome) to careers@held-accountable.com with subject **AI Prompt Engineer – [Your Name]**.`,
+Send your resume/portfolio (prompt samples/eval reports welcome) to contact@held-accountable.com with subject **AI Prompt Engineer – [Your Name]**.`,
     location: "Remote",
     type: "Full-time",
     salary: "$140k - $200k base + equity",
@@ -84,7 +84,7 @@ We ship quickly, test rigorously, and instrument everything. We value clear writ
 - Document a platform architecture and engineering style guide adopted by the team.
 
 ## How to apply
-Send your resume/GitHub/portfolio to careers@held-accountable.com with subject **Senior Engineering Lead – [Your Name]**.`,
+Send your resume/GitHub/portfolio to contact@held-accountable.com with subject **Senior Engineering Lead – [Your Name]**.`,
     location: "Remote",
     type: "Full-time",
     salary: "$140k - $200k base + equity",
@@ -132,7 +132,7 @@ We move quickly, test rigorously, and let user insight + data guide decisions. Y
 - Stand up a measurement stack and weekly dashboards for DAU, D1/D7 retention, poll participation rate, CPA/CAC, share ratio, and newsletter open/CTR.
 
 ## How to apply
-Send your resume/portfolio to careers@held-accountable.com with subject **Marketing Lead – [Your Name]**.`,
+Send your resume/portfolio to contact@held-accountable.com with subject **Marketing Lead – [Your Name]**.`,
     location: "Remote",
     type: "Full-time",
     salary: "$140k - $200k base + equity",

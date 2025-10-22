@@ -146,7 +146,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
             className="text-blue flex gap-[2px] items-center"
             onClick={handleShowSummary}
           >
-            Elaborate <Icon icon="lsicon:down-outline" />
+            Simplify <Icon icon="lsicon:down-outline" />
           </button>
         ) : (
           ""
