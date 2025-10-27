@@ -71,6 +71,16 @@ export default function Sidebar() {
             <span>Headlines</span>
           </Link> */}
           <Link
+            href="/enterprises"
+            className={
+              "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
+              (pathname == "/enterprises" ? "bg-blue  text-white" : "")
+            }
+          >
+            <Icon icon="carbon:satellite-radar" />
+            <span>Enterprise Radar</span>
+          </Link>
+          <Link
             href="/blog"
             className={
               "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +

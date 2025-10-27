@@ -139,3 +139,132 @@ Send your resume/portfolio to contact@held-accountable.com with subject **Market
     industry: "Marketing",
   },
 ];
+
+export const FAMOUS_COMPANIES_DATA = [
+  {
+    id: "apple",
+    name: "Apple",
+    description: "Apple designs and manufactures consumer electronics, including iPhone, iPad, and Mac. Known for innovation, design, and a seamless ecosystem of hardware, software, and services.",
+    logo: "ic:baseline-apple",
+    search: "http://en.wikipedia.org/wiki/Apple_Inc."
+  },
+  {
+    id: "microsoft",
+    name: "Microsoft",
+    description: "Microsoft is a technology giant offering software, hardware, and cloud services. Notable products include Windows, Office, Azure, and the Xbox gaming platform.",
+    logo: "lineicons:microsoft",
+    search: "http://en.wikipedia.org/wiki/Microsoft"
+  },
+  {
+    id: "amazon",
+    name: "Amazon",
+    description: "Amazon is the world's largest online retailer and cloud services provider. It offers a wide range of products, digital content, and AWS cloud computing.",
+    logo: "lineicons:amazon",
+    search: "http://en.wikipedia.org/wiki/Amazon_(company)"
+  },
+  {
+    id: "google",
+    name: "Google",
+    description: "Google specializes in search engines, digital advertising, and technology products, including Android, Chrome, YouTube, and cloud computing solutions.",
+    logo: "lineicons:google",
+    search: "http://en.wikipedia.org/wiki/Google"
+  },
+  {
+    id: "tesla",
+    name: "Tesla",
+    description: "Tesla is a pioneer in electric vehicles, renewable energy, and battery technology. The company also develops self-driving software and energy storage solutions.",
+    logo: "lineicons:tesla",
+    search: "http://en.wikipedia.org/wiki/Tesla,_Inc."
+  },
+  {
+    id: "meta",
+    name: "Meta Platforms",
+    description: "Meta, formerly Facebook, is a leader in social media, virtual reality, and digital communication via platforms like Facebook, Instagram, WhatsApp, and Oculus.",
+    logo: "lineicons:meta",
+    search: "http://en.wikipedia.org/wiki/Meta_Platforms"
+  },
+  {
+    id: "samsung",
+    name: "Samsung",
+    description: "Samsung is a global electronics manufacturer, producing smartphones, TVs, semiconductors, and home appliances. It is renowned for innovation in mobile technology.",
+    logo: "logos:samsung",
+    search: "http://en.wikipedia.org/wiki/Samsung"
+  },
+  {
+    id: "toyota",
+    name: "Toyota",
+    description: "Toyota is a top global automaker, renowned for quality vehicles, hybrid technology, and pioneering the mass adoption of fuel-efficient and reliable cars worldwide.",
+    logo: "lineicons:toyota",
+    search: "http://en.wikipedia.org/wiki/Toyota"
+  },
+  {
+    id: "ibm",
+    name: "IBM",
+    description: "IBM specializes in enterprise technology, cloud computing, artificial intelligence, and consulting services, supporting businesses with innovative hardware and software solutions.",
+    logo: "lineicons:ibm",
+    search: "http://en.wikipedia.org/wiki/IBM"
+  },
+  {
+    id: "nike",
+    name: "Nike",
+    description: "Nike is the world's leading sportswear and footwear brand, recognized for innovation, cutting-edge design, athlete sponsorships, and global appeal across athletes and consumers.",
+    logo: "lineicons:nike",
+    search: "http://en.wikipedia.org/wiki/Nike,_Inc."
+  },
+  {
+    id: "intel",
+    name: "Intel",
+    description: "Intel is a leading producer of semiconductors, microprocessors, and computer components, powering millions of devices and driving advancements in computing technology.",
+    logo: "lineicons:intel",
+    search: "http://en.wikipedia.org/wiki/Intel"
+  },
+  {
+    id: "netflix",
+    name: "Netflix",
+    description: "Netflix is a global streaming platform, offering original movies, series, and documentaries. It has revolutionized how people consume digital entertainment worldwide.",
+    logo: "lineicons:netflix",
+    search: "http://en.wikipedia.org/wiki/Netflix,_Inc."
+  },
+  {
+    id: "disney",
+    name: "Disney",
+    description: "Disney is a diversified entertainment company creating beloved movies, TV shows, theme parks, and streaming platforms like Disney+, enchanting audiences globally.",
+    logo: "tabler:brand-disney",
+    search: "http://en.wikipedia.org/wiki/The_Walt_Disney_Company"
+  },
+  {
+    id: "siemens",
+    name: "Siemens",
+    description: "Siemens is a multinational engineering and technology company focusing on industry, energy, healthcare, and infrastructure solutions to support sustainable global progress.",
+    logo: "simple-icons:siemens",
+    search: "http://en.wikipedia.org/wiki/Siemens"
+  },
+  {
+    id: "sony",
+    name: "Sony",
+    description: "Sony is a global conglomerate producing electronics, gaming consoles, films, and music. PlayStation and its entertainment divisions are household names globally.",
+    logo: "simple-icons:sony",
+    search: "http://en.wikipedia.org/wiki/Sony"
+  },
+  {
+    id: "mcdonalds",
+    name: "McDonald's",
+    description: "McDonald's is the world's largest fast-food restaurant chain, known for its burgers, fries, and extensive global presence with thousands of locations in over 100 countries.",
+    logo: "simple-icons:mcdonalds",
+    search: "http://en.wikipedia.org/wiki/McDonald's"
+  },
+  {
+    id: "alibaba",
+    name: "Alibaba",
+    description: "Alibaba is a leading Chinese e-commerce, technology, and cloud company, connecting buyers and sellers worldwide through platforms like Alibaba.com, Taobao, and Tmall.",
+    logo: "ant-design:alibaba-outlined",
+    search: "http://en.wikipedia.org/wiki/Alibaba"
+  },
+  {
+    id: "oracle",
+    name: "Oracle",
+    description: "Oracle is a major provider of database software, cloud solutions, and enterprise IT products, serving businesses with reliable, scalable, and secure technology solutions.",
+    logo: "lineicons:oracle",
+    search: "http://en.wikipedia.org/wiki/Oracle"
+  }
+];

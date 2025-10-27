@@ -34,6 +34,18 @@ function callViralDetectionEndpoint() {
   });
 }
 
+function callEnterpriseEndpoint() {
+  https.get('https://held-accountable.com/api/enterprise/generate', (res) => {
+    let data = '';
+    res.on('data', (chunk) => data += chunk);
+    res.on('end', () => {
+      console.log(`[${new Date().toISOString()}] Called /api/enterprise/generate: ${res.statusCode}`);
+    });
+  }).on('error', (err) => {
+    console.error(`[${new Date().toISOString()}] Error calling /api/enterprise/generate:`, err.message);
+  });
+}
+
 app.prepare().then(() => {
   // Redirect from HTTP to HTTPS
   http.createServer((req, res) => {
@@ -60,8 +72,10 @@ app.prepare().then(() => {
 
     // Start polling every 15 minutes
     callPollAiEndpoint(); // Call immediately on startup
+    callEnterpriseEndpoint(); // Call immediately on startup
     setInterval(callPollAiEndpoint, 5 * 60 * 1000); // Every 15 minutes
-    cron.schedule('30 11 * * *', () => {
+    setInterval(callEnterpriseEndpoint, 5 * 60 * 1000); // Every 15 minutes
+    cron.schedule('30 6 * * *', () => {
       console.log(`[${new Date().toISOString()}] Triggering daily viral detection task...`);
       callViralDetectionEndpoint();
     });

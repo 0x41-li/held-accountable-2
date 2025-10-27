@@ -16,11 +16,13 @@ import {
   limit,
   startAfter,
 } from "firebase/firestore";
+import { FAMOUS_COMPANIES_DATA } from "../const";
 
 const POLLS_COLLECTION = "polls";
 const TOPIC_COLLECTION = "topics";
 const ARTICLE_COLLECTION = "articles";
 const CONTACTS_COLLECTION = "contacts";
+const USERS_COLLECTION = "users";
 const SNAPSHOT_COLLECTION = 'snapshots';
 const VIRAL_DETECTIONS_COLLECTION = 'viral_detections';
 
@@ -649,8 +651,9 @@ export async function generatePoll(article_url, article_title, article_body) {
   const url = "https://api.openai.com/v1/responses";
 
   const message = `Create a short "Breaking News" card from this url: ${article_url}
-  
+
 If you can not access please reference following content:
+
 ### Article Title ###
 ${article_title}
 
@@ -661,16 +664,21 @@ ${article_body}
 ### Non-negotiable rules (internal; do not print):
 - Parse ONLY from the article's own page:
   - outlet_name (must match URL domain), publish_datetime (ISO), location, the main H1 headline text, and the first 1–2 sentences.
-- If the H1 contains a hard number (e.g., casualties, % move, count), KEEP the same number (or "at least X" if that is how it appears).
+  - If the H1 contains a hard number (e.g., casualties, % move, count), KEEP the same number (or "at least X" if that is how it appears).
+
 - Dates:
   - Prefer the article's publish date UNLESS the H1 explicitly includes an absolute event date (e.g., "on Sept. 28, 2025"). Do NOT invent or convert relative dates (e.g., "Sunday")—omit the date from the headline if you can't resolve it to an absolute date on the page.
+
 - Leaders/administrations (U.S. guardrail by event date):
   - 2017-01-20 → 2021-01-20 = Trump
   - 2021-01-20 → 2025-01-20 = Biden
   - 2025-01-20 → present = Trump
   If uncertain, use neutral phrasing ("the U.S. administration"). Never guess.
+
 - Outlet lock: The parenthetical MUST match the URL's news brand (e.g., reuters.com → Reuters; bbc.com → BBC News; abcnews.go.com → ABC News).
+
 - No embellishment or inference. If a number/date is unclear, omit it rather than inventing it.
+
 - All results should be English.
 
 ### Output:
@@ -683,17 +691,35 @@ ${article_body}
    Always include analytics (stats, trends, or charts).
    Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
    Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be **bolded** for emphasis.
-   **At the end of the Big Picture analysis, add a sources list titled "### Big Picture — Sources" with 3–6 bullet points naming the organization and the dataset/report/page title actually used. Use only open sources (e.g., Wikipedia, World Bank, IMF, UN, government statistical agencies); do not include the news article itself.**
-   **Format example (placeholders shown):**
-   ### Big Picture — Sources
-   - Wikipedia — [Topic/Page Title]
-   - World Bank — [Dataset or "Commodity Markets Outlook (Year)"]
-   - U.S. Federal Reserve (FRED) — [Series name/code]
-   - IMF — [Report/Dataset Title (Year)]
+
+   New — Investment Impact Section:
+   - Add a clearly labeled subsection titled **"💵 If you invested X dollars, what would that mean?"** whenever the topic is **Crypto, AI, Finance, or Politics** that specifically mentions a company or a high‑level person involved with a company.
+   - Use only open data (e.g., index/sector returns from FRED, World Bank, IMF, OECD) and Wikipedia for background. If precise asset‑level open data are unavailable, use a transparent index-level proxy (state the proxy and timeframe) or provide a formulaic illustration (e.g., compound growth at an open-data CAGR).
+   - Default **X = $1,000** unless a different amount is explicitly provided by the user or the article context; state all assumptions (time horizon, return proxy, volatility or drawdown context if used).
+   - Present outcomes numerically (e.g., end value, % change, real (inflation-adjusted) terms if applicable) and label it as a hypothetical illustration, **not financial advice**.
+
+   **NEW — Enterprise Adoption Add-on (must accompany the Investment Impact subsection):**
+   - Immediately after the "💵 If you invested X dollars..." subsection, add a second subsection titled **"🏢 How large companies leverage this today"**.
+   - Summarize how major firms (e.g., Fortune 500 or sector leaders) are currently adopting, deploying, or monetizing the technology/policy/asset discussed.
+   - Use only open sources (e.g., FRED sector data, OECD/IMF/World Bank industry indicators) and **Wikipedia** company pages for background. Prefer 2–4 concise, sourced examples; keep neutral, avoid marketing language.
+   - Where direct adoption data are unavailable from open sources, describe typical enterprise use cases in the sector using sector-level open data proxies (explicitly name the proxy and timeframe).
+
+   **Analytics and Sources:**
+   - You may embed analytics inline or present them in a trailing section:
+     **📊 Analytics & Data Points** — bullet key figures, historical trends, or compact charts.
+   - **At the end of the Big Picture analysis, add a sources list titled "### Big Picture — Sources" with 3–6 bullet points** naming the organization and the dataset/report/page title actually used. Use only open sources (e.g., World Bank, IMF, OECD, UN, national statistical agencies, FRED). **Place the Wikipedia source as the last bullet.**
+   - **Format example (placeholders shown):**
+     ### Big Picture — Sources
+     - World Bank — [Dataset or "Commodity Markets Outlook (Year)"]
+     - U.S. Federal Reserve (FRED) — [Series name/code]
+     - IMF — [Report/Dataset Title (Year)]
+     - UN / National Statistical Office — [Dataset/Release Title (Year)]
+     - Wikipedia — [Topic/Page Title] ← Always last
+
 7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto"]
 
-
 ### Final self-audit (internal; do not print):
+
 - Outlet parenthetical matches URL domain.
 - No invented dates. If no absolute date in H1/lede, none appears in title.
 - If H1 has a number, identical number appears in the title.
@@ -1134,5 +1160,174 @@ export async function deleteViralDetection(id) {
   } catch (error) {
     console.error("Error deleting article:", error);
     throw error;
+  }
+}
+
+export async function addCompanyToFavorites(user_id, company_id) {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, user_id);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+    const favorites = userData.favorites || [];
+    if (favorites.includes(company_id)) {
+      throw new Error("Company already in favorites");
+    }
+    favorites.push(company_id);
+    await updateDoc(userRef, { favorites });
+    return true;
+  } catch (error) {
+    console.error("Error adding company to favorites:", error);
+    return false;
+  }
+}
+
+export async function removeCompanyFromFavorites(user_id, company_id) {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, user_id);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+    const favorites = userData.favorites || [];
+    if (!favorites.includes(company_id)) {
+      throw new Error("Company not in favorites");
+    }
+    favorites.splice(favorites.indexOf(company_id), 1);
+    await updateDoc(userRef, { favorites });
+    return true;
+  } catch (error) {
+    console.error("Error removing company from favorites:", error);
+    return false;
+  }
+}
+
+export async function getCompanyNewsFromNewsAi(company_id) {
+  const url = "https://eventregistry.org/api/v1/article/getArticles";
+  const today = (new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
+  const company = FAMOUS_COMPANIES_DATA.find(company => company.id === company_id);
+  if (!company) {
+    throw new Error("Company not found");
+  }
+  try {
+    const body = JSON.stringify({
+      articlesCount: "100",
+      includeArticleImage: "true",
+      includeArticleShares: "true",
+      includeArticleSentiment: "true",
+      query: JSON.stringify({
+        "$query":
+        {
+          "$and": 
+          [
+            {
+              "dateStart": today,
+              "dateEnd":today
+            },
+            {"sourceGroupUri":"business/top100"},
+            {
+              "conceptUri": company.search
+            }
+          ]
+        },
+        "$filter": {
+          "forceMaxDataTimeWindow": "31",
+          "isDuplicate": "skipDuplicates",
+          "dataType": ["news", "blog"]
+        }
+      }),
+      resultType: "articles",
+      articlesSortBy: "date",
+      apiKey: process.env.NEWSAPI_KEY,
+      articlesConceptLang: "eng",
+      includeArticleConcepts: "true",
+      _origin: "sandbox",
+      articlesPage: "1",
+    });
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    return null;
+  }
+}
+
+
+export async function generateComapnyArticleUsingGPT(news_title, news_body) {
+  const openai_api_key =
+    "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";
+  const url = "https://api.openai.com/v1/responses";
+
+  const message = `Please create an professional analysis article based on following news.
+
+### News Details ###
+
+News Title:
+${news_title}
+News Content:
+${news_body}
+
+### Output:
+1. **title**: Clear and compelling title.
+2. **content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
+3. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + openai_api_key,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1",
+        tools: [{ type: "web_search_preview" }],
+        input: message,
+        text: {
+          format: {
+            name: "poll",
+            type: "json_schema",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                content: { type: "string" },
+                category: {
+                  type: "string",
+                  enum: ["AI", "Finance", "Politics", "Crypto"],
+                },
+              },
+              required: [
+                "title",
+                "content",
+                "category",
+              ],
+              additionalProperties: false,
+            },
+          },
+        },
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    return data.output.length > 1
+      ? JSON.parse(data.output[1].content[0].text)
+      : JSON.parse(data.output[0].content[0].text);
+  } catch (error) {
+    console.error("Error generating article using gpt:", error);
+    return null;
   }
 }
