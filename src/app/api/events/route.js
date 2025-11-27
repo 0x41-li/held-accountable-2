@@ -9,17 +9,17 @@ const getEventsData = async () => {
 }
 export async function GET(req) {
     let data = [];
-    if (fs.existsSync("upcoming_events")) {
-        const dump = JSON.parse(fs.readFileSync("upcoming_events"));
-        if (Date.now() - dump.last_timestamp > 3600 * 1000) {
-            data = await getEventsData();
-            fs.writeFileSync("upcoming_events", JSON.stringify({ last_timestamp: Date.now(), data }));
-        } else {
-            data = dump.data;
-        }
-        return NextResponse.json({ message: 'Received', data: data.events.results }, { status: 200 });
-    }
+    // if (fs.existsSync("upcoming_events")) {
+    //     const dump = JSON.parse(fs.readFileSync("upcoming_events"));
+    //     if (Date.now() - dump.last_timestamp > 3600 * 1000) {
+    //         data = await getEventsData();
+    //         fs.writeFileSync("upcoming_events", JSON.stringify({ last_timestamp: Date.now(), data }));
+    //     } else {
+    //         data = dump.data;
+    //     }
+    //     return NextResponse.json({ message: 'Received', data: data.events.results }, { status: 200 });
+    // }
     data = await getEventsData();
-    fs.writeFileSync("upcoming_events", JSON.stringify({ last_timestamp: Date.now(), data }));
+    // fs.writeFileSync("upcoming_events", JSON.stringify({ last_timestamp: Date.now(), data }));
     return NextResponse.json({ message: 'Received', data: data.events.results }, { status: 200 });
 }

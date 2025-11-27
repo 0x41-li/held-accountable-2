@@ -19,17 +19,17 @@ const getTrendingData = async () => {
 }
 export async function GET(req) {
     let data = [];
-    if (fs.existsSync("trending_dump")) {
-        const dump = JSON.parse(fs.readFileSync("trending_dump"));
-        if (Date.now() - dump.last_timestamp > 300 * 1000) {
-            data = await getTrendingData();
-            fs.writeFileSync("trending_dump", JSON.stringify({ last_timestamp: Date.now(), data }));
-        } else {
-            data = dump.data;
-        }
-        return NextResponse.json({ message: 'Received', symbols: data }, { status: 200 });
-    }
+    // if (fs.existsSync("trending_dump")) {
+    //     const dump = JSON.parse(fs.readFileSync("trending_dump"));
+    //     if (Date.now() - dump.last_timestamp > 300 * 1000) {
+    //         data = await getTrendingData();
+    //         fs.writeFileSync("trending_dump", JSON.stringify({ last_timestamp: Date.now(), data }));
+    //     } else {
+    //         data = dump.data;
+    //     }
+    //     return NextResponse.json({ message: 'Received', symbols: data }, { status: 200 });
+    // }
     data = await getTrendingData();
-    fs.writeFileSync("trending_dump", JSON.stringify({ last_timestamp: Date.now(), data }));
+    // fs.writeFileSync("trending_dump", JSON.stringify({ last_timestamp: Date.now(), data }));
     return NextResponse.json({ message: 'Received', symbols: data }, { status: 200 });
 }
