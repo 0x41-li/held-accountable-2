@@ -1,7 +1,7 @@
 'use client';
 import Sidebar from "@/components/Sidebar";
 import { useEffect, useRef, useState } from "react";
-import { auth } from "../../../lib/firebase";
+import { auth } from "../../../../lib/firebase";
 import { addArticleToPoll, createSnapshot, getUserById, updateUserById } from "@/services/polls/polls";
 import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { toast } from "react-toastify";

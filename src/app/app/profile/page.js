@@ -1,8 +1,8 @@
 import { updateUserSubscription } from "@/services/polls/polls";
 import Profile from "@/views/Profile";
-import { stripe } from "../../../lib/stripe";
-import { auth } from "../../../lib/firebase";
-import { admin } from "../../../lib/firebaseAdmin";
+import { stripe } from "../../../../lib/stripe";
+import { auth } from "../../../../lib/firebase";
+import { admin } from "../../../../lib/firebaseAdmin";
 import { headers } from "next/headers";
 
 export default async function ProfilePage({searchParams}) {

@@ -7,7 +7,7 @@ import { HOME_LATEST, getHomePolls, getTrendingTopics, getPollsByTopic, getArtic
 import CreatePoll from '@/components/CreatePoll';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '../../../lib/firebase';
+import { auth } from '../../../../lib/firebase';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Blog from '@/components/Blog';

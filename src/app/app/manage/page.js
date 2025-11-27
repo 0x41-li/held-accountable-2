@@ -3,7 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { auth } from "../../../lib/firebase";
+import { auth } from "../../../../lib/firebase";
 import { getPollsByUserId } from "@/services/polls/polls";
 import { onAuthStateChanged } from "firebase/auth";
 import CreatePoll from "@/components/CreatePoll";

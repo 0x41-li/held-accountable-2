@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getUserById } from "@/services/polls/polls";
 import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import { Icon } from "@iconify/react";
-import { auth } from "../../../lib/firebase";
+import { auth } from "../../../../lib/firebase";
 import Link from "next/link";
 import Label from "@/components/ui/Label";
 

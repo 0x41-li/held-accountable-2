@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
-import { auth } from '../../../lib/firebase';
+import { auth } from '../../../../lib/firebase';
 
 export default function Home() {
   const [viewType, setViewType] = useState(HOME_LATEST);
