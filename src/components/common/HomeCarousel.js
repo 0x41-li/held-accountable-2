@@ -6,7 +6,7 @@ import Marquee from "react-fast-marquee";
 export default function HomeCarousel({ trend = true, title, speed=25, className, data }) {
 
   return (
-    <div className={`flex items-center py-1 gap-3 pl-6 w-full ${className} text-xs`}>
+    <div className={`flex items-center py-1 gap-3 w-full ${className} text-xs`}>
       {/* <div
         className={`flex items-center justify-center py-0.5 gap-1 w-[160px] rounded-lg border-[1px] ${
           trend
@@ -38,7 +38,7 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
         </p>
       </div> */}
       <div className="relative w-full overflow-hidden">
-        <div className="pointer-events-none absolute left-0 top-0 h-full w-14 bg-gradient-to-r from-white to-transparent z-10"></div>
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-14 z-10"></div>
         <Marquee speed={speed}>
           {data.concat(data).map((item, index) => (
               trend ? <div key={index} className="flex shrink-0 items-center gap-2 mr-4">

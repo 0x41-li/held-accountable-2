@@ -100,7 +100,7 @@ export default function Profile() {
                 <div className="flex gap-[32px] items-center">
                     <span className="flex-1">Actions</span>
                     {user.subscripted_at > Date.now() && <button className="text-red-500">Cancel Premium</button>}
-                    <Link href="/subscription" className="px-4 py-2 rounded-[10px] bg-blue text-white">{user.subscripted_at > Date.now() ?"Renew Now": "Subscribe"}</Link>
+                    <Link href="/app/subscription" className="px-4 py-2 rounded-[10px] bg-blue text-white">{user.subscripted_at > Date.now() ?"Renew Now": "Subscribe"}</Link>
                 </div>
                 <hr />
                 <div className="text-[18px] leading-[38px]">Financial</div>

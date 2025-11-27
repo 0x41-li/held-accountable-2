@@ -76,7 +76,7 @@ const SignIn = () => {
       }
 
       toast.success("Login succeed!");
-      router.push("/");
+      router.push("/app/home");
     } catch (error) {
       console.error(error);
       toast.error("Invalid credentials!");
@@ -103,7 +103,7 @@ const SignIn = () => {
       }
 
       toast.success("Login succeed!");
-      router.push("/");
+      router.push("/app/home");
     } catch (error) {
       console.error(error);
     }

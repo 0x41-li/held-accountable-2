@@ -7,7 +7,7 @@ const Blog = ({ blog }) => {
   const router = useRouter();
 
   const gotoDetailPage = () => {
-    router.push("/blog/" + blog.id);
+    router.push("/app/blog/" + blog.id);
   };
 
   const isNew = useMemo(() => {

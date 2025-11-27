@@ -1,5 +1,5 @@
-import Home from "@/views/Home";
+import LandingPage from "@/views/LandingPage";
 
-export default function HomePage() {
-  return <Home></Home>;
+export default function LandingPageRoute() {
+  return <LandingPage />;
 }

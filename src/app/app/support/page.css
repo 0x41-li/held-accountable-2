@@ -1,0 +1,6 @@
+.faq {
+    border-radius: 32px;
+    box-shadow: 0px 20px 50px 0px rgba(27, 53, 132, 0.2);
+    background: rgba(247, 248, 255, 0.5);
+    overflow: hidden;
+}

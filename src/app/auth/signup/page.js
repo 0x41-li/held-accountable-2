@@ -81,7 +81,7 @@ const SignUp = () => {
       });
 
       toast.success("Sign up succeed!");
-      router.push("/");
+      router.push("/app/home");
     } catch (error) {
       console.error(error);
     }
@@ -107,7 +107,7 @@ const SignUp = () => {
       }
 
       toast.success("Sign up succeed!");
-      router.push("/");
+      router.push("/app/home");
     } catch (error) {
       console.error(error);
     }

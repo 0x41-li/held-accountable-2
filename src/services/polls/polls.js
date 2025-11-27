@@ -195,6 +195,8 @@ export const getHomePolls = async (type, start = null, length = 10) => {
     }
 
     q = query(q, where("status", "==", 1));
+    q = query(q, where("topic", "!=", "Politics"));
+    
     const querySnapshot = await getDocs(q);
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
@@ -617,7 +619,7 @@ export async function getNewsFromNewsAi(condition) {
       includeArticleImage: "true",
       includeArticleShares: "true",
       includeArticleSentiment: "true",
-      query: `{\"$query\":{\"$and\":[{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}, ${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"},{\"sourceUri\":\"bbc24news.com\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"coindesk.com\"},{\"sourceUri\":\"cointelegraph.com\"},{\"sourceUri\":\"coingeek.com\"},{\"sourceUri\":\"binance.com\"},{\"sourceUri\":\"blog.coinbase.com\"},{\"sourceUri\":\"coingape.com\"},{\"sourceUri\":\"decrypt.co\"},{\"sourceUri\":\"bitcoinmagazine.com\"},{\"sourceUri\":\"livebitcoinnews.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"isDuplicate\":\"skipDuplicates\",\"dataType\":[\"news\",\"blog\"]}}`,
+      query: `{\"$query\":{\"$and\":[{\"dateStart\":\"${today}\",\"dateEnd\":\"${today}\"}, ${condition},{\"$or\":[{\"sourceUri\":\"hosted.ap.org\"},{\"sourceUri\":\"reuters.com\"},{\"sourceUri\":\"feeds.bbci.co.uk\"},{\"sourceUri\":\"bbc.com\"},{\"sourceUri\":\"pbs.org\"},{\"sourceUri\":\"bloomberg.com\"},{\"sourceUri\":\"npr.org\"},{\"sourceUri\":\"economist.com\"},{\"sourceUri\":\"theguardian.com\"},{\"sourceUri\":\"afp.com\"},{\"sourceUri\":\"euronews.com\"},{\"sourceUri\":\"dpa-international.com\"},{\"sourceUri\":\"propublica.org\"},{\"sourceUri\":\"news.mongabay.com\"},{\"sourceUri\":\"bbc24news.com\"},{\"sourceUri\":\"ft.com\"},{\"sourceUri\":\"wsj.com\"},{\"sourceUri\":\"technologyreview.com\"},{\"sourceUri\":\"techcrunch.com\"},{\"sourceUri\":\"artificialintelligence-news.com\"},{\"sourceUri\":\"analyticsinsight.net\"},{\"sourceUri\":\"kdnuggets.com\"},{\"sourceUri\":\"ai-magazine.com\"},{\"sourceUri\":\"emerj.com\"},{\"sourceUri\":\"r-bloggers.com\"},{\"sourceUri\":\"sciencedaily.com\"},{\"sourceUri\":\"syncedreview.com\"},{\"sourceUri\":\"towardsdatascience.com\"},{\"sourceUri\":\"venturebeat.com\"},{\"sourceUri\":\"coindesk.com\"},{\"sourceUri\":\"cointelegraph.com\"},{\"sourceUri\":\"theblock.co\"},{\"sourceUri\":\"u.today\"},{\"sourceUri\":\"coingape.com\"},{\"sourceUri\":\"decrypt.co\"},{\"sourceUri\":\"bankless.com\"},{\"sourceUri\":\"beincrypto.com\"},{\"sourceUri\":\"bitcoinmagazine.com\"},{\"sourceUri\":\"cryptoslate.com\"},{\"sourceUri\":\"coinmarketcap.com\"},{\"sourceUri\":\"cryptobriefing.com\"},{\"sourceUri\":\"cryptopotato.com\"},{\"sourceUri\":\"newsbtc.com\"},{\"sourceUri\":\"coinjournal.net\"},{\"sourceUri\":\"coincheckup.com\"},{\"sourceUri\":\"blockworks.co\"},{\"sourceUri\":\"forbes.com\"},{\"sourceUri\":\"cnn.com\"},{\"sourceUri\":\"cnbc.com\"},{\"sourceUri\":\"fool.com\"},{\"sourceUri\":\"businessinsider.com\"},{\"sourceUri\":\"theglobeandmail.com\"},{\"sourceUri\":\"moneymorning.com\"},{\"sourceUri\":\"investing.com\"},{\"sourceUri\":\"foxbusiness.com\"},{\"sourceUri\":\"finance.yahoo.com\"},{\"sourceUri\":\"marketwatch.com\"},{\"sourceUri\":\"barrons.com\"},{\"sourceUri\":\"fnlondon.com\"}]}]},\"$filter\":{\"forceMaxDataTimeWindow\":\"31\",\"isDuplicate\":\"skipDuplicates\",\"dataType\":[\"news\",\"blog\"]}}`,
       resultType: "articles",
       articlesSortBy: "date",
       apiKey: process.env.NEWSAPI_KEY,
@@ -716,7 +718,7 @@ ${article_body}
      - UN / National Statistical Office — [Dataset/Release Title (Year)]
      - Wikipedia — [Topic/Page Title] ← Always last
 
-7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto"]
+7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Crypto"]
 
 ### Final self-audit (internal; do not print):
 
@@ -756,7 +758,7 @@ ${article_body}
                 blog_content: { type: "string" },
                 category: {
                   type: "string",
-                  enum: ["AI", "Finance", "Politics", "Crypto"],
+                  enum: ["AI", "Finance", "Crypto"],
                 },
               },
               required: [

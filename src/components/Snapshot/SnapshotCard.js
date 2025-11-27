@@ -4,94 +4,67 @@ import Image from "next/image";
 import Link from "next/link";
 
 export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, deleteSnapshot }) {
+  
+  // Format date as "3:21 PM, 21 OCT 2025"
+  const formatDateForCard = (date) => {
+    const time = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).toUpperCase();
+    return `${time}, ${formattedDate}`;
+  };
+
+  const categoryColors = {
+    CRYPTO: "text-[#C11574]",
+    POLITICS: "text-[#6941C6]",
+    AI: "text-[#3538cd]",
+    FINANCE: "text-[#026AA2]",
+  };
+
+  const category = snapshot.tags ? snapshot.tags[0].toUpperCase() : "";
+  const categoryColor = categoryColors[category] || "text-[#C11574]";
   return (
-    <div
-      key={snapshot.id}
-      className="flex flex-col lg:flex-row sm:w-[80%] lg:w-full mx-auto gap-6 lg:gap-0 lg:items-center border border-[#e9eaeb] rounded-2xl overflow-hidden"
-    >
-      <div className="flex flex-col px-6 pb-6 lg:pb-6 lg:pt-9 w-full">
-        <div className="flex items-center justify-between w-full gap-2 mt-6 lg:mt-0">
-          <div className="flex gap-[0.625rem] items-center">
-            {/* <div className="rounded-full overflow-hidden">
-              <img
-                src={snapshot.user?.avatar ?? "/images/snapshot/AlishLane.png"}
-                width={32}
-                height={32}
-                alt="Author Avatar"
-              />
-            </div> */}
-            <div className="flex flex-col gap-0">
-              <p className="font-medium text-[#101828] text-sm">
-                {snapshot.user ? snapshot.user.fullname : ""}
-              </p>
-              <span className="text-xs text-[#7c7c7c]">
-                {
-                  formatDate(new Date(snapshot.createdAt.seconds * 1000)).split(
-                    "●"
-                  )[1]
-                }
-              </span>
-            </div>
-          </div>
-          <button>
-            <Icon
-              icon="mdi:bookmark-plus-outline"
-              width={18}
-              height={18}
-              style={{ color: "#6b6366" }}
-            />
-          </button>
+    
+    <div className="relative flex flex-col w-full rounded-[32px] border border-[#E9EAEB] p-6 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
+      {/* READ MORE button positioned at top right */}
+      <Link 
+        href={"/app/snapshots/" + snapshot.id} 
+        className="hidden md:flex absolute top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
+      >
+        READ MORE
+        <div className="w-12 h-12 bg-[#F7F8FF80] flex items-center justify-center rounded-bl-lg border-gray-200/50 shadow-sm">
+          <Icon icon="mdi:arrow-top-right" width={20} height={20} className="text-gray-800" />
         </div>
-
-        <p className="text-lg font-semibold text-[#181d27] leading-[156%] mt-2 line-clamp-1">
-          {snapshot.title}
-        </p>
-        <p className="text-[#535862] text-base leading-[150%] mt-1 line-clamp-2">
-            {snapshot.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 100) +
-              (snapshot.content.length > 100 ? "..." : "")}
-        </p>
-
-        <div className="flex items-center w-full mt-6 mb-6 lg:mb-0 justify-between flex-col md:flex-row gap-4">
-          <div className="flex items-center gap-2">
-          {snapshot.tags.map((tag, index) => (
-            <div
-              key={index}
-              className={`rounded-full border  flex justify-center items-center px-3 py-1 ${
-                index === 0
-                  ? "border-[#e9d7fe] bg-[#F9F5FF]"
-                  : "border-[#c7d7fe] bg-[#eef4ff]"
-              }`}
-            >
-              <p
-                className={`leading-[143%] text-sm font-medium ${
-                  index === 0 ? "text-[#6941C6]" : "text-[#3538cd]"
-                }`}
-              >
-                {tag}
-              </p>
-            </div>
-          ))}
-          </div>
-          <div className="flex items-center gap-4">
-            {showManage && <button className="text-sm font-medium leading-[143%] flex items-center" onClick={() => {changeSnapshotStatus(snapshot)}}>
-              {snapshot.enabled ? <span className="text-sm inline-flex items-center gap-1 text-green-600"><Icon icon="streamline-sharp:visible" /> Enabled</span> : <span className="text-sm inline-flex items-center gap-1 text-red-600"><Icon icon="streamline-flex:invisible-1" /> Disabled</span>}
-            </button>}
-            {showManage && <button className="text-sm font-medium leading-[143%] flex items-center gap-1 text-red-600" onClick={() => {deleteSnapshot(snapshot.id)}}>
-              <Icon icon="tabler:trash" /> Delete
-            </button> }
-            <Link href={"/snapshots/" + snapshot.id} className="flex items-center gap-1">
-              <p className="text-sm font-medium leading-[143%] text-[#525252]">
-                Read More
-              </p>
-              <Icon
-                icon="line-md:arrow-up"
-                className={"transition-transform duration-300 rotate-90"}
-                style={{ color: "#525252" }}
-              />
-            </Link>
-          </div>
-        </div>
+      </Link>
+      
+      <div className="flex items-center gap-2 mb-3 pr-32">
+        <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
+          {category}
+        </span>
+        <span className="text-[11px] md:text-sm text-[#98A2B3]">|</span>
+        <span className="text-[11px] md:text-sm text-[#98A2B3]">
+          {formatDateForCard(new Date(snapshot.createdAt * 1000))}
+        </span>
       </div>
+      <h3 className="text-[18px] md:text-xl font-bold text-[#101828] mb-2 line-clamp-2 pr-32">
+        {snapshot.title}
+      </h3>
+      <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+        {snapshot.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 200)}
+        {snapshot.content.length > 200 ? "..." : ""}
+      </p>
+      <Link 
+        href={"/app/snapshots/" + snapshot.id} 
+        className="md:hidden text-[#1D74D6] font-bold text-sm hover:text-blue-700"
+      >
+        READ MORE
+      </Link>
     </div>
   );
 }

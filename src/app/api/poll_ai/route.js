@@ -33,14 +33,14 @@ export async function GET(req) {
         const short_topics = [
             "AI", 
             "Finance",
-            "Politics",
+            // "Politics",
             "Crypto", 
         ]
 
         const topics = [
             "{\"categoryUri\":\"dmoz/Computers/Artificial_Intelligence\"}", 
             "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Finance\"}",
-            "{\"categoryUri\":\"news/Politics\"}",
+            // "{\"categoryUri\":\"news/Politics\"}",
             "{\"conceptUri\":\"http://en.wikipedia.org/wiki/Blockchain\"}"
         ];
 

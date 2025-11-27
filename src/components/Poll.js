@@ -41,6 +41,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   const getHeadline = (headline) => {
     let str = headline.split("(")[1].split(")")[0];
     headline = headline.replace("(" + str + ")", "");
+    headline = headline.replace("Breaking News — ", "");
     return [
       headline,
       <span style={{ color: "#1f65ceff"}}>{"(" + str.replace("publisher verified", "").replace(",", "").trim() + ")"}</span>
@@ -108,7 +109,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         </div>
         <div className="hidden md:flex gap-[8px]">
           <Link
-            href="/blog"
+            href="/app/blog"
             className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white"
           >
             <Icon icon="mingcute:document-fill" />
@@ -126,7 +127,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       </div>
       <div className="flex md:hidden gap-[8px]">
         <Link
-          href="/blog"
+          href="/app/blog"
           className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white"
         >
           <Icon icon="mingcute:document-fill" />
@@ -141,7 +142,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
             {getHeadline(poll.questions[0].headline)}
           </p>
         )}
-        {poll.questions[0].summary ? (
+        {/* {poll.questions[0].summary ? (
           <button
             className="text-blue flex gap-[2px] items-center"
             onClick={handleShowSummary}
@@ -159,7 +160,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           </div>
         ) : (
           ""
-        )}
+        )} */}
       </div>
       {poll.golden_insights ? (
         <div className="flex w-full flex-col pt-[12px]">
@@ -174,6 +175,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
                   onClick={() => onDetail(poll.id)}
                   key={insight.id + "_poll_link"}
                 >
+                  <p className="text-left font-bold text-[18px] text-blue mb-[10px]">Learn under 2min & Invest</p>
                   <div
                     key={i + "_golden_insights"}
                     className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer"

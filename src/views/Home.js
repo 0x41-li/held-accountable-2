@@ -10,11 +10,10 @@ import { useRouter } from "next/navigation";
 import { useInView } from "react-intersection-observer";
 import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
-import HomeCarousel from "@/components/common/HomeCarousel";
 import Tabs from "@/components/ui/Tabs";
 import Poll from "@/components/Poll";
 import GoldenInsightDetail from "@/components/GoldenInsightDetail";
-import GoldenInsightDetailPage from "@/app/golden-insights/[id]/page";
+import GoldenInsightDetailPage from "@/app/app/golden-insights/[id]/page";
 
 const carousel = [
   {
@@ -100,8 +99,6 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentTopic, setCurrentTopic] = useState("All");
-  const [trendingData, setTrendingData] = useState([]);
-  const [eventData, setEventData] = useState([]);
   const [detailId,  setDetailId] = useState(-1);
 
   const timerInterval = useRef(null);
@@ -144,8 +141,6 @@ export default function Home() {
     if (polls.length > 0) {
       const rs = 300 - parseInt((Date.now() - polls[0].createdAt.seconds * 1000) / 1000);
       if (rs <= 0 && !loading) {
-        loadTrendingData();
-        loadEventData();
         loadNewPolls().catch((err) => {
           console.error("Error loading new polls:", err);
         });
@@ -154,7 +149,7 @@ export default function Home() {
       return;
     }
     setRemainingSeconds(0);
-  }, [setRemainingSeconds, polls, loading]);
+  }, [setRemainingSeconds, polls, loading, loadNewPolls]);
   useEffect(() => {
     timerInterval.current = setInterval(() => {
       updateRemainingSeconds();
@@ -192,7 +187,10 @@ export default function Home() {
 
       if (poll_list.length > 0) {
         setStart(lastDoc);
-        setPolls((prevPolls) => [...prevPolls, ...poll_list]);
+        setPolls((prevPolls) => [
+          ...prevPolls,
+          ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
+        ]);
       } else {
         setHasMore(false);
       }
@@ -209,53 +207,15 @@ export default function Home() {
     setPolls([]);
   }, []);
 
-  const loadTrendingData = useCallback(() => {
-    fetch("/api/trending")
-      .then((res) => res.json())
-      .then((data) => {
-        setTrendingData(data.symbols);
-      })
-      .catch((error) => {
-        console.error("Error loading trending data:", error);
-      });
-  }, [setTrendingData]);
-
-  const loadEventData = useCallback(() => {
-    fetch("/api/events")
-      .then((res) => res.json())
-      .then((data) => {
-        setEventData(data.data.filter((ev) => ev.title.eng));
-      })
-      .catch((error) => {
-        console.error("Error loading event data:", error);
-      });
-  }, [setEventData]);
-
-  useEffect(() => {
-    loadTrendingData();
-    loadEventData();
-  }, [loadTrendingData, loadEventData]);
-
   useEffect(() => {
     if (!loading && inView && hasMore) loadPolls();
   }, [inView, loading, hasMore, currentTopic, loadPolls]);
 
   return (
     <div className="w-full h-full">
-      <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden md:rounded-tl-[40px] border border-secondary flex-col bg-[#FCFCFD]`}>
+      <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden md:rounded-tl-[40px] flex-col`}>
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
-            <div className="flex flex-col items-start">
-              <HomeCarousel title="" data={trendingData} speed={30} />
-              <HomeCarousel
-                trend={false}
-                title=""
-                className="border-[#E4E7EC] border-t-[1px] border-b-[1px]"
-                data={eventData}
-                speed={35}
-              />
-            </div>
-
             <div className="px-4 py-4 font-bold">
               Live updates{" "}
               <span className="text-red-400">

@@ -1,30 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { DatePicker } from "../ui/DatePicker";
-import { MultiSelect } from "../ui/MultiSelect";
+import { SingleDatePicker } from "../ui/SingleDatePicker";
 
-export function SnapshotFilters({setSelectedDate, setSelectedTopics, selectedDate, selectedTopics}) {
+export function SnapshotFilters({setSelectedDate, selectedDate}) {
   return (
     <div className="flex flex-row flex-wrap gap-3 items-center">
       <div className="w-full sm:w-[20rem]">
-        <DatePicker
-          startDate={selectedDate.startDate}
-          endDate={selectedDate.endDate}
+        <SingleDatePicker
+          selectedDate={selectedDate}
           onDateSelect={setSelectedDate}
-        />
-      </div>
-      <div className="w-full sm:w-[20rem]">
-        <MultiSelect
-          options={[
-            "AI",
-            "Crypto",
-            "Politics",
-            "Finance",
-          ]}
-          placeholder="Filter Topics"
-          selectedValues={selectedTopics}
-          onChange={setSelectedTopics}
         />
       </div>
     </div>

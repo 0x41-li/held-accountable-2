@@ -68,7 +68,7 @@ export default function SubscriptionPay({show, hideDialog, subscriptionType}) {
                         toast.success("Paid Successfully!");
                         
                         hideDialog();
-                        router.push("/profile");
+                        router.push("/app/profile");
                     } catch (error) {
                         toast.error("Transaction Error: " + error);
                     }

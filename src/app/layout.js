@@ -1,9 +1,7 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
 import Head from "next/head";
 import { AuthProvider } from "@/providers/authProvider";
 import Script from 'next/script';
@@ -16,6 +14,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
 });
 
 export const metadata = {
@@ -45,19 +49,17 @@ export default function RootLayout({ children }) {
     }}
   />
   <body
-    className={`${inter.className} antialiased`}
+    className={`antialiased`}
   >
     <AuthProvider>
       <ToastContainer />
-      <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col md:flex-row">
-          <div className="flex">
-            <Sidebar />
-            <Navbar />
-          </div>
-          <div className='flex-1 overflow-auto h-full'>
-            {children}
-          </div>
+      {/* Gradient Ellipses Background */}
+      <div className="fixed top-0 left-0 right-0 bottom-0 inset-0 overflow-hidden pointer-events-none mainbg">
+        <img src="/images/tl.png" className="absolute top-0 left-0" />
+        <img src="/images/tr.png" className="absolute top-0 right-0" />
+        <img src="/images/br.png" className="absolute bottom-0 right-0" />
       </div>
+      {children}
     </AuthProvider>
   </body>
 </html>

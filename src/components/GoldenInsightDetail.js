@@ -32,6 +32,7 @@ export default function GoldenInsightDetail({
   const url = `https://held-accountable.com/golden-insights/${id}`;
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(article.title);
+  const [showSummary, setShowSummary] = useState(false);
 
   useEffect(() => {}, [id]);
 
@@ -152,6 +153,25 @@ export default function GoldenInsightDetail({
           <div className="text-[16px] leading-[24px] text-center">
             {poll.questions[0].question}
           </div>
+          {poll.questions[0].summary ? (
+            <button
+              className="text-white flex gap-[2px] items-center text-center mx-auto"
+              onClick={() => setShowSummary(!showSummary)}
+            >
+              Simplify <Icon icon="lsicon:down-outline" />
+            </button>
+          ) : (
+            ""
+          )}
+          {poll.questions[0].summary && showSummary ? (
+            <div className="px-[10px] md:px-[30px]">
+              <div className="rounded-[7px] border-l-[2px] border-[#3B88E3] bg-[#3B88E326] text-white p-[14px]">
+                {poll.questions[0].summary}
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center w-full mt-2">
           <div className="flex items-center gap-3">

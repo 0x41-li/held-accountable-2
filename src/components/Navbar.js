@@ -3,12 +3,13 @@ import { getUserById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../../lib/firebase";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState();
   const [show, setShow] = useState(false);
 
@@ -51,50 +52,50 @@ export default function Navbar() {
           <div className="w-2/3 bg-white pt-[20px]">
             <div className="flex flex-col px-[16px] gap-[4px] h-full overflow-scroll">
               <Link
-                href="/"
+                href="/app/home"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/home" || pathname == "/" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="typcn:home" />
                 <span>Home</span>
               </Link>
               <Link
-                href="/viral-detection"
+                href="/app/viral-detection"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/viral-detection" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/viral-detection" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="solar:camera-outline" />
                 <span>Viral Detection</span>
               </Link>
               <Link
-                href="/enterprises"
+                href="/app/enterprises"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/enterprises" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/enterprises" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="carbon:satellite-radar" />
                 <span>Enterprise Radar</span>
               </Link>
               <Link
-                href="/blog"
+                href="/app/blog"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/blog" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/blog" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="mi:document" />
                 <span>Thought Leadership</span>
               </Link>
               <Link
-                href="/snapshots"
+                href="/app/snapshots"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/snapshots" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/snapshots" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="solar:camera-outline" />
@@ -109,40 +110,40 @@ export default function Navbar() {
                         <span>Poll Management</span>
                     </Link> */}
               <Link
-                href="/about-us"
+                href="/app/about-us"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/about-us" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/about-us" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="solar:info-square-linear" />
                 <span>About Us</span>
               </Link>
               <Link
-                href="/careers"
+                href="/app/careers"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/careers" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/careers" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="flowbite:briefcase-outline" />
                 <span>Careers</span>
               </Link>
               <Link
-                href="/profile"
+                href="/app/profile"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/profile" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/profile" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="mingcute:user-4-line" />
                 <span>Profile</span>
               </Link>
               <Link
-                href="/support"
+                href="/app/support"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/support" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/support" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="ix:support" />
@@ -181,7 +182,7 @@ export default function Navbar() {
                           <Icon icon="material-symbols:close" />
                         </button>
                       </div>
-                      <Link href="/subscription" className="rounded-[8px] bg-blue text-white w-full p-[8px] text-center">
+                      <Link href="/app/subscription" className="rounded-[8px] bg-blue text-white w-full p-[8px] text-center">
                         Upgrade Now
                       </Link>
                     </div>
