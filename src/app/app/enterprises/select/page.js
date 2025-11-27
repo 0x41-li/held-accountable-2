@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../../../lib/firebase";
 import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import { addCompanyToFavorites, removeCompanyFromFavorites, getUserById } from "@/services/polls/polls";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { auth } from "../../../../../lib/firebase";
 
 function CompanyCard({ company, isFavorite, onAdd, onRemove, loading }) {
   return (
