@@ -97,9 +97,9 @@ export default function Snapshot() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex items-center gap-3 mt-4 flex-col md:flex-row flex-1">
-              <h1 className="text-3xl font-bold text-[#101828]">Snapshots</h1>
-              <p className="text-[#475467] text-base">See what were discussed in previous days.</p>
+            <div className="flex items-end gap-3 mt-4 flex-col md:flex-row flex-1">
+              <h1 className="text-3xl font-bold text-[#2b425b]">Snapshots</h1>
+              <p className="text-[#2b425b] text-base">See what were discussed in previous days.</p>
             </div>
             {shouldShowNewButton && (
               <Link 
@@ -131,8 +131,8 @@ export default function Snapshot() {
                     onClick={() => changeSelectedCategory(category)}
                     className={`px-4 py-3 text-sm font-medium transition-colors relative ${
                       activeCategory === category
-                        ? "text-blue-700 md:border border-[#2B425B40] rounded-full px-4 py-2"
-                        : "text-[#475467] hover:text-[#101828]"
+                        ? "text-blue-700 md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
+                        : "text-[#2b425b] hover:text-[#101828]"
                     }`}
                   >
                     {category}
@@ -150,7 +150,7 @@ export default function Snapshot() {
               </div>
             </div>
             {/* Left Column - Snapshots */}
-            <div className="flex-1 overflow-auto p-6">
+            <div className="flex-1 overflow-auto px-10 pt-[20px]">
               <div className="flex flex-col gap-6">
                 {snapshots.length > 0 ? (
                   snapshots.map((snapshot) => (

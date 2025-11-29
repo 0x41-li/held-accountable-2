@@ -66,7 +66,7 @@ export function SingleDatePicker({
   return (
     <div className="relative w-full">
       <div
-        className="flex items-center gap-2 bg-[#E8F0FE] rounded-lg px-3 py-2.5 w-full cursor-pointer"
+        className="flex items-center gap-2 px-3 py-2.5 w-full cursor-pointer"
         onClick={() => setCalendarOpen(true)}
       >
         <span className="text-[#101828] text-sm font-medium">DATE:</span>
