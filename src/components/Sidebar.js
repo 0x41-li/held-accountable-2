@@ -100,7 +100,7 @@ export default function Sidebar() {
             <img src="/images/snapshots.png" />
             <span>Snapshots</span>
           </Link>
-          <Link
+          {/* <Link
             href="/app/about-us"
             className={
               "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
@@ -109,12 +109,12 @@ export default function Sidebar() {
           >
             <img src="/images/about-us.png" />
             <span>About Us</span>
-          </Link>
+          </Link> */}
           {/* <Link href="/app/manage" className={"rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " + (pathname == '/app/manage' ? "bg-[#F8F9FDaa]  text-black": "")}>
                     <Icon icon="gravity-ui:square-list-ul" />
                     <span>Poll Management</span>
                 </Link> */}
-          <Link
+          {/* <Link
             href="/app/careers"
             className={
               "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
@@ -123,7 +123,7 @@ export default function Sidebar() {
           >
             <img src="/images/careers.png" />
             <span>Careers</span>
-          </Link>
+          </Link> */}
           {/* <Link
             href="/profile"
             className={
