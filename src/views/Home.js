@@ -216,16 +216,48 @@ export default function Home() {
       <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden md:rounded-tl-[40px] flex-col`}>
         <div className="flex-1 flex h-full">
           <div className="w-full flex-1 flex flex-col h-full">
-            <div className="px-4 py-4 font-bold">
-              Live updates{" "}
-              <span className="text-red-400">
-                {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
-                sec
-              </span>{" "}
-              until next breaking news
+            <div className="flex flex-col gap-4 p-6">
+              <div className="flex items-end gap-[19px]">
+                <div className="text-[24px] md:text-[36px] font-[700] text-[#2b425b]">
+                  What's happening now?
+                </div>
+                <p className="font-[500] text-[14px] text-[#2B425B66]">
+                  Live updates{" "}
+                  <span className="text-[#2B425B]">
+                    {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
+                    sec
+                  </span>{" "}
+                  until next breaking news
+                </p>
+              </div>
+              
+              {/* Category Tabs */}
+              <div className="flex gap-1 mt-2">
+                {navTopic.map((topic) => (
+                  <button
+                    key={topic}
+                    onClick={() => {
+                      setCurrentTopic(topic);
+                      setStart(null);
+                      setHasMore(true);
+                      setPolls([]);
+                    }}
+                    className={`px-4 py-3 text-sm font-medium transition-colors relative ${
+                      currentTopic === topic
+                        ? "text-blue-700 md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
+                        : "text-[#2b425b] hover:text-[#101828]"
+                    }`}
+                  >
+                    {topic}
+                    {currentTopic === topic && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
-
-            <div className="px-4 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
+            
+            <div className="px-16 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
               {polls.map((poll) => (
                 <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
               ))}

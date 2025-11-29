@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../lib/firebase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { arrayUnion, increment } from "firebase/firestore";
+import { arrayUnion, arrayRemove, increment } from "firebase/firestore";
 import ShareModal from "./ShareModal";
 
 export default function Poll({ poll: initialPoll, showDetail }) {
@@ -47,6 +47,32 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       <span style={{ color: "#1f65ceff"}}>{"(" + str.replace("publisher verified", "").replace(",", "").trim() + ")"}</span>
     ]
   }
+
+  const formatDateForCard = (date) => {
+    const time = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).toUpperCase();
+    return `${time}, ${formattedDate}`;
+  };
+
+  const categoryColors = {
+    CRYPTO: "text-[#C11574]",
+    POLITICS: "text-[#6941C6]",
+    AI: "text-[#3538cd]",
+    FINANCE: "text-[#026AA2]",
+  };
+
+  const category = poll.topic ? poll.topic.toUpperCase() : "";
+  const categoryColor = categoryColors[category] || "text-[#C11574]";
+  
+  const firstInsight = poll.golden_insights && poll.golden_insights.length > 0 ? poll.golden_insights[0] : null;
   
   const handleLike = async () => {
     if (poll.like_users.includes(auth.currentUser.uid)) return;
@@ -84,146 +110,115 @@ export default function Poll({ poll: initialPoll, showDetail }) {
     });
   }
 
-  return (
-    <div className="rounded-[12px] border border-secondary shadow-xs flex flex-col p-[16px] gap-[11px] md:gap-[20px] md:px-[24px] md:py-[17px] w-full bg-white">
-      <div className="flex w-full gap-[8px] items-center w-full">
-        <div className="flex flex-1 gap-[10px] items-center">
-          <div className="rounded-full overflow-hidden">
-            <img src="/images/logo.png" width={44} />
-          </div>
-          <span className="text-[14px] text-[#949494]">
-            {formatDate(new Date(poll.createdAt.seconds * 1000))}
-          </span>
-          <div>
-            <p className="leading-[20px] text-[14px] font-medium">
-              {poll.user ? poll.user.fullname : ""}
-            </p>
-            <p className="leading-[16px] text-[12px]">
-              {poll.user
-                ? poll.user.username == ""
-                  ? ""
-                  : "@" + poll.user.username
-                : ""}
-            </p>
-          </div>
-        </div>
-        <div className="hidden md:flex gap-[8px]">
-          <Link
-            href="/app/blog"
-            className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white"
-          >
-            <Icon icon="mingcute:document-fill" />
-            <span className="text-xs leading-xs font-medium">
-              &nbsp;{poll.topic}
-            </span>
-          </Link>
-        </div>
-        {isNew && (
-          <span className="text-3xl text-green-500">
-            <Icon icon="mdi:new-box" />
-          </span>
-        )}
-        <img src="/images/fire_icon.png" alt="Top" width={24} height={24} />
-      </div>
-      <div className="flex md:hidden gap-[8px]">
-        <Link
-          href="/app/blog"
-          className="rounded-full bg-[#5856D6] w-[114px] h-[22px] flex items-center justify-center text-white"
-        >
-          <Icon icon="mingcute:document-fill" />
-          <span className="text-xs leading-xs font-medium">
-            &nbsp;{poll.topic}
-          </span>
-        </Link>
-      </div>
-      <div className="text-[16px] leading-[28px] font-medium pl-[15px]">
-        {poll.questions[0].headline && (
-          <p className="font-bold">
-            {getHeadline(poll.questions[0].headline)}
-          </p>
-        )}
-        {/* {poll.questions[0].summary ? (
-          <button
-            className="text-blue flex gap-[2px] items-center"
-            onClick={handleShowSummary}
-          >
-            Simplify <Icon icon="lsicon:down-outline" />
-          </button>
-        ) : (
-          ""
-        )}
-        {poll.questions[0].summary && showSummary ? (
-          <div className="px-[30px]">
-            <div className="rounded-[7px] border-l-[2px] border-[#3B88E3] bg-[#3B88E326] text-blue p-[14px]">
-              {poll.questions[0].summary}
-            </div>
-          </div>
-        ) : (
-          ""
-        )} */}
-      </div>
-      {poll.golden_insights ? (
-        <div className="flex w-full flex-col pt-[12px]">
-          <div className="hidden gap-[10px] items-center pb-[10px]">
-            <Icon icon="mynaui:chat-messages" />
-            <span>The Big Picture</span>
-          </div>
-          <div className="w-full overflow-auto">
-            <div className="flex w-max gap-[10px]">
-              {poll.golden_insights.map((insight, i) => (
-                <button
-                  onClick={() => onDetail(poll.id)}
-                  key={insight.id + "_poll_link"}
-                >
-                  <p className="text-left font-bold text-[18px] text-blue mb-[10px]">Learn under 2min & Invest</p>
-                  <div
-                    key={i + "_golden_insights"}
-                    className="group gap-[10px] border border-[#E6E6E6] rounded-[16px] overflow-hidden w-fit flex cursor-pointer"
-                  >
-                    <div className="w-[140px] relative">
-                      <img
-                        src="/images/narrative_detail.png"
-                        className="w-[140px] h-[140px]"
-                      />
-                      <div className="bg-[#00000000] absolute top-0 left-0 bottom-0 right-0 group-hover:bg-[#00000055] flex items-center justify-center">
-                        <p className="text-white hidden group-hover:block">
-                          Read more
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-[10px] max-w-[360px] p-[10px]">
-                      <p className="font-semibold">{insight.title}</p>
-                      <p className="flex-1">
-                        {insight.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 70) + "..."}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        ""
-      )}
+  const postedDate = new Date(poll.createdAt.seconds * 1000);
+  
+  const getHeadlineText = (headline) => {
+    if (!headline) return '';
+    try {
+      let str = headline.split("(")[1]?.split(")")[0] || '';
+      let cleanHeadline = headline.replace("(" + str + ")", "");
+      cleanHeadline = cleanHeadline.replace("Breaking News — ", "");
+      return cleanHeadline.trim();
+    } catch (e) {
+      return headline.replace("Breaking News — ", "").trim();
+    }
+  };
+  
+  const headlineText = poll.questions[0].headline ? getHeadlineText(poll.questions[0].headline) : '';
 
-      <div className="flex items-center gap-5 text-[#404040] font-medium text-[12px] ml-auto">
-        <p
-          className="flex items-center gap-1 cursor-pointer select-none"
-          onClick={() => handleLike()}
+  return (
+    <div className="relative flex flex-col w-full rounded-[32px] border border-[#E9EAEB] p-6 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
+      {/* READ MORE button positioned at top right */}
+      {firstInsight && (
+        <Link 
+          href={`/golden-insights/${poll.id}`}
+          onClick={(e) => {
+            if (showDetail) {
+              e.preventDefault();
+              showDetail(poll.id);
+            }
+          }}
+          className="hidden md:flex absolute top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
         >
-          <Icon
-            icon={like ? "flat-color-icons:like" : "icon-park-outline:like"}
-            width={20}
-            height={20}
-          />
-          {poll.likes} Likes
-        </p>
-        <button onClick={()=>setShowShareModal(true)} className="text-[#404040] flex items-center cursor-pointer select-none gap-1">
-          <Icon icon="ix:share" width={20} height={20} />
-          Share
-        </button>
+          READ MORE
+          <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
+            style={{
+              boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
+            }}
+          >
+            <Icon icon="mdi:arrow-top-right" width={20} height={20} className="text-[#2B425B66]" />
+          </div>
+        </Link>
+      )}
+      
+      <div className="flex items-center gap-2 mb-4 pr-32">
+        <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
+          {category}
+        </span>
+        <span className="text-[11px] md:text-sm text-[#98A2B3]">|</span>
+        <span className="text-[11px] md:text-sm text-[#98A2B3]">
+          {formatDateForCard(postedDate)}
+        </span>
+        {isNew && (
+          <span className="text-green-500 ml-2">
+            <Icon icon="mdi:new-box" width={16} height={16} />
+          </span>
+        )}
       </div>
+      
+      <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-2 pr-32">
+        {headlineText}
+      </h3>
+      
+      {firstInsight ? (
+        <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+          {firstInsight.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 200)}
+          {firstInsight.content.replace(/\*/g, "").replace(/#/g, "").length > 200 ? "..." : ""}
+        </p>
+      ) : (
+        <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+          {poll.questions[0].summary || "No content available"}
+        </p>
+      )}
+      
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4 text-[#404040] font-medium text-[12px]">
+          <p
+            className="flex items-center gap-1 cursor-pointer select-none"
+            onClick={() => handleLike()}
+          >
+            <Icon
+              icon={like ? "flat-color-icons:like" : "icon-park-outline:like"}
+              width={20}
+              height={20}
+            />
+            {poll.likes || 0} Likes
+          </p>
+          <button 
+            onClick={()=>setShowShareModal(true)} 
+            className="text-[#404040] flex items-center cursor-pointer select-none gap-1"
+          >
+            <Icon icon="ix:share" width={20} height={20} />
+            Share
+          </button>
+        </div>
+      </div>
+      
+      {firstInsight && (
+        <Link 
+          href={`/golden-insights/${poll.id}`}
+          onClick={(e) => {
+            if (showDetail) {
+              e.preventDefault();
+              showDetail(poll.id);
+            }
+          }}
+          className="md:hidden text-[#1D74D6] font-bold text-sm hover:text-blue-700"
+        >
+          READ MORE
+        </Link>
+      )}
+      
       <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
     </div>
   );
