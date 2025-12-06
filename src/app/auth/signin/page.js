@@ -226,6 +226,22 @@ const SignIn = () => {
           </div>
         </div>
       </div>
+      <div className="block md:hidden relative w-full">
+        <img src="/images/auth-side-bg2.png" className="w-full" />
+        <div className="absolute top-[-50px] left-[16px] right-[16px] flex items-center justify-center">
+          <CustomPlayer
+            video="https://player.vimeo.com/video/1120069862?autoplay=1&loop=1&controls=0"
+            className="!w-full"
+            videoClass="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
+          />
+        </div>
+        <div className="absolute bottom-[20px] left-[16px] right-[16px] z-10 flex flex-col gap-2">
+          <p className="text-white/80 text-[10px] md:text-xs uppercase tracking-[0.2em] font-normal">HELD ACCOUNTABLE</p>
+          <p className="text-white text-[24px] font-bold leading-tight">
+            We provide a holistic perspective on news and public information
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -109,7 +109,7 @@ export default function AboutUsPage() {
                     </div>
                     <div className="w-full px-4">
                         <div className="max-w-7xl mx-auto flex items-center justify-center mt-8 md:mt-16">
-                            <div className="w-full aspect-video">
+                            <div className="w-full aspect-video flex items-center justify-center">
                                 <CustomPlayer video="https://player.vimeo.com/video/1120069891?autoplay=1&loop=1&muted=0&controls=0" />
                             </div>
                         </div>
