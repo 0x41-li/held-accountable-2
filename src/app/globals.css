@@ -165,3 +165,38 @@ body {
   letter-spacing: 4%;
   text-align: left;
 }
+
+.career-detail-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #414651;
+}
+
+.career-detail-content h2:first-child {
+  margin-top: 0;
+}
+
+.career-detail-content ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.career-detail-content li {
+  margin-bottom: 0.5rem;
+  color: #535862;
+}
+
+.career-detail-content p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: #535862;
+}
+
+.career-detail-content strong {
+  font-weight: 600;
+  color: #414651;
+}

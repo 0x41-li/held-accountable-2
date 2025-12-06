@@ -31,7 +31,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="hidden md:flex flex-col justify-between w-[230px]">
+    <div className="hidden md:flex flex-col justify-between w-[230px] max-h-screen">
       <div className="flex flex-col gap-[24px] pt-[32px] ">
         <Link href="/" className="flex items-center pl-[23px]">
           <img src="/images/logo.png" width={50} />
@@ -115,10 +115,10 @@ export default function Sidebar() {
                     <span>Poll Management</span>
                 </Link> */}
           {/* <Link
-            href="/app/careers"
+            href="/careers"
             className={
               "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/app/careers" ? "bg-[#F8F9FDaa]  text-black" : "")
+              (pathname == "/careers" ? "bg-[#F8F9FDaa]  text-black" : "")
             }
           >
             <img src="/images/careers.png" />

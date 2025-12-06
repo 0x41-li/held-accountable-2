@@ -1,8 +1,7 @@
-import { Geist, Geist_Mono, Inter, Poppins } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
-import Head from "next/head";
 import { AuthProvider } from "@/providers/authProvider";
 import Script from 'next/script';
 
@@ -27,9 +26,8 @@ export const metadata = {
   description: "Held Accountable",
 };
 
-const inter = Inter({ subsets: ['latin'] })
-
 export default function RootLayout({ children }) {
+  console.log("request");
   return (
 <html lang="en">
   <Script

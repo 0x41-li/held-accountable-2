@@ -120,10 +120,10 @@ export default function Navbar() {
                 <span>About Us</span>
               </Link>
               <Link
-                href="/app/careers"
+                href="/careers"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex items-center w-full gap-[12px] " +
-                  (pathname == "/app/careers" ? "bg-blue  text-white" : "")
+                  (pathname == "/careers" ? "bg-blue  text-white" : "")
                 }
               >
                 <Icon icon="flowbite:briefcase-outline" />

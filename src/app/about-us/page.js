@@ -40,7 +40,7 @@ export default function AboutUsPage() {
                                 <Link href="/app/support" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
                                     Services
                                 </Link>
-                                <Link href="/app/careers" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
+                                <Link href="/careers" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
                                     Careers
                                 </Link>
                                 <Link href="#blog" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
@@ -71,7 +71,7 @@ export default function AboutUsPage() {
                                         Services
                                     </Link>
                                     <Link 
-                                        href="/app/careers" 
+                                        href="/careers" 
                                         className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
                                     >

@@ -5,6 +5,7 @@ import {
   getHomePolls,
   getPollsByTopic,
   getUserById,
+  getViralDetections,
 } from "@/services/polls/polls";
 import { useRouter } from "next/navigation";
 import { useInView } from "react-intersection-observer";
@@ -14,6 +15,9 @@ import Tabs from "@/components/ui/Tabs";
 import Poll from "@/components/Poll";
 import GoldenInsightDetail from "@/components/GoldenInsightDetail";
 import GoldenInsightDetailPage from "@/app/app/golden-insights/[id]/page";
+import { Icon } from "@iconify/react";
+import { FAMOUS_COMPANIES_DATA } from "@/services/const";
+import Link from "next/link";
 
 const carousel = [
   {
@@ -100,10 +104,17 @@ export default function Home() {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentTopic, setCurrentTopic] = useState("All");
   const [detailId,  setDetailId] = useState(-1);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [viralData, setViralData] = useState([]);
 
   const timerInterval = useRef(null);
+  const companyDropdownRef = useRef(null);
 
   const { ref, inView } = useInView();
+
+  // Get first 6 companies for the filter
+  const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
 
   const loadNewPolls = useCallback(async () => {
     if (loading) return;
@@ -211,26 +222,118 @@ export default function Home() {
     if (!loading && inView && hasMore) loadPolls();
   }, [inView, loading, hasMore, currentTopic, loadPolls]);
 
+  useEffect(() => {
+    getViralDetections().then(data => {
+      setViralData(data.slice(0, 3)); // Get first 3 viral detections
+    });
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target)) {
+        setShowCompanyDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="w-full h-full">
-      <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden md:rounded-tl-[40px] flex-col`}>
-        <div className="flex-1 flex h-full">
-          <div className="w-full flex-1 flex flex-col h-full">
-            <div className="flex flex-col gap-4 p-6">
-              <div className="flex items-end gap-[19px]">
-                <div className="text-[24px] md:text-[36px] font-[700] text-[#2b425b]">
-                  What's happening now?
-                </div>
-                <p className="font-[500] text-[14px] text-[#2B425B66]">
-                  Live updates{" "}
-                  <span className="text-[#2B425B]">
-                    {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
-                    sec
-                  </span>{" "}
-                  until next breaking news
-                </p>
+      <div className={`${detailId == -1 ? "flex" : "hidden"} w-full h-full overflow-hidden flex flex-col shadow-sm`}>
+        {/* Header */}
+        <div className="flex flex-col gap-4 p-6">
+          <div className="flex items-start flex-1 justify-between gap-4">
+            <div className="flex items-end gap-3 mt-4 flex-col md:flex-row flex-1">
+              <div className="flex gap-[16px] items-center">
+                <h1 className="text-3xl font-bold text-[#2b425b]">What's happening now?</h1>
               </div>
-              
+              <p className="text-[#475467] text-sm md:text-base text-left md:text-right">
+                Live updates{" "}
+                <span className="text-[#2B425B]">
+                  {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
+                  sec
+                </span>{" "}
+                until next breaking news
+              </p>
+            </div>
+          
+            <button
+                className="hidden md:block gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                onClick={() => router.push("/app/subscription")}
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+          <div className="flex flex-col flex-1">
+            {/* Company Filter and Category Tabs */}
+            <div className="flex flex-col md:flex-row gap-4 px-6">
+              {/* Company Filter */}
+              <div className="flex flex-1 items-center gap-3 relative" ref={companyDropdownRef}>
+                <button
+                  onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#2b425b] hover:bg-[#F7F8FF] rounded-lg transition-colors"
+                >
+                  <Icon icon="mdi:cog" width={20} height={20} />
+                  <span>MANAGE</span>
+                </button>
+                
+                {selectedCompany && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FF] rounded-full border border-[#E4E7EC]">
+                    <span className="text-sm font-medium text-[#2b425b]">
+                      {FAMOUS_COMPANIES_DATA.find(c => c.id === selectedCompany)?.name || selectedCompany}
+                    </span>
+                    <button
+                      onClick={() => setSelectedCompany(null)}
+                      className="text-[#98A2B3] hover:text-[#2b425b]"
+                    >
+                      <Icon icon="mdi:close" width={16} height={16} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Company Dropdown */}
+                {showCompanyDropdown && (
+                  <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl p-6 shadow-lg border border-[#E4E7EC] z-50 w-[400px] max-w-[90vw]">
+                    <div className="grid grid-cols-3 gap-4">
+                      {filterCompanies.map((company) => (
+                        <button
+                          key={company.id}
+                          onClick={() => {
+                            setSelectedCompany(company.id);
+                            setShowCompanyDropdown(false);
+                          }}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
+                            selectedCompany === company.id
+                              ? "bg-[#F7F8FF] border-2 border-[#3D83FF]"
+                              : "bg-[#F9FAFB] border border-transparent hover:bg-[#F7F8FF]"
+                          }`}
+                        >
+                          <Icon 
+                            icon={company.logo} 
+                            className={`${selectedCompany === company.id ? "text-[#3D83FF]" : ""}`}
+                            width={48} 
+                            height={48} 
+                          />
+                          <span className={`text-xs font-medium ${
+                            selectedCompany === company.id ? "text-[#3D83FF]" : "text-[#2b425b]"
+                          }`}>
+                            {company.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Category Tabs */}
               <div className="flex gap-1 mt-2">
                 {navTopic.map((topic) => (
@@ -256,13 +359,76 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            
-            <div className="px-16 w-full mx-auto xl:max-w-[80%]  flex flex-col gap-[24px] flex-1 h-full overflow-auto pb-[200px]">
-              {polls.map((poll) => (
-                <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-              ))}
-              {/* Intersection Observer Trigger */}
-              <div ref={ref} className="h-10" />
+
+            {/* Left Column - Polls */}
+            <div className="flex-1 overflow-auto px-6 md:px-10 pt-[20px]">
+              <div className="flex flex-col gap-6">
+                {polls.map((poll) => (
+                  <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                ))}
+                {/* Intersection Observer Trigger */}
+                <div ref={ref} className="h-10" />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="hidden xl:flex xl:w-[400px] border-l border-[#E4E7EC] flex-col">
+            <div className="flex flex-col gap-8 p-6 overflow-auto">
+              {/* Viral Detection Section */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-[#101828]">Viral Detection</h3>
+                    <img src="/images/hot_badge.png" alt="Hot" width={32} height={20} />
+                  </div>
+                  <Link href="/app/viral-detection" className="text-sm text-[#344054] font-medium hover:text-blue-600">
+                    ALL
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-4 bg-[#F7F8FF80] rounded-[32px] p-6 shadow-[0_20px_50px_0_rgba(27,53,132,0.2)]">
+                  {viralData.length > 0 ? (
+                    viralData.map((item) => (
+                      <div key={item.id} className="flex flex-col gap-2 p-4 transition-colors">
+                        <h4 className="text-sm font-semibold text-[#101828] line-clamp-2">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs text-[#98A2B3]">
+                          {item.content?.replace(/\*/g, "").replace(/#/g, "").substring(0, 100) +
+                          (item.content?.length > 100 ? "..." : "")}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-[#98A2B3] text-center py-4">No viral detections yet</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Company Section */}
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-[#101828]">Company</h3>
+                  <img src="/images/hot_badge.png" alt="Hot" width={32} height={20} />
+                </div>
+                <div className="flex flex-col gap-4 rounded-lg">
+                  <div className="flex gap-[16px] w-full items-center">
+                    <img src="/images/viralPage/companybg.png" alt="Company" className="flex-shrink-0" />
+                    <p className="text-sm text-[#475467] leading-6 flex-1">
+                      We approach every challenge with curiosity and rigor, digging beneath the surface
+                    </p>
+                  </div>
+                  <p className="text-[12px] text-[#2B425B54] leading-6">
+                    Jacinda Ardern's Glasgow Visit and the Continued Influence of Former Visit and the Continued Influence
+                  </p>
+                  <Link
+                    href="/about-us"
+                    className="text-[#3D83FF] text-[12px] font-bold hover:underline"
+                  >
+                    LEARN MORE
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

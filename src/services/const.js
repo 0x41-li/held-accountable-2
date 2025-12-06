@@ -1,6 +1,7 @@
 
 export const CAREERS_DATA = [
   {
+    id: "ai-prompt-engineer",
     vacancy: "AI Prompt Engineer (LLM Applications)",
     short_description: `We’re looking for an AI Prompt Engineer to design, test, and scale high-quality prompts and prompt-driven workflows across our products. You’ll sit at the intersection of product, applied ML, and engineering—turning fuzzy user needs into reliable LLM behaviors, then hardening those behaviors for production.`,
     responsibilities: `## Responsibilities
@@ -43,6 +44,7 @@ Send your resume/portfolio (prompt samples/eval reports welcome) to contact@held
     industry: "AI/ML",
   },
   {
+    id: "senior-engineering-lead",
     vacancy: "Senior Engineering Lead, Held Accountable (AI News Platform)",
     short_description: `We’re hiring a Senior Engineering Lead to own the technical roadmap and lead a small, high-impact team building our core platform: real-time news ingestion, AI summarization, polling, personalization, and analytics—hardened with reliability, safety, and speed. You’ll stay hands-on while setting standards for architecture, code quality, and delivery.`,
     responsibilities: `## Responsibilities
@@ -91,6 +93,7 @@ Send your resume/GitHub/portfolio to contact@held-accountable.com with subject *
     industry: "Engineering",
   },
   {
+    id: "marketing-lead",
     vacancy: "Marketing Lead, Held Accountable (AI News Platform)",
     short_description: `We’re hiring a Marketing Lead to define our narrative, accelerate growth, and turn our AI features (news postings, polls, insights) into habit-forming experiences. You’ll own brand, product marketing, lifecycle, and growth across owned, earned, and paid channels—partnering tightly with Product, Editorial, and Partnerships.`,
     responsibilities: `## Responsibilities

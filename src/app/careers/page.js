@@ -3,43 +3,39 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CAREERS_DATA } from "@/services/const";
+import CareersCard from "@/components/common/CareersCard";
 
-const features = [
-    {
-        "icon": "/images/subscription/share.png",
-        "title": "Share narratives on headlines"
-    },
-    {
-        "icon": "/images/subscription/earn.png",
-        "title": "Earn money on your activity"
-    },
-    {
-        "icon": "/images/subscription/fast.png",
-        "title": "Get exclusive insights"
-    },
-    {
-        "icon": "/images/subscription/earn2.png",
-        "title": "Join the community"
-    },
-];
-
-const subscriptionItems = [
-    "Share narratives on polls",
-    "Earn money with your engagement",
-    "Get improved insights",
-    "Withdraw with crypto",
-    "Cancel anytime"
-];
-
-export default function LandingPage() {
+export default function CareersPage() {
     const router = useRouter();
+    const filters = [
+      "All",
+      "AI/ML",
+      "Marketing",
+      "Engineering",
+    ];
+    const [activeFilter, setActiveFilter] = useState("All");
+    const [page, setPage] = useState(1);
+    const itmsToShow = 6;
+  
+    const filteredData =
+      activeFilter === "All"
+        ? CAREERS_DATA
+        : CAREERS_DATA.filter((item) => item.industry === activeFilter);
+    const totalPages = Math.ceil(filteredData.length / itmsToShow);
+    const paginatedData = filteredData.slice(
+      (page - 1) * itmsToShow,
+      page * itmsToShow
+    );
+  
+    const handleFilterChange = (filter) => {
+      setActiveFilter(filter);
+      setPage(1);
+    };
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <div className='fixed top-0 left-0 right-0 bottom-0 w-full min-h-screen relative bg-[#EAECFB] overflow-auto'>
-            <div className="absolute top-0 left-0 right-0 bottom-0">
-                <img src="/images/grid.png" />
-            </div>
             <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
                 {/* Main Content */}
                 <div className='flex-1 flex flex-col items-center p-6 md:p-8 py-8 md:py-8'>
@@ -126,81 +122,36 @@ export default function LandingPage() {
                         </div>
                     </div>
                     <div className="w-full flex flex-col items-center justify-center mt-[50px]">
-                        <img src="/images/trusted.png" className="mb-[23px]" />
+                        <img src="/images/careers_badge.png" className="mb-[23px]" />
                         <div className="text-[48px] leading-[50px] md:text-[90px] md:leading-[90px] font-bold text-center text-[#2B425B]">
-                            <span className="text-[#3d83ff]">A holistic</span> perspective
-                            <br /> on news
+                            <span className="text-[#3d83ff]">Be a part</span> of our<br/>
+                            mission
                         </div>
                         <div className="text-[15px] leading-[28px] md:text-[18px] md:leading-[32px] text-[#2B425B80] font-medium mt-[23px]">
                             Everyone can make opinions and decisions, whether that is financial, political, regardless of their background.
                         </div>
-                        <button className="w-[140px] h-[54px] text-center justify-center items-center flex gradient-button text-white text-[13px] mt-[23px] px-6 py-4 rounded-[24px]">Get Started</button>
                     </div>
-                    <div className="relative w-full">
-                        <img src="/images/hero_effect.png" className="absolute md:top-[-300px] left-0 w-full" />
-                        <div className="w-full flex items-center justify-center">
-                            <img src="/images/hero.png" className="z-10" />
-                        </div>
-                    </div>
-                    <div className="w-full flex items-center justify-center">
-                        <div className="w-full">
-                            <div className="flex flex-col flex-col-reverse md:flex-row items-center justify-center md:pr-[100px]">
-                                <div className="flex-1 items-center justify-center">
-                                    <img src="/images/informed.png" />
-                                </div>
-                                <div className="flex-1 flex flex-col items-start justify-center">
-                                    <div className="text-[30px] leading-[36px] md:text-[56px] md:leading-[64px] font-[600] text-[#2B425B]">
-                                        <span className="text-[#3D83FF]">Make informed</span> <br/>
-                                        opinions & decisions
-                                    </div>
-
-                                    <div className="text-[13px] leading-[26px] md:text-[14px] md:leading-[28px] text-[#2b425b] font-[500] mt-[48px]">
-                                    To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape economics, and technology that empowers them to make their own choices and shape
-                                    </div>
-                                    <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px] w-[140px] h-[54px]">
-                                        More
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="flex flex-col md:flex-row items-center justify-center md:pl-[100px]">
-                                <div className="flex-1 flex flex-col md:flex-row gap-[36px] items-center justify-center w-full">
-                                    <div className="flex-1 flex flex-col items-start justify-center">
-                                        <div className="text-[24px] leading-[30px] md:text-[56px] md:leading-[64px] font-[600] text-[#2B425B]">
-                                            <span className="text-[#3D83FF]">Dashboard</span> <br/>
-                                            Options
-                                        </div>
-
-                                        <div className="text-[13px] leading-[26px] md:text-[14px] md:leading-[28px] text-[#2b425b] font-[500] mt-[48px]">
-                                        To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape
-                                        </div>
-                                        <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px]">
-                                            Get Started
-                                        </button>
-                                    </div>
+                    <div className="w-full mt-32 flex flex-col items-center justify-center">
+                        <div className="max-w-7xl">
+                            <div className="flex gap-10">
                                     <div className="flex overflow-x-auto md:overflow-x-visible min-w-0 w-full md:w-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
                                         <div className="flex flex-row md:flex-col items-start text-[18px] leading-[24px]">
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
-                                                Cryptocurrency News
-                                            </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#3D83FF] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
-                                                Viral Detection
-                                            </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
-                                                Snapshots
-                                            </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
-                                                Careers
-                                            </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
-                                                Support
-                                            </div>
+                                            {filters.map((filter) => (
+                                                <button
+                                                    onClick={() => handleFilterChange(filter)}
+                                                    className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${activeFilter === filter ? "border-[#3D83FF] text-[#3D83FF]" : "text-[#2B425B]"}`}
+                                                    key={filter}
+                                                >
+                                                    {filter}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="flex flex-col items-start text-[18px] leading-[24px] gap-8">
+                                            {paginatedData.map((item) => (
+                                                <CareersCard key={item.short_description} data={item} />
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex-1 items-center justify-center">
-                                    <img src="/images/dashboard.png" className="hidden md:block" />
-                                    <img src="/images/mobile-dashboard.png" className="block md:hidden" />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -235,22 +186,22 @@ export default function LandingPage() {
                                     <Link href="/about-us" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         About
                                     </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
+                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         Privacy Policy
                                     </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
+                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         Terms & Conditions
                                     </Link>
                                 </div>
                                 <div className="flex-1 flex flex-col items-start gap-4">
                                     <p className="font-[700] text-[14px] leading-[30px] text-[#2b425b])]">Dashboard</p>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
+                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         Get Started
                                     </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
+                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         Services
                                     </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
+                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                                         Team
                                     </Link>
                                 </div>
