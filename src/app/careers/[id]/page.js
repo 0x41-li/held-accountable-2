@@ -233,13 +233,13 @@ export default function CareerDetailPage() {
     >
       <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
         {/* Main Content */}
-        <div className='flex-1 flex flex-col items-center p-6 md:p-8 py-8 md:py-8'>
+        <div className='flex-1 flex flex-col items-center p-4 md:p-6 lg:p-8 py-6 md:py-8'>
           <div className='w-full max-w-7xl'>
             {/* Top Navbar */}
-            <div className='flex justify-between items-center relative mb-8'>
-              <div className='flex items-center justify-center'>
-                <img src="/images/logo.png" alt="Logo" width={50} height={50} />
-                <h1 className='text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
+            <div className='flex justify-between items-center relative mb-6 md:mb-8'>
+              <div className='flex items-center justify-center gap-2'>
+                <img src="/images/logo.png" alt="Logo" width={40} height={40} className="md:w-[50px] md:h-[50px]" />
+                <h1 className='text-base md:text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
               </div>
               {/* Hamburger Menu Button - Mobile Only */}
               <button
@@ -254,21 +254,21 @@ export default function CareerDetailPage() {
                 />
               </button>
               {/* Desktop Navigation */}
-              <div className='hidden md:flex items-center justify-center gap-[32px] font-medium'>
-                <Link href="/about-us" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
+              <div className='hidden lg:flex items-center justify-center gap-6 xl:gap-[32px] font-medium'>
+                <Link href="/about-us" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
                   About
                 </Link>
-                <Link href="/app/support" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
+                <Link href="/app/support" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
                   Services
                 </Link>
-                <Link href="/careers" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
+                <Link href="/careers" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
                   Careers
                 </Link>
-                <Link href="#blog" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
+                <Link href="#blog" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
                   Blog
                 </Link>
-                <Link href="/auth/signin" className='inline-flex items-center justify-center gap-2 rounded-full bg-white text-[14px] leading-[30px] text-[#3d83ff] w-[120px] h-[45px]'>
-                  <Icon icon="majesticons:lock" width="24" height="24" />
+                <Link href="/auth/signin" className='inline-flex items-center justify-center gap-2 rounded-full bg-white text-sm xl:text-[14px] leading-[30px] text-[#3d83ff] w-[100px] xl:w-[120px] h-[40px] xl:h-[45px]'>
+                  <Icon icon="majesticons:lock" width="20" height="20" className="xl:w-6 xl:h-6" />
                   Sign In
                 </Link>
               </div>
@@ -318,56 +318,56 @@ export default function CareerDetailPage() {
             </div>
 
             {/* Header Section */}
-            <div className="mb-8">
+            <div className="mb-6 md:mb-8">
               <Link 
                 href="/careers" 
-                className="inline-flex items-center gap-2 text-[#414651] hover:text-[#1D74D6] mb-6 transition-colors"
+                className="inline-flex items-center gap-2 text-[#414651] hover:text-[#1D74D6] mb-4 md:mb-6 transition-colors"
               >
-                <Icon icon="mdi:arrow-left" width={20} height={20} />
-                <span className="text-sm font-medium">Back</span>
+                <Icon icon="mdi:arrow-left" width={18} height={18} className="md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm font-medium">Back</span>
               </Link>
 
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-6">
             <div className="flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#414651] mb-2">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#414651] mb-2">
                 {jobTitle}
               </h1>
               {subtitle && (
-                <p className="text-lg text-[#98A2B3] mb-4">{subtitle}</p>
+                <p className="text-base md:text-lg text-[#98A2B3] mb-3 md:mb-4">{subtitle}</p>
               )}
-              <div className="flex items-center gap-2 mb-4">
-                <span className={`text-[11px] md:text-sm font-medium ${getCategoryColor(job.industry)}`}>
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className={`text-[10px] md:text-[11px] lg:text-sm font-medium ${getCategoryColor(job.industry)}`}>
                   {job.industry?.toUpperCase() || ""}
                 </span>
-                <span className="text-[11px] md:text-sm text-[#98A2B3]">|</span>
-                <div className="flex items-center gap-1.5 text-[#98A2B3] text-[11px] md:text-sm font-medium">
-                  <Icon icon="tabler:briefcase" width={14} height={14} />
+                <span className="text-[10px] md:text-[11px] lg:text-sm text-[#98A2B3] hidden sm:inline">|</span>
+                <div className="flex items-center gap-1.5 text-[#98A2B3] text-[10px] md:text-[11px] lg:text-sm font-medium">
+                  <Icon icon="tabler:briefcase" width={12} height={12} className="md:w-3.5 md:h-3.5" />
                   <span>{job.type?.toUpperCase() || ""}</span>
                 </div>
-                <span className="text-[11px] md:text-sm text-[#98A2B3]">|</span>
-                <div className="flex items-center gap-1.5 text-[#98A2B3] text-[11px] md:text-sm font-medium">
-                  <Icon icon="mdi:account-outline" width={14} height={14} />
+                <span className="text-[10px] md:text-[11px] lg:text-sm text-[#98A2B3] hidden sm:inline">|</span>
+                <div className="flex items-center gap-1.5 text-[#98A2B3] text-[10px] md:text-[11px] lg:text-sm font-medium">
+                  <Icon icon="mdi:account-outline" width={12} height={12} className="md:w-3.5 md:h-3.5" />
                   <span>{job.location?.toUpperCase() || ""}</span>
                 </div>
               </div>
             </div>
-            <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px]">
+            <button className="gradient-button text-white text-xs md:text-[13px] w-full md:w-auto mt-0 md:mt-[48px] px-4 md:px-6 py-3 md:py-4 rounded-[24px]">
               Contact Us
             </button>
           </div>
         </div>
 
         {/* Two Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
           {/* Left Sidebar - Navigation */}
           <div className="lg:w-auto flex-shrink-0">
-            <nav className="sticky top-8">
-              <div className="flex flex-row lg:flex-col items-start text-[18px] leading-[24px]">
+            <nav className="sticky top-4 md:top-8">
+              <div className="flex flex-row lg:flex-col items-start overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 -mx-4 md:mx-0 px-4 md:px-0 text-sm md:text-base lg:text-[18px] leading-[20px] md:leading-[24px]">
                 {navItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className={`flex-shrink-0 whitespace-nowrap border-b lg:border-l lg:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] lg:pr-[40px] py-[10px] transition-colors ${
+                    className={`flex-shrink-0 whitespace-nowrap border-b lg:border-l lg:border-b-0 border-[#2B425B20] pl-4 md:pl-8 lg:pl-[40px] pr-4 md:pr-6 lg:pr-[40px] py-2 md:py-[10px] transition-colors ${
                       activeSection === item.id
                         ? "border-[#3D83FF] text-[#3D83FF]"
                         : "text-[#2B425B]"
@@ -382,7 +382,7 @@ export default function CareerDetailPage() {
 
           {/* Right Content Area */}
           <div className="flex-1">
-            <div className="p-8 space-y-12">
+            <div className="p-4 md:p-6 lg:p-8 space-y-8 md:space-y-10 lg:space-y-12">
               {/* Render all qualification sections */}
               {Object.keys(qualificationSections).map((key) => (
                 <div
@@ -391,17 +391,17 @@ export default function CareerDetailPage() {
                   ref={(el) => (sectionRefs.current[key] = el)}
                   className="scroll-mt-8"
                 >
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF]">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF] flex-shrink-0">
                       <Icon 
                         icon={sectionIcons[key] || "mdi:file-document-outline"} 
-                        width={24} 
-                        height={24} 
-                        className="text-[#1D74D6]"
+                        width={20} 
+                        height={20} 
+                        className="md:w-6 md:h-6 text-[#1D74D6]"
                       />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-semibold text-[#414651] mb-4">
+                      <h2 className="text-xl md:text-2xl font-semibold text-[#414651] mb-3 md:mb-4">
                         {qualificationSections[key].title}
                       </h2>
                       <div 
@@ -424,17 +424,17 @@ export default function CareerDetailPage() {
                   ref={(el) => (sectionRefs.current[key] = el)}
                   className="scroll-mt-8"
                 >
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF]">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF] flex-shrink-0">
                       <Icon 
                         icon={sectionIcons[key] || "mdi:file-document-outline"} 
-                        width={24} 
-                        height={24} 
-                        className="text-[#1D74D6]"
+                        width={20} 
+                        height={20} 
+                        className="md:w-6 md:h-6 text-[#1D74D6]"
                       />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-semibold text-[#414651] mb-4">
+                      <h2 className="text-xl md:text-2xl font-semibold text-[#414651] mb-3 md:mb-4">
                         {aboutSections[key].title}
                       </h2>
                       <div 
@@ -456,17 +456,17 @@ export default function CareerDetailPage() {
                   ref={(el) => (sectionRefs.current["responsibilities"] = el)}
                   className="scroll-mt-8"
                 >
-                  <div className="flex items-start gap-4 mb-6">
-                    <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF]">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg bg-[#F7F8FF] flex-shrink-0">
                       <Icon 
                         icon={sectionIcons["responsibilities"] || "mdi:file-document-outline"} 
-                        width={24} 
-                        height={24} 
-                        className="text-[#1D74D6]"
+                        width={20} 
+                        height={20} 
+                        className="md:w-6 md:h-6 text-[#1D74D6]"
                       />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-semibold text-[#414651] mb-4">
+                      <h2 className="text-xl md:text-2xl font-semibold text-[#414651] mb-3 md:mb-4">
                         Responsibilities
                       </h2>
                       <div 
@@ -487,13 +487,13 @@ export default function CareerDetailPage() {
         </div>
 
         {/* Footer */}
-        <footer className='w-full border-t border-[#E9EAEB] bg-[#f7f8ff80] py-8 px-6 md:px-12 z-[1]'>
+        <footer className='w-full border-t border-[#E9EAEB] bg-[#f7f8ff80] py-6 md:py-8 px-4 md:px-6 lg:px-12 z-[1]'>
         <div className='max-w-7xl mx-auto'>
-          <div className='flex flex-col md:flex-row justify-between items-center gap-6 w-full'>
+          <div className='flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 w-full'>
             {/* Logo */}
-            <div className='flex items-center justify-center'>
-              <img src="/images/logo.png" alt="Logo" width={50} height={50} />
-              <h1 className='text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
+            <div className='flex items-center justify-center gap-2'>
+              <img src="/images/logo.png" alt="Logo" width={40} height={40} className="md:w-[50px] md:h-[50px]" />
+              <h1 className='text-base md:text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
             </div>
 
             {/* Navigation Links */}
