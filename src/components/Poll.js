@@ -159,11 +159,6 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         <span className="text-[11px] md:text-sm text-[#98A2B3]">
           {formatDateForCard(postedDate)}
         </span>
-        {isNew && (
-          <span className="text-green-500 ml-2">
-            <Icon icon="mdi:new-box" width={16} height={16} />
-          </span>
-        )}
       </div>
       
       <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-2 pr-32">

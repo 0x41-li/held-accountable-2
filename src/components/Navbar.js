@@ -65,7 +65,7 @@ export default function Navbar() {
                 href="/app/viral-detection"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/app/viral-detection" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/viral-detection" ? "font-bold" : "")
                 }
               >
                 <span>Viral Detection</span>
@@ -75,7 +75,7 @@ export default function Navbar() {
                 href="/app/snapshots"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/app/snapshots" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/snapshots" ? "font-bold" : "")
                 }
               >
                 <span>Snapshots</span>
@@ -85,7 +85,7 @@ export default function Navbar() {
                 href="/app/support"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/app/support" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/support" ? "font-bold" : "")
                 }
               >
                 <span>Support</span>
@@ -98,7 +98,7 @@ export default function Navbar() {
                 }}
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/logout" ? "bg-blue  text-white" : "")
+                  (pathname == "/logout" ? "font-bold" : "")
                 }
               >
                 <span>Logout</span>
@@ -108,7 +108,7 @@ export default function Navbar() {
                 href="/app/profile"
                 className={
                   "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/app/profile" ? "bg-blue  text-white" : "")
+                  (pathname == "/app/profile" ? "font-bold" : "")
                 }
               >
                 <span>{user?.fullname}</span>
