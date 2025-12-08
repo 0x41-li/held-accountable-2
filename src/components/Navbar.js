@@ -33,7 +33,9 @@ export default function Navbar() {
   }
 
   return (
-    <div className="flex p-4 md:hidden items-center h-[60px] w-full border-b border-[#E4E7EC]">
+    <div className={
+      `flex p-4 md:hidden items-center w-full border-b border-[#E4E7EC] ${show ? "fixed top-0 right-0 left-0 bottom-0 bg-[#dbe7f8] z-[999] !pt-[50px] h-[110px]" : " h-[60px]"}`
+    }>
       <Link href="/" className="flex flex-1 items-center pl-[23px]">
         <img src="/images/logo.png" width={50} />
         <span className="text-[24px] leading-[38px] font-medium">
@@ -47,7 +49,7 @@ export default function Navbar() {
         {!show?<Icon icon="mingcute:menu-fill" />:<Icon icon="mdi:close" />}
       </button>
       {show && (
-        <div className="fixed left-0 top-[120px] bottom-0 right-0 bg-[#dbe7f8] flex border-t z-[999]">
+        <div className="fixed left-0 top-[110px] bottom-0 right-0 bg-[#dbe7f8] flex border-t z-[999]">
           {/* <div className="w-1/3" onClick={() => setShow(false)}></div> */}
           <div className="w-full pt-[20px]">
             <div className="flex flex-col items-end justify-end px-[16px] gap-[40px] h-full overflow-scroll">
