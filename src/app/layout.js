@@ -52,10 +52,10 @@ export default function RootLayout({ children }) {
     <AuthProvider>
       <ToastContainer />
       {/* Gradient Ellipses Background */}
-      <div className="fixed top-0 left-0 right-0 bottom-0 inset-0 overflow-hidden pointer-events-none mainbg">
-        <img src="/images/tl.png" className="absolute top-0 left-0" />
-        <img src="/images/tr.png" className="absolute top-0 right-0" />
-        <img src="/images/br.png" className="absolute bottom-0 right-0" />
+      <div className="fixed top-0 left-0 right-0 bottom-0 inset-0 overflow-hidden pointer-events-none bg-[#dbe7f8] md:mainbg">
+        <img src="/images/tl.png" className="absolute top-0 left-0 hidden md:block" />
+        <img src="/images/tr.png" className="absolute top-0 right-0 hidden md:block" />
+        <img src="/images/br.png" className="absolute bottom-0 right-0 hidden md:block" />
       </div>
       {children}
     </AuthProvider>
