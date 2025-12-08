@@ -54,7 +54,7 @@ export default function Navbar() {
               <Link
                 href="/app/home"
                 className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
+                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[36px] text-[16px]  " +
                   (pathname == "/app/home" || pathname == "/" ? "font-bold" : "")
                 }
               >
@@ -64,7 +64,7 @@ export default function Navbar() {
               <Link
                 href="/app/viral-detection"
                 className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
+                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[36px] text-[16px]  " +
                   (pathname == "/app/viral-detection" ? "font-bold" : "")
                 }
               >
@@ -74,7 +74,7 @@ export default function Navbar() {
               <Link
                 href="/app/snapshots"
                 className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
+                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[36px] text-[16px]  " +
                   (pathname == "/app/snapshots" ? "font-bold" : "")
                 }
               >
@@ -84,41 +84,28 @@ export default function Navbar() {
               <Link
                 href="/app/support"
                 className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
+                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[36px] text-[16px]  " +
                   (pathname == "/app/support" ? "font-bold" : "")
                 }
               >
                 <span>Support</span>
                 <img src="/images/support.png" />
               </Link>
-              <button
-                onClick={() => {
-                  auth.signOut();
-                  router.push("/auth/signin");
-                }}
-                className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
-                  (pathname == "/logout" ? "font-bold" : "")
-                }
-              >
-                <span>Logout</span>
-                <Icon icon="material-symbols:logout-rounded" />
-              </button>
               <Link
                 href="/app/profile"
                 className={
-                  "rounded-[12px] py-[8px] px-[12px] flex justify-end items-center w-full gap-[12px] text-[16px]  " +
+                  "rounded-[12px] py-[8px] px-[4px] flex justify-end items-center w-full gap-[28px] text-[16px]  " +
                   (pathname == "/app/profile" ? "font-bold" : "")
                 }
               >
                 <span>{user?.fullname}</span>
-                <img src={user?.avatar} className="w-[24px] h-[24px] rounded-full" />
+                <img src={user?.avatar} className="w-[40px] h-[40px] rounded-full" />
               </Link>
               <div className="flex-1"></div>
               {user && (
-                <div className="flex flex-col gap-[10px]">
-                  <div className="p-[10px] w-full">
-                    <div className="rounded-[12px] p-[16px] border border-secondary w-full gap-[8px] flex">
+                <div className="flex flex-col gap-[10px] w-full">
+                  <div className="w-full">
+                    <div className="rounded-[12px] pb-[16px] border border-secondary w-full gap-[8px] flex">
                       <div className="flex w-full justify-between">
                         <div className="flex gap-[8px] items-center">
                           <img src="/images/sub_avatars.png" />
@@ -128,9 +115,6 @@ export default function Navbar() {
                         Subscribe
                       </Link>
                     </div>
-                  </div>
-                  <div className="text-md leading-md h-[34px] w-full text-[#A7A7A7] text-center">
-                    © 2025 Held Accountable
                   </div>
                 </div>
               )}
