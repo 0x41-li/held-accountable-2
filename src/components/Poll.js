@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { arrayUnion, arrayRemove, increment } from "firebase/firestore";
 import ShareModal from "./ShareModal";
+import Image from "next/image";
 
 export default function Poll({ poll: initialPoll, showDetail }) {
   const [poll, setPoll] = useState(initialPoll);
@@ -127,8 +128,8 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   const headlineText = poll.questions[0].headline ? getHeadlineText(poll.questions[0].headline) : '';
 
   return (
-    <div className="relative flex flex-col w-full rounded-[32px] border border-[#E9EAEB] p-6 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
-      {/* READ MORE button positioned at top right */}
+    <div className="relative flex flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
+      {/* Learn in 2 min & Invest button positioned at top right of card */}
       {firstInsight && (
         <Link 
           href={`/golden-insights/${poll.id}`}
@@ -138,9 +139,9 @@ export default function Poll({ poll: initialPoll, showDetail }) {
               showDetail(poll.id);
             }
           }}
-          className="hidden md:flex absolute top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
+          className="hidden md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
         >
-          READ MORE
+          Learn in 2 min & Invest
           <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
             style={{
               boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
@@ -151,7 +152,37 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         </Link>
       )}
       
-      <div className="flex items-center gap-2 mb-4 pr-32">
+      {/* Image on the left */}
+      <div className="flex flex-shrink-0 self-stretch items-stretch relative">
+        <div className="relative w-[140px] md:w-[250px] h-full">
+          <Image
+            src="/images/narrative_detail.png"
+            alt="Narrative"
+            fill
+            className="rounded-[32px] object-cover p-2"
+          />
+          {/* Heart icon overlay on top right of image */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleLike();
+            }}
+            className="absolute top-4 right-4 bg-[#0909091A] rounded-full p-1.5 shadow-md z-10 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <Icon
+              icon={like ? "icon-park-solid:like" : "icon-park-outline:like"}
+              width={16}
+              height={16}
+              className={"text-white"}
+            />
+          </button>
+        </div>
+      </div>
+      
+      {/* Content on the right */}
+      <div className="flex-1 flex flex-col relative p-2 md:p-6">
+        <div className="flex items-center gap-2 mb-4 md:pr-32">
         <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
           {category}
         </span>
@@ -161,22 +192,21 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         </span>
       </div>
       
-      <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-2 pr-32">
+      <h3 className="text-[16px] md:text-[18px] md:text-xl font-[500] text-[#101828] mb-2 line-clamp-2 md:pr-32">
         {headlineText}
       </h3>
       
       {firstInsight ? (
-        <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
-          {firstInsight.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 200)}
-          {firstInsight.content.replace(/\*/g, "").replace(/#/g, "").length > 200 ? "..." : ""}
+        <p className="text-[#2B425B66] text-[11px] md:text-[12px] md:text-base leading-6 mb-2 line-clamp-1 md:line-clamp-2">
+          {firstInsight.content.replace(/\*/g, "").replace(/#/g, "")}
         </p>
       ) : (
-        <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+        <p className="text-[#2B425B66] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
           {poll.questions[0].summary || "No content available"}
         </p>
       )}
       
-      <div className="flex items-center justify-between mb-4">
+      <div className="hidden items-center justify-between mb-4">
         <div className="flex items-center gap-4 text-[#404040] font-medium text-[12px]">
           <p
             className="flex items-center gap-1 cursor-pointer select-none"
@@ -199,22 +229,23 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         </div>
       </div>
       
-      {firstInsight && (
-        <Link 
-          href={`/golden-insights/${poll.id}`}
-          onClick={(e) => {
-            if (showDetail) {
-              e.preventDefault();
-              showDetail(poll.id);
-            }
-          }}
-          className="md:hidden text-[#1D74D6] font-bold text-sm hover:text-blue-700"
-        >
-          READ MORE
-        </Link>
-      )}
-      
-      <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
+        {firstInsight && (
+          <Link 
+            href={`/golden-insights/${poll.id}`}
+            onClick={(e) => {
+              if (showDetail) {
+                e.preventDefault();
+                showDetail(poll.id);
+              }
+            }}
+            className="md:hidden uppercase text-[#1D74D6] font-bold text-[11px] hover:text-blue-700"
+          >
+          Learn in 2 min & Invest
+          </Link>
+        )}
+        
+        <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
+      </div>
     </div>
   );
 }

@@ -104,9 +104,12 @@ export default function Home() {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentTopic, setCurrentTopic] = useState("All");
   const [detailId,  setDetailId] = useState(-1);
-  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [tempSelectedCompanies, setTempSelectedCompanies] = useState([]);
   const [viralData, setViralData] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   const timerInterval = useRef(null);
   const companyDropdownRef = useRef(null);
@@ -115,6 +118,23 @@ export default function Home() {
 
   // Get first 6 companies for the filter
   const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Initialize temp selection when modal opens
+  useEffect(() => {
+    if (showCompanyModal) {
+      setTempSelectedCompanies([...selectedCompanies]);
+    }
+  }, [showCompanyModal]);
 
   const loadNewPolls = useCallback(async () => {
     if (loading) return;
@@ -247,13 +267,13 @@ export default function Home() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex items-end gap-3 mt-4 flex-col md:flex-row flex-1">
+            <div className="flex md:items-end gap-3 mt-4 flex-col md:flex-row flex-1">
               <div className="flex gap-[16px] items-center">
                 <h1 className="text-3xl font-bold text-[#2b425b]">What's happening now?</h1>
               </div>
               <p className="text-[#475467] text-sm md:text-base text-left md:text-right">
                 Live updates{" "}
-                <span className="text-[#2B425B]">
+                <span className="text-[#2B425B] font-bold">
                   {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
                   sec
                 </span>{" "}
@@ -274,56 +294,73 @@ export default function Home() {
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           <div className="flex flex-col flex-1">
             {/* Company Filter and Category Tabs */}
-            <div className="flex flex-col md:flex-row gap-4 px-6">
+            <div className="flex flex-row gap-2 items-center justify-center md:justify-between md:gap-4 px-2 md:px-6">
               {/* Company Filter */}
-              <div className="flex flex-1 items-center gap-3 relative" ref={companyDropdownRef}>
+              <div className="flex gap-3 relative items-center justify-center" ref={companyDropdownRef}>
                 <button
-                  onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
+                  onClick={() => {
+                    if (isMobile) {
+                      setShowCompanyModal(true);
+                    } else {
+                      setShowCompanyDropdown(!showCompanyDropdown);
+                    }
+                  }}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#2b425b] hover:bg-[#F7F8FF] rounded-lg transition-colors"
                 >
-                  <Icon icon="mdi:cog" width={20} height={20} />
-                  <span>MANAGE</span>
+                  <Icon icon="solar:filter-linear" width={20} height={20} />
+                  <span className="hidden md:inline">MANAGE</span>
                 </button>
                 
-                {selectedCompany && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FF] rounded-full border border-[#E4E7EC]">
-                    <span className="text-sm font-medium text-[#2b425b]">
-                      {FAMOUS_COMPANIES_DATA.find(c => c.id === selectedCompany)?.name || selectedCompany}
-                    </span>
-                    <button
-                      onClick={() => setSelectedCompany(null)}
-                      className="text-[#98A2B3] hover:text-[#2b425b]"
-                    >
-                      <Icon icon="mdi:close" width={16} height={16} />
-                    </button>
+                {selectedCompanies.length > 0 && (
+                  <div className="hidden md:flex items-center gap-2 flex-wrap">
+                    {selectedCompanies.map((companyId) => {
+                      const company = FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
+                      if (!company) return null;
+                      return (
+                        <div key={companyId} className="flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FF] rounded-full border border-[#E4E7EC]">
+                          <span className="text-sm font-medium text-[#2b425b]">
+                            {company.name.toUpperCase()}
+                          </span>
+                          <button
+                            onClick={() => setSelectedCompanies(selectedCompanies.filter(id => id !== companyId))}
+                            className="text-[#98A2B3] hover:text-[#2b425b]"
+                          >
+                            <Icon icon="mdi:close" width={16} height={16} />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
-                {/* Company Dropdown */}
-                {showCompanyDropdown && (
+                {/* Company Dropdown (Desktop) */}
+                {showCompanyDropdown && !isMobile && (
                   <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl p-6 shadow-lg border border-[#E4E7EC] z-50 w-[400px] max-w-[90vw]">
                     <div className="grid grid-cols-3 gap-4">
                       {filterCompanies.map((company) => (
                         <button
                           key={company.id}
                           onClick={() => {
-                            setSelectedCompany(company.id);
-                            setShowCompanyDropdown(false);
+                            if (selectedCompanies.includes(company.id)) {
+                              setSelectedCompanies(selectedCompanies.filter(id => id !== company.id));
+                            } else {
+                              setSelectedCompanies([...selectedCompanies, company.id]);
+                            }
                           }}
                           className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
-                            selectedCompany === company.id
+                            selectedCompanies.includes(company.id)
                               ? "bg-[#F7F8FF] border-2 border-[#3D83FF]"
                               : "bg-[#F9FAFB] border border-transparent hover:bg-[#F7F8FF]"
                           }`}
                         >
                           <Icon 
                             icon={company.logo} 
-                            className={`${selectedCompany === company.id ? "text-[#3D83FF]" : ""}`}
+                            className={`${selectedCompanies.includes(company.id) ? "text-[#3D83FF]" : ""}`}
                             width={48} 
                             height={48} 
                           />
                           <span className={`text-xs font-medium ${
-                            selectedCompany === company.id ? "text-[#3D83FF]" : "text-[#2b425b]"
+                            selectedCompanies.includes(company.id) ? "text-[#3D83FF]" : "text-[#2b425b]"
                           }`}>
                             {company.name}
                           </span>
@@ -373,7 +410,7 @@ export default function Home() {
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="hidden xl:flex xl:w-[400px] border-l border-[#E4E7EC] flex-col">
+          <div className="hidden xl:flex xl:w-[400px] flex-col">
             <div className="flex flex-col gap-8 p-6 overflow-auto">
               {/* Viral Detection Section */}
               <div className="flex flex-col gap-4">
@@ -436,6 +473,113 @@ export default function Home() {
       {
         detailId != -1 && <GoldenInsightDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
       }
+
+      {/* Company Selection Modal (Mobile) */}
+      {showCompanyModal && isMobile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-[#2B425B] bg-opacity-30 backdrop-blur-sm"
+            onClick={() => setShowCompanyModal(false)}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-[#E4E7EC]">
+              <h2 className="text-xl font-bold text-[#101828]">Manage</h2>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setTempSelectedCompanies([])}
+                  className="text-sm font-medium text-[#3D83FF] hover:text-[#2B5FCC]"
+                >
+                  CLEAR ALL
+                </button>
+                <button
+                  onClick={() => setShowCompanyModal(false)}
+                  className="text-[#98A2B3] hover:text-[#2b425b]"
+                >
+                  <Icon icon="mdi:close" width={24} height={24} />
+                </button>
+              </div>
+            </div>
+
+            {/* Selected Tags */}
+            {tempSelectedCompanies.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-4 border-b border-[#E4E7EC]">
+                {tempSelectedCompanies.map((companyId) => {
+                  const company = FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
+                  if (!company) return null;
+                  return (
+                    <div key={companyId} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F9FAFB] rounded-lg border border-[#E4E7EC]">
+                      <span className="text-sm font-medium text-[#2b425b]">
+                        {company.name.toUpperCase()}
+                      </span>
+                      <button
+                        onClick={() => setTempSelectedCompanies(tempSelectedCompanies.filter(id => id !== companyId))}
+                        className="text-[#98A2B3] hover:text-[#2b425b]"
+                      >
+                        <Icon icon="mdi:close" width={16} height={16} />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Company Grid */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-2 gap-4">
+                {filterCompanies.map((company) => {
+                  const isSelected = tempSelectedCompanies.includes(company.id);
+                  return (
+                    <button
+                      key={company.id}
+                      onClick={() => {
+                        if (isSelected) {
+                          setTempSelectedCompanies(tempSelectedCompanies.filter(id => id !== company.id));
+                        } else {
+                          setTempSelectedCompanies([...tempSelectedCompanies, company.id]);
+                        }
+                      }}
+                      className={`flex flex-col items-center gap-3 p-4 rounded-xl transition-all ${
+                        isSelected
+                          ? "bg-white border-2 border-[#2B425B] shadow-sm"
+                          : "bg-[#F9FAFB] border border-dashed border-[#E4E7EC]"
+                      }`}
+                    >
+                      <Icon 
+                        icon={company.logo} 
+                        className={isSelected ? "text-[#2B425B]" : "text-gray-400"}
+                        width={48} 
+                        height={48} 
+                      />
+                      <span className={`text-sm font-medium ${
+                        isSelected ? "text-[#2B425B]" : "text-[#98A2B3]"
+                      }`}>
+                        {company.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-[#E4E7EC]">
+              <button
+                onClick={() => {
+                  setSelectedCompanies([...tempSelectedCompanies]);
+                  setShowCompanyModal(false);
+                }}
+                className="gradient-button w-full rounded-full text-white font-bold py-3 transition-all"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,6 +6,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../../lib/firebase";
+import HomeIcon from "@/assets/icons/home.svg";
+import ViralIcon from "@/assets/icons/viral.svg";
+import SnapshotIcon from "@/assets/icons/snapshots.svg";
+import SupportIcon from "@/assets/icons/support.svg";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -61,7 +65,7 @@ export default function Navbar() {
                 }
               >
                 <span>Home</span>
-                <img src="/images/home.png" />
+                <HomeIcon />
               </Link>
               <Link
                 href="/app/viral-detection"
@@ -71,7 +75,7 @@ export default function Navbar() {
                 }
               >
                 <span>Viral Detection</span>
-                <img src="/images/viral.png" />
+                <ViralIcon className="stroke-[#000]" />
               </Link>
               <Link
                 href="/app/snapshots"
@@ -81,7 +85,7 @@ export default function Navbar() {
                 }
               >
                 <span>Snapshots</span>
-                <img src="/images/snapshots.png" />
+                <SnapshotIcon className="stroke-[#000]" />
               </Link>
               <Link
                 href="/app/support"
@@ -91,7 +95,7 @@ export default function Navbar() {
                 }
               >
                 <span>Support</span>
-                <img src="/images/support.png" />
+                <SupportIcon className="stroke-[#000]" />
               </Link>
               <Link
                 href="/app/profile"

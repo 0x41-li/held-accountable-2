@@ -4,7 +4,6 @@ import ViralCard from "./card/ViralCard";
 import { Icon } from "@iconify/react";
 import ViralSidebarContent from "./card/ViralSidebarContent";
 import { getViralDetections } from "@/services/polls/polls";
-import Btn from "@/components/ui/Btn";
 
 export default function ViralDetection() {
   const [viralData, setViralData] = useState([]);
@@ -37,12 +36,15 @@ export default function ViralDetection() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex items-end gap-3 mt-4 flex-col md:flex-row">
+            <div className="flex items-start md:items-end gap-3 mt-4 flex-col md:flex-row">
               <div className="flex gap-[16px] items-center">
                 <h1 className="text-3xl font-bold text-[#2b425b]">Viral Detection</h1>
-                <img src="/images/hot_badge.png" />
+                <img src="/images/hot_badge.png" className="md:block hidden" />
               </div>
+              <div className="flex items-center gap-2">
+              <img src="/images/hot_badge.png" className="md:hidden block" />
               <p className="text-[#475467] text-base text-right">Top 5 most trending topics today!</p>
+              </div>
             </div>
           
             <button
@@ -65,11 +67,11 @@ export default function ViralDetection() {
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-3 text-sm font-medium transition-colors relative ${
                     activeCategory === category
-                    ? "text-blue-700 md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
-                    : "text-[#2b425b] hover:text-[#101828]"
+                      ? "text-blue-700 !font-bold md:font-normal md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
+                      : "text-[#2b425b] hover:text-[#101828]"
                   }`}
                 >
-                  {category}
+                  {category.toUpperCase()}
                   {activeCategory === category && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
                   )}

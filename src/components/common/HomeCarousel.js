@@ -43,8 +43,8 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
           {data.concat(data).map((item, index) => (
               trend ? <div key={index} className="flex shrink-0 items-center gap-2 mr-4">
                         {item.change >= 0?<Icon icon="icon-park-solid:up-one" className="text-green-400" />:<Icon icon="icon-park-solid:down-one" className="text-red-400" />}
-                        <span>{item.symbol}</span>
-                        <span>
+                        <span className="text-[#2B425B] font-medium">{item.symbol}</span>
+                        <span className="text-[#2B425BB2]">
                         {item.price.toLocaleString("en-US", {
                           style: "currency",
                           currency: "USD",
@@ -55,10 +55,10 @@ export default function HomeCarousel({ trend = true, title, speed=25, className,
               key={index}
               className="flex items-center gap-2 shrink-0 mr-4"
             >
-              <p className="text-[#344054] font-bold">
+              <p className="text-[#2B425B] font-medium">
                 {item.eventDate}
               </p>
-              <p className="text-[#344054]">
+              <p className="text-[#2B425B66]">
                 {item.title.eng}
               </p>
             </div>

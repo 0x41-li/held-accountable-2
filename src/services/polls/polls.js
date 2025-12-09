@@ -15,6 +15,7 @@ import {
   orderBy,
   limit,
   startAfter,
+  getCountFromServer,
 } from "firebase/firestore";
 import { FAMOUS_COMPANIES_DATA } from "../const";
 
@@ -922,38 +923,50 @@ export const createSnapshot = async (snapshotData) => {
 export const getSnapshots = async (start = null, length = 10, date_start = null, date_end = null, tag_filter = [], enabled_filter = true) => {
   try {
     const constraints = [];
+    const countConstraints = [];
 
     // ✅ Tag filter
     if (tag_filter.length > 0) {
       constraints.push(where("tags", "array-contains-any", tag_filter));
+      countConstraints.push(where("tags", "array-contains-any", tag_filter));
     }
 
     // ✅ Date range filter (optional)
     if (date_start) {
       constraints.push(where("post_date", ">=", date_start));
+      countConstraints.push(where("post_date", ">=", date_start));
     }
     if (date_end) {
       constraints.push(where("post_date", "<=", date_end));
+      countConstraints.push(where("post_date", "<=", date_end));
     }
 
     constraints.push(orderBy("post_date", "desc"));
     constraints.push(limit(length));
 
-    if (enabled_filter)
+    if (enabled_filter) {
       constraints.push(where("enabled", "==", true));
+      countConstraints.push(where("enabled", "==", true));
+    }
 
     if (start) {
       constraints.push(startAfter(start));
     }
 
+    // Get paginated results
     const q = query(collection(db, SNAPSHOT_COLLECTION), ...constraints);
-
     const snapshot = await getDocs(q);
+
+    // Get total count (without pagination)
+    const countQuery = query(collection(db, SNAPSHOT_COLLECTION), ...countConstraints);
+    const countSnapshot = await getCountFromServer(countQuery);
+    const totalCount = countSnapshot.data().count;
 
     const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     return {
       results,
-      lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
+      lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null,
+      totalCount
     };
   } catch (error) {
     console.error("Error fetching snapshots:", error);

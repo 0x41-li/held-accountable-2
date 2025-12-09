@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react";
 import React from "react";
 
 export default function Pagination({ totalPages, page, setPage, className }) {
+  console.log(totalPages, page);
   const handlePrev = () => {
     setPage((prev) => Math.max(prev - 1, 1));
   };
@@ -38,25 +39,29 @@ export default function Pagination({ totalPages, page, setPage, className }) {
   }
 
   return (
-    <div className={`flex items-center justify-center mb-6 ${className}`}>
+    <div className={`flex items-center justify-center gap-2 mb-6 ${className}`}>
       <button
         onClick={handlePrev}
         disabled={page === 1}
-        className={`${page === 1 && "opacity-[0.5]"}`}
+        className={`text-gray-400 hover:text-gray-600 transition-colors ${
+          page === 1 ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
-        <Icon icon="ep:arrow-left-bold" width={24} height={24} />
+        <Icon icon="mdi:chevron-left" width={24} height={24} />
       </button>
       {getPaginationPages(page, totalPages).map((p, i) =>
         p === "..." ? (
-          <span key={i} className="px-2">
+          <span key={i} className="px-2 text-gray-400">
             ...
           </span>
         ) : (
           <button
             key={i}
             onClick={() => setPage(p)}
-            className={`px-3 sm:px-4 py-2 rounded-lg ${
-              page === p ? "bg-gray-200" : "bg-blue-500"
+            className={`px-3 py-1 transition-colors ${
+              page === p
+                ? "font-bold text-[#2b425b]"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             {p}
@@ -67,9 +72,11 @@ export default function Pagination({ totalPages, page, setPage, className }) {
       <button
         onClick={handleNext}
         disabled={page === totalPages}
-        className={`${page === totalPages && "opacity-[0.5]"}`}
+        className={`text-gray-400 hover:text-gray-600 transition-colors ${
+          page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
-        <Icon icon="ep:arrow-right-bold" width={24} height={24} />
+        <Icon icon="mdi:chevron-right" width={24} height={24} />
       </button>
     </div>
   );

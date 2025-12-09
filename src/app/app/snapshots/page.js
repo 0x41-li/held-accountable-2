@@ -9,6 +9,7 @@ import { useInView } from "react-intersection-observer";
 import SnapshotSidebar from "@/components/Snapshot/SnapshotSidebar";
 import { SingleDatePicker } from "@/components/ui/SingleDatePicker";
 import { auth } from "../../../../lib/firebase";
+import Pagination from "@/components/common/Pagination";
 
 export default function Snapshot() {
   const router = useRouter();
@@ -18,9 +19,13 @@ export default function Snapshot() {
   const [start, setStart] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [activeCategory, setActiveCategory] = useState("ALL");
-  const categories = ["ALL", "FINANCE", "CRYPTO", "POLITICS", "AI"];
+  const categories = ["ALL", "Finance", "Crypto", "Politics", "AI"];
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCursors, setPageCursors] = useState({}); // Store cursor for each page
+  const [totalPages, setTotalPages] = useState(1);
 
   const { ref, inView } = useInView();
 
@@ -29,6 +34,8 @@ export default function Snapshot() {
     setHasMore(true);
     setSnapshots([]);
     setSelectedDate(date);
+    setCurrentPage(1);
+    setPageCursors({});
   }
 
   const changeSelectedCategory = (category) => {
@@ -36,6 +43,8 @@ export default function Snapshot() {
     setHasMore(true);
     setSnapshots([]);
     setActiveCategory(category);
+    setCurrentPage(1);
+    setPageCursors({});
   }
 
   const handleChangeSnapshotStatus = async (snapshot) => {
@@ -53,24 +62,83 @@ export default function Snapshot() {
     setSnapshots(snapshots.filter(snap => snap.id != snapshotId));
   }
 
-  const loadData = async (from) => {
+  const loadData = async (from, isPageLoad = false, pageNum = 1) => {
     setLoading(true);
     // Convert category to topics array format
-    const topics = activeCategory === "ALL" ? [] : [activeCategory.toLowerCase()];
+    const topics = activeCategory === "ALL" ? [] : [activeCategory];
+    console.log(topics);
     const dateStr = selectedDate ? selectedDate.toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10) : null;
-    const { results, lastDoc } = await getSnapshots(from, 10, dateStr, dateStr, topics, !shouldShowNewButton);
-    if (results.length == 0) {
-      setHasMore(false);
+    const { results, lastDoc, totalCount } = await getSnapshots(from, 5, dateStr, dateStr, topics, !shouldShowNewButton);
+    
+    if (isMobile && isPageLoad) {
+      // For mobile pagination, replace snapshots instead of appending
+      setSnapshots(results);
+      // Store cursor for next page
+      if (lastDoc) {
+        setPageCursors(prev => ({ ...prev, [pageNum + 1]: lastDoc }));
+      }
+      // Calculate total pages from total count
+      const itemsPerPage = 10;
+      const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
+      setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
+    } else {
+      // Desktop infinite scroll behavior
+      if (results.length == 0) {
+        setHasMore(false);
+      }
+      setStart(lastDoc);
+      setSnapshots([...snapshots, ...results.filter(snap => !snapshots.some(s => s.id === snap.id))]);
     }
-    setStart(lastDoc);
-    setSnapshots([...snapshots, ...results.filter(snap => !snapshots.some(s => s.id === snap.id))]);
     setLoading(false);
   };
 
+  // Mobile detection
   useEffect(() => {
-    if (!loading && inView && hasMore)
+    let wasMobile = window.innerWidth < 768;
+    setIsMobile(wasMobile);
+    
+    const checkMobile = () => {
+      const nowMobile = window.innerWidth < 768; // md breakpoint
+      
+      // Reset state when switching between mobile and desktop
+      if (wasMobile !== nowMobile) {
+        setSnapshots([]);
+        setStart(null);
+        setHasMore(true);
+        setCurrentPage(1);
+        setPageCursors({});
+        setTotalPages(1);
+        wasMobile = nowMobile;
+      }
+      setIsMobile(nowMobile);
+    };
+    
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Desktop infinite scroll
+  useEffect(() => {
+    if (!isMobile && !loading && inView && hasMore) {
       loadData(start);
-  }, [loading, inView, hasMore, activeCategory, selectedDate, shouldShowNewButton]);
+    }
+  }, [loading, inView, hasMore, activeCategory, selectedDate, shouldShowNewButton, isMobile]);
+
+  // Mobile pagination - load data when page changes
+  useEffect(() => {
+    if (isMobile) {
+      // Calculate cursor for current page
+      // Page 1: no cursor (start from beginning)
+      // Page 2+: use cursor from previous page (stored at pageCursors[currentPage])
+      const cursor = currentPage === 1 ? null : pageCursors[currentPage];
+      
+      // Load data - cursor might be undefined for pages we haven't visited yet
+      // but that's okay, we'll fetch from the last known position
+      if (currentPage === 1 || cursor !== undefined) {
+        loadData(cursor, true, currentPage);
+      }
+    }
+  }, [currentPage, activeCategory, selectedDate, shouldShowNewButton, isMobile]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -97,7 +165,7 @@ export default function Snapshot() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex items-end gap-3 mt-4 flex-col md:flex-row flex-1">
+            <div className="flex md:items-end gap-3 mt-4 flex-col md:flex-row flex-1">
               <h1 className="text-3xl font-bold text-[#2b425b]">Snapshots</h1>
               <p className="text-[#2b425b] text-base">See what were discussed in previous days.</p>
             </div>
@@ -123,19 +191,19 @@ export default function Snapshot() {
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           <div className="flex flex-col flex-1">
             {/* Category Tabs and Date Picker */}
-            <div className="flex gap-1 mt-2 px-6 justify-between items-center">
-              <div className="flex gap-1">
+            <div className="flex gap-1 mt-2 px-6 justify-start md:justify-between items-start md:items-center md:flex-row flex-col">
+              <div className="flex gap-6 md:gap-1">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => changeSelectedCategory(category)}
-                    className={`px-4 py-3 text-sm font-medium transition-colors relative ${
+                    className={`md:px-4 py-3 text-sm font-medium transition-colors relative ${
                       activeCategory === category
-                        ? "text-blue-700 md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
+                        ? "text-blue-700 !font-bold md:font-normal md:border border-dashed border-[#2B425B40] rounded-full py-2"
                         : "text-[#2b425b] hover:text-[#101828]"
                     }`}
                   >
-                    {category}
+                    {category.toUpperCase()}
                     {activeCategory === category && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
                     )}
@@ -150,7 +218,7 @@ export default function Snapshot() {
               </div>
             </div>
             {/* Left Column - Snapshots */}
-            <div className="flex-1 overflow-auto px-10 pt-[20px]">
+            <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-[20px] md:px-10 pt-[20px]`}>
               <div className="flex flex-col gap-6">
                 {snapshots.length > 0 ? (
                   snapshots.map((snapshot) => (
@@ -163,7 +231,17 @@ export default function Snapshot() {
                     No snapshots found
                   </p>
                 )}
-                <div ref={ref} className="h-10" />
+                {/* Infinite scroll trigger for desktop only */}
+                {!isMobile && <div ref={ref} className="h-10" />}
+                {/* Pagination for mobile only */}
+                {isMobile && totalPages > 1 && (
+                  <Pagination
+                    totalPages={totalPages}
+                    page={currentPage}
+                    setPage={setCurrentPage}
+                    className="mt-6"
+                  />
+                )}
               </div>
             </div>
           </div>

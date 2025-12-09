@@ -57,10 +57,10 @@ export function SnapshotCard({ snapshot, showManage, changeSnapshotStatus, delet
           {formatDateForCard(new Date(snapshot.createdAt.seconds * 1000))}
         </span>
       </div>
-      <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-2 pr-32">
+      <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-1 md:line-clamp-2 pr-32">
         {snapshot.title}
       </h3>
-      <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+      <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3 h-[29px] md:h-auto">
         {snapshot.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 200)}
         {snapshot.content.length > 200 ? "..." : ""}
       </p>
