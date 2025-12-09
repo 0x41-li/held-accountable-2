@@ -18,6 +18,7 @@ import GoldenInsightDetailPage from "@/app/app/golden-insights/[id]/page";
 import { Icon } from "@iconify/react";
 import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import Link from "next/link";
+import Pagination from "@/components/common/Pagination";
 
 const carousel = [
   {
@@ -110,6 +111,10 @@ export default function Home() {
   const [tempSelectedCompanies, setTempSelectedCompanies] = useState([]);
   const [viralData, setViralData] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCursors, setPageCursors] = useState({});
+  const [totalPages, setTotalPages] = useState(1);
+  const [companyPollAssignments, setCompanyPollAssignments] = useState([]);
 
   const timerInterval = useRef(null);
   const companyDropdownRef = useRef(null);
@@ -119,12 +124,53 @@ export default function Home() {
   // Get first 6 companies for the filter
   const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
 
+  // Function to assign polls to companies (defined early to avoid initialization error)
+  const assignPollsToCompanies = useCallback((pollsList) => {
+    // Randomly assign 2-5 polls per company (only once)
+    const assignments = [];
+    const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
+    let pollIndex = 0;
+    
+    filterCompanies.forEach((company) => {
+      // Random number between 2 and 5
+      const pollsCount = Math.floor(Math.random() * 4) + 2; // 2-5 polls
+      const companyPolls = pollsList.slice(pollIndex, pollIndex + pollsCount);
+      
+      if (companyPolls.length > 0) {
+        assignments.push({
+          company,
+          polls: companyPolls,
+          startIndex: pollIndex,
+          endIndex: pollIndex + companyPolls.length
+        });
+        pollIndex += companyPolls.length;
+      }
+    });
+    
+    setCompanyPollAssignments(assignments);
+  }, []);
+
   // Mobile detection
   useEffect(() => {
+    let wasMobile = window.innerWidth < 768;
+    setIsMobile(wasMobile);
+    
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const nowMobile = window.innerWidth < 768;
+      
+      // Reset state when switching between mobile and desktop
+      if (wasMobile !== nowMobile) {
+        setPolls([]);
+        setStart(null);
+        setHasMore(true);
+        setCurrentPage(1);
+        setPageCursors({});
+        setTotalPages(1);
+        wasMobile = nowMobile;
+      }
+      setIsMobile(nowMobile);
     };
-    checkMobile();
+    
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -191,56 +237,107 @@ export default function Home() {
     };
   }, [loadNewPolls]);
 
-  const loadPolls = useCallback(async () => {
+  const loadPolls = useCallback(async (from = null, isPageLoad = false, pageNum = 1) => {
     if (loading) return;
     setLoading(true);
     try {
       let poll_list = [],
-        lastDoc;
+        lastDoc,
+        totalCount;
+
+      // Determine items per page based on mobile/desktop
+      const itemsPerPage = (isMobile && isPageLoad) ? 5 : 10;
+      const cursor = isMobile && isPageLoad ? from : (from || start);
 
       if (currentTopic === "All") {
-        const { result, lastDoc: last } = await getHomePolls(viewType, start);
+        const { result, lastDoc: last, totalCount: count } = await getHomePolls(viewType, cursor, itemsPerPage);
         poll_list = result;
         lastDoc = last;
+        totalCount = count;
       } else {
-        const { result, lastDoc: last } = await getPollsByTopic(
+        const { result, lastDoc: last, totalCount: count } = await getPollsByTopic(
           currentTopic,
-          start
+          cursor,
+          itemsPerPage
         );
         poll_list = result;
         lastDoc = last;
+        totalCount = count;
       }
 
-      if (poll_list.length === 0) {
-        setHasMore(false);
+      if (isMobile && isPageLoad) {
+        // For mobile pagination, replace polls instead of appending
+        setPolls(poll_list);
+        // Store cursor for next page
+        if (lastDoc) {
+          setPageCursors(prev => ({ ...prev, [pageNum + 1]: lastDoc }));
+        }
+        // Calculate total pages from total count
+        const calculatedTotalPages = Math.ceil(totalCount / 5);
+        setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
+        
+        // Assign polls to companies only on first page load and only if not already assigned
+        if (pageNum === 1 && companyPollAssignments.length === 0) {
+          assignPollsToCompanies(poll_list);
+        }
+        
+        // Don't update start cursor on mobile to prevent desktop scroll from interfering
         return;
-      }
-
-      if (poll_list.length > 0) {
-        setStart(lastDoc);
-        setPolls((prevPolls) => [
-          ...prevPolls,
-          ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
-        ]);
-      } else {
-        setHasMore(false);
+      } else if (!isMobile && !isPageLoad) {
+        // Desktop infinite scroll behavior - only when not mobile and not a page load
+        if (poll_list.length === 0) {
+          setHasMore(false);
+          return;
+        }
+        if (poll_list.length > 0) {
+          setStart(lastDoc);
+          setPolls((prevPolls) => {
+            const newPolls = [
+              ...prevPolls,
+              ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
+            ];
+            
+            // Assign polls to companies only on first load (when prevPolls is empty)
+            if (prevPolls.length === 0 && companyPollAssignments.length === 0) {
+              assignPollsToCompanies(newPolls);
+            }
+            
+            return newPolls;
+          });
+        } else {
+          setHasMore(false);
+        }
       }
     } catch (error) {
       console.error("Error loading polls:", error);
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, viewType, start]);
+  }, [loading, currentTopic, viewType, start, isMobile, assignPollsToCompanies, companyPollAssignments.length]);
 
   const onRefresh = useCallback(() => {
     setStart(null);
     setHasMore(true);
     setPolls([]);
+    setCompanyPollAssignments([]);
   }, []);
 
+  // Desktop infinite scroll
   useEffect(() => {
-    if (!loading && inView && hasMore) loadPolls();
-  }, [inView, loading, hasMore, currentTopic, loadPolls]);
+    if (!isMobile && !loading && inView && hasMore) {
+      loadPolls(start, false, 1);
+    }
+  }, [inView, loading, hasMore, currentTopic, viewType, isMobile, start, loadPolls]);
+
+  // Mobile pagination - load data when page changes
+  useEffect(() => {
+    if (isMobile) {
+      const cursor = currentPage === 1 ? null : pageCursors[currentPage];
+      if (currentPage === 1 || cursor !== undefined) {
+        loadPolls(cursor, true, currentPage);
+      }
+    }
+  }, [currentPage, currentTopic, viewType, isMobile, loadPolls]);
 
   useEffect(() => {
     getViralDetections().then(data => {
@@ -267,9 +364,9 @@ export default function Home() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex md:items-end gap-3 mt-4 flex-col md:flex-row flex-1">
+            <div className="flex md:items-end gap-3 md:mt-4 flex-col md:flex-row flex-1">
               <div className="flex gap-[16px] items-center">
-                <h1 className="text-3xl font-bold text-[#2b425b]">What's happening now?</h1>
+                <h1 className="text-[30px] md:text-3xl font-bold text-[#2b425b]">What's happening now?</h1>
               </div>
               <p className="text-[#475467] text-sm md:text-base text-left md:text-right">
                 Live updates{" "}
@@ -381,6 +478,9 @@ export default function Home() {
                       setStart(null);
                       setHasMore(true);
                       setPolls([]);
+                      setCurrentPage(1);
+                      setPageCursors({});
+                      setCompanyPollAssignments([]);
                     }}
                     className={`px-4 py-3 text-sm font-medium transition-colors relative ${
                       currentTopic === topic
@@ -398,19 +498,89 @@ export default function Home() {
             </div>
 
             {/* Left Column - Polls */}
-            <div className="flex-1 overflow-auto px-6 md:px-10 pt-[20px]">
+            <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-6 md:px-10 pt-[20px]`}>
               <div className="flex flex-col gap-6">
-                {polls.map((poll) => (
-                  <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-                ))}
-                {/* Intersection Observer Trigger */}
-                <div ref={ref} className="h-10" />
+                {/* Group polls by company - Test View */}
+                {/* Only show company groupings on first page of mobile, or always on desktop */}
+                {companyPollAssignments.length > 0 && (!isMobile || currentPage === 1) ? (
+                  <>
+                    {companyPollAssignments.map(({ company, polls: companyPolls }) => {
+                      // On mobile page 1, use assigned polls directly
+                      // On desktop or mobile page 1, check if polls exist in current polls array
+                      const validPolls = isMobile && currentPage === 1 
+                        ? companyPolls 
+                        : companyPolls.filter(poll => polls.some(p => p.id === poll.id));
+                      
+                      if (validPolls.length === 0) return null;
+                      
+                      return (
+                        <div key={company.id} className="flex flex-col gap-4">
+                          {/* Company Title */}
+                          <div className="flex items-center gap-3 pb-2">
+                            <Icon icon={company.logo} width={32} height={32} className="text-[#2B425B]" />
+                            <h2 className="text-2xl font-bold text-[#2B425B]">{company.name}</h2>
+                          </div>
+                          {/* Company Polls */}
+                          <div className="flex flex-col gap-6">
+                            {validPolls.map((poll) => (
+                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {/* Remaining polls (if any) - polls beyond assigned ones */}
+                    {(() => {
+                      if (isMobile && currentPage === 1) {
+                        const totalAssigned = companyPollAssignments.reduce((sum, assignment) => sum + assignment.polls.length, 0);
+                        const remainingPolls = polls.slice(totalAssigned);
+                        return remainingPolls.length > 0 ? (
+                          <div className="flex flex-col gap-6">
+                            {remainingPolls.map((poll) => (
+                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                            ))}
+                          </div>
+                        ) : null;
+                      } else if (!isMobile) {
+                        // On desktop, show remaining polls that aren't in any company assignment
+                        const assignedPollIds = new Set(
+                          companyPollAssignments.flatMap(assignment => assignment.polls.map(p => p.id))
+                        );
+                        const remainingPolls = polls.filter(poll => !assignedPollIds.has(poll.id));
+                        return remainingPolls.length > 0 ? (
+                          <div className="flex flex-col gap-6">
+                            {remainingPolls.map((poll) => (
+                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                            ))}
+                          </div>
+                        ) : null;
+                      }
+                      return null;
+                    })()}
+                  </>
+                ) : (
+                  // Fallback: show polls normally if assignments not ready or on mobile page > 1
+                  polls.map((poll) => (
+                    <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                  ))
+                )}
+                {/* Infinite scroll trigger for desktop only */}
+                {!isMobile && <div ref={ref} className="h-10" />}
+                {/* Pagination for mobile only */}
+                {isMobile && totalPages > 1 && (
+                  <Pagination
+                    totalPages={totalPages}
+                    page={currentPage}
+                    setPage={setCurrentPage}
+                    className="mt-6"
+                  />
+                )}
               </div>
             </div>
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="hidden xl:flex xl:w-[400px] flex-col">
+          <div className="flex xl:w-[400px] flex-col">
             <div className="flex flex-col gap-8 p-6 overflow-auto">
               {/* Viral Detection Section */}
               <div className="flex flex-col gap-4">

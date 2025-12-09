@@ -31,7 +31,7 @@ export default function ViralCard({ data }) {
   const categoryColor = categoryColors[category] || "text-[#C11574]";
 
   return (
-    <div className="card-item relative flex flex-col w-full rounded-[32px] border border-[#E9EAEB] p-6 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
+    <div className="card-item relative flex flex-col w-full rounded-[32px] border border-[#E9EAEB] px-6 py-4 md:p-6 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
       {/* READ MORE button positioned at top right */}
       <Link 
         href={"/app/viral-detection/" + data.id} 
@@ -47,7 +47,7 @@ export default function ViralCard({ data }) {
         </div>
       </Link>
       
-      <div className="flex items-center gap-2 mb-4 pr-32">
+      <div className="flex items-center gap-2 mb-2 md:mb-4 pr-32">
         <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
           {category}
         </span>
@@ -56,10 +56,10 @@ export default function ViralCard({ data }) {
           {formatDateForCard(postedDate)}
         </span>
       </div>
-      <h3 className="text-[18px] md:text-xl font-[500] text-[#101828] mb-4 line-clamp-2 pr-32">
+      <h3 className="text-[16px] md:text-[18px] md:text-xl font-[500] text-[#101828] mb-2 md:mb-4 line-clamp-1 md:line-clamp-2 md:pr-32">
         {data.title}
       </h3>
-      <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+      <p className="text-[#475467] text-[12px] md:text-base leading-6 mb-2 md:mb-4 line-clamp-1 md:line-clamp-3">
         {data.content.replace(/\*/g, "").replace(/#/g, "").substring(0, 200)}
         {data.content.length > 200 ? "..." : ""}
       </p>

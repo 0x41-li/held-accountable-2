@@ -160,6 +160,7 @@ export const getPollsByUserId = async (userId) => {
 export const getHomePolls = async (type, start = null, length = 10) => {
   try {
     let q;
+    let countQ;
     const pollsCollection = collection(db, POLLS_COLLECTION);
 
     switch (type) {
@@ -170,11 +171,16 @@ export const getHomePolls = async (type, start = null, length = 10) => {
           orderBy("trendScore", "desc"),
           limit(length)
         );
+        countQ = query(
+          pollsCollection,
+          orderBy("trendScore", "desc")
+        );
         break;
 
       case HOME_LATEST:
         // Latest polls: Order by creation date (descending)
         q = query(pollsCollection, orderBy("createdAt", "desc"), limit(length));
+        countQ = query(pollsCollection, orderBy("createdAt", "desc"));
         break;
 
       case HOME_MOST_ANSWERED:
@@ -183,6 +189,10 @@ export const getHomePolls = async (type, start = null, length = 10) => {
           pollsCollection,
           orderBy("totalVotes", "desc"),
           limit(length)
+        );
+        countQ = query(
+          pollsCollection,
+          orderBy("totalVotes", "desc")
         );
         break;
 
@@ -198,7 +208,13 @@ export const getHomePolls = async (type, start = null, length = 10) => {
     q = query(q, where("status", "==", 1));
     q = query(q, where("topic", "!=", "Politics"));
     
+    countQ = query(countQ, where("status", "==", 1));
+    countQ = query(countQ, where("topic", "!=", "Politics"));
+    
     const querySnapshot = await getDocs(q);
+    const countSnapshot = await getCountFromServer(countQ);
+    const totalCount = countSnapshot.data().count;
+    
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -215,6 +231,7 @@ export const getHomePolls = async (type, start = null, length = 10) => {
         dislike_users: doc.data().dislike_users ?? []
       })),
       lastDoc,
+      totalCount,
     };
   } catch (error) {
     console.error("Error fetching polls:", error);
@@ -308,12 +325,22 @@ export const getPollsByTopic = async (topicName, start = null, length = 10) => {
       limit(length)
     );
 
+    let countQ = query(
+      pollsCollection,
+      where("topic", "==", topicName),
+      orderBy("createdAt", "desc")
+    );
+
     if (start) {
       q = query(q, startAfter(start));
     }
     q = query(q, where("status", "==", 1));
+    countQ = query(countQ, where("status", "==", 1));
 
     const querySnapshot = await getDocs(q);
+    const countSnapshot = await getCountFromServer(countQ);
+    const totalCount = countSnapshot.data().count;
+    
     let lastDoc = null;
     if (querySnapshot.docs.length > 0)
       lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -327,6 +354,7 @@ export const getPollsByTopic = async (topicName, start = null, length = 10) => {
         dislike_users: doc.data().dislike_users ?? []
       })),
       lastDoc,
+      totalCount,
     };
   } catch (error) {
     console.error("Error fetching polls by topic:", error);

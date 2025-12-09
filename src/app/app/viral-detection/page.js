@@ -36,9 +36,9 @@ export default function ViralDetection() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex items-start md:items-end gap-3 mt-4 flex-col md:flex-row">
+            <div className="flex items-start md:items-end gap-3 md:mt-4 flex-col md:flex-row">
               <div className="flex gap-[16px] items-center">
-                <h1 className="text-3xl font-bold text-[#2b425b]">Viral Detection</h1>
+                <h1 className="text-[30px] md:text-3xl font-bold text-[#2b425b]">Viral Detection</h1>
                 <img src="/images/hot_badge.png" className="md:block hidden" />
               </div>
               <div className="flex items-center gap-2">

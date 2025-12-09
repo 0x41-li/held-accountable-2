@@ -38,11 +38,11 @@ export default function Navbar() {
 
   return (
     <div className={
-      `flex p-4 md:hidden items-center w-full border-b border-[#E4E7EC] ${show ? "fixed top-0 right-0 left-0 bottom-0 bg-[#dbe7f8] z-[999] !pt-[30px] h-[90px]" : " h-[60px]"}`
+      `flex px-[20px] py-[10px] md:hidden items-center w-full border-b border-[#E4E7EC] ${show ? "fixed top-0 right-0 left-0 bottom-0 bg-[#dbe7f8] z-[999] !pt-[30px] h-[90px]" : " h-[60px]"}`
     }>
-      <Link href="/" className="flex flex-1 items-center pl-[23px]">
-        <img src="/images/logo.png" width={50} />
-        <span className="text-[24px] leading-[38px] font-medium">
+      <Link href="/" className="flex flex-1 items-center gap-[16px]">
+        <img src="/images/logo.png" className="w-[40px]" />
+        <span className="text-[16px] font-extrabold text-[#2B425B] leading-[24px]">
           Held Accountable
         </span>
       </Link>
