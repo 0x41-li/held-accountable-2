@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CAREERS_DATA } from "@/services/const";
 import CareersCard from "@/components/common/CareersCard";
+import CareersIcon from "@/assets/icons/careers.svg";
+import Footer from "@/components/common/Footer";
 
 export default function CareersPage() {
     const router = useRouter();
@@ -40,11 +42,11 @@ export default function CareersPage() {
                 {/* Main Content */}
                 <div className='flex-1 flex flex-col items-center p-4 md:p-6 lg:p-8 py-6 md:py-8'>
                     <div className='w-full max-w-7xl'>
-                        <div className='flex justify-between items-center relative mb-6 md:mb-8'>
-                            <div className='flex items-center justify-center gap-2'>
-                                <img src="/images/logo.png" alt="Logo" width={40} height={40} className="md:w-[50px] md:h-[50px]" />
-                                <h1 className='text-base md:text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
-                            </div>
+                        <div className='flex justify-between items-center relative'>
+                            <Link href="/" className='flex items-center justify-center gap-[16px]'>
+                                <img src="/images/logo.png" alt="Logo" className="w-[50px] h-[50px] md:w-[64px] md:h-[64px]" />
+                                <h1 className='text-[18px] md:text-[24px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
+                            </Link>
                             {/* Hamburger Menu Button - Mobile Only */}
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -122,7 +124,10 @@ export default function CareersPage() {
                         </div>
                     </div>
                     <div className="w-full flex flex-col items-center justify-center mt-8 md:mt-[50px] px-4">
-                        <img src="/images/careers_badge.png" className="mb-4 md:mb-[23px] w-16 md:w-auto" />
+                        <div className="rounded-full flex gap-2 mb-[23px] bg-[#F8F9FD] px-4 py-2 items-center justify-center font-[500] text-[12px] text-[#2B425B]">
+                            <CareersIcon width={10} height={10} />
+                            Career
+                        </div>
                         <div className="text-3xl md:text-[48px] lg:text-[90px] leading-[36px] md:leading-[50px] lg:leading-[90px] font-bold text-center text-[#2B425B]">
                             <span className="text-[#3d83ff]">Be a part</span> of our<br/>
                             mission
@@ -163,73 +168,7 @@ export default function CareersPage() {
                 </div>
 
                 {/* Footer */}
-                <footer className='w-full border-t border-[#E9EAEB] bg-[#f7f8ff80] py-6 md:py-8 px-4 md:px-6 lg:px-12 z-[1]'>
-                    <div className='max-w-7xl mx-auto'>
-                        <div className='flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 w-full'>
-                            {/* Logo */}
-                            <div className='flex items-center justify-center gap-2'>
-                                <img src="/images/logo.png" alt="Logo" width={40} height={40} className="md:w-[50px] md:h-[50px]" />
-                                <h1 className='text-base md:text-[18px] font-extrabold text-[#2B425B]'>Held Accountable</h1>
-                            </div>
-
-                            {/* Navigation Links */}
-                            <div className='flex flex-wrap gap-6 md:gap-8 lg:gap-[100px] items-start justify-center w-full md:w-auto'>
-                                <div className="flex-1 flex flex-col items-start gap-4">
-                                    <p className="font-[700] text-[14px] leading-[30px] text-[#2b425b])]">Sections</p>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Services
-                                    </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Careers
-                                    </Link>
-                                    <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Blog
-                                    </Link>
-                                </div>
-                                <div className="flex-1 flex flex-col items-start gap-4">
-                                    <p className="font-[700] text-[14px] leading-[30px] text-[#2b425b])]">Help</p>
-                                    <Link href="/about-us" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        About
-                                    </Link>
-                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Privacy Policy
-                                    </Link>
-                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Terms & Conditions
-                                    </Link>
-                                </div>
-                                <div className="flex-1 flex flex-col items-start gap-4">
-                                    <p className="font-[700] text-[14px] leading-[30px] text-[#2b425b])]">Dashboard</p>
-                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Get Started
-                                    </Link>
-                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Services
-                                    </Link>
-                                    <Link href="/app/" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                                        Team
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Social Media Icons */}
-                            <div className='flex gap-4 items-center'>
-                                <a href="#" className='w-8 h-8 flex items-center justify-center rounded-full bg-[#F2F4F7] hover:bg-[#E9EAEB] transition-colors'>
-                                    <Icon icon="mdi:twitter" className="text-[#475467]" width={18} height={18} />
-                                </a>
-                                <a href="#" className='w-8 h-8 flex items-center justify-center rounded-full bg-[#F2F4F7] hover:bg-[#E9EAEB] transition-colors'>
-                                    <Icon icon="mdi:facebook" className="text-[#475467]" width={18} height={18} />
-                                </a>
-                                <a href="#" className='w-8 h-8 flex items-center justify-center rounded-full bg-[#F2F4F7] hover:bg-[#E9EAEB] transition-colors'>
-                                    <Icon icon="mdi:linkedin" className="text-[#475467]" width={18} height={18} />
-                                </a>
-                                <a href="#" className='w-8 h-8 flex items-center justify-center rounded-full bg-[#F2F4F7] hover:bg-[#E9EAEB] transition-colors'>
-                                    <Icon icon="mdi:instagram" className="text-[#475467]" width={18} height={18} />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         </div>
     );
