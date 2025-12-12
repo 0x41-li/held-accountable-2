@@ -107,7 +107,7 @@ export default function AboutUsPage() {
                             We're <span className="text-[#3d83ff]">spread all</span> <br/>
                             across the world
                         </div>
-                        <div className="text-sm md:text-[15px] lg:text-[18px] leading-6 md:leading-[28px] lg:leading-[32px] text-[#2B425B80] font-medium mt-4 md:mt-[23px] max-w-2xl text-center px-4">
+                        <div className="text-sm md:text-[15px] lg:text-[18px] leading-6 md:leading-[28px] lg:leading-[32px] text-[#2B425B80] font-medium mt-4 md:mt-[23px]  text-center px-4">
                             Everyone can make opinions and decisions, whether that is financial, political, regardless of their background.
                         </div>
                         <button className="w-[140px] h-[48px] md:h-[54px] text-center justify-center items-center flex gradient-button text-white text-xs md:text-[13px] mt-4 md:mt-[23px] px-4 md:px-6 py-3 md:py-4 rounded-[24px]">Get Started</button>
@@ -121,7 +121,7 @@ export default function AboutUsPage() {
                     </div>
                     <div className="w-full mt-12 md:mt-20 lg:mt-32 flex flex-col items-center justify-center px-4 md:px-6">
                         <div className="max-w-7xl w-full">
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 pb-8 md:pb-16">
+                            <div className="flex flex-col md:flex-row items-start justify-center gap-6 md:gap-10 pb-8 md:pb-16">
                                 <div className="flex-1 flex-col flex gap-6 md:gap-[32px]">
                                     <div className="text-2xl md:text-[30px] lg:text-[56px] leading-[32px] md:leading-[36px] lg:leading-[64px] font-[600] text-[#2B425B]">
                                         Our Mission
@@ -130,7 +130,7 @@ export default function AboutUsPage() {
                                         Holistic perspective on news and public information
                                     </div>
                                 </div>
-                                <div className="flex-1 flex flex-col items-start justify-center gap-6 md:gap-10">
+                                <div className="flex-1 flex flex-col items-start justify-center gap-6 md:gap-[73px]">
                                     <img src="/images/arrown_down_right.png" className="hidden md:block w-12 md:w-auto" />
                                     <div className="text-sm md:text-[14px] leading-6 md:leading-[28px] font-[500] text-[#2b425b80]">
                                     Held Accountable's mission is to provide a holistic perspective on news and public information, so that everyone can make informed opinions and decisions, whether that is financial, political, or personal, regardless of their background or knowledge.cal, or personal, regardless of their background or knowledge.Held Accountable's mission is to provide a holistic perspective on news and public information, so that
@@ -156,15 +156,15 @@ export default function AboutUsPage() {
                                 <div className="text-3xl md:text-5xl lg:text-[170px] leading-[40px] md:leading-[60px] lg:leading-[90px] font-[600] text-[#2B425B] mt-0 md:mt-10">
                                     Join <span className="text-[#3d83ff]">Us</span>
                                 </div>
-                                <div className="text-sm md:text-base lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px] text-center max-w-2xl px-4">
+                                <div className="text-[14px] lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px] text-center max-w-2xl px-4">
                                     We're a 100% remote team spread all across the world.
                                 </div>
                                 <button className="w-[140px] h-[48px] md:h-[54px] text-center justify-center items-center flex gradient-button text-white text-xs md:text-[13px] mt-4 md:mt-[23px] px-4 md:px-6 py-3 md:py-4 rounded-[24px]">Get Started</button>
                             </div>
                         </div>
                         <div className="max-w-7xl my-12 md:my-20 lg:my-32 px-4 md:px-6 w-full">
-                            <div className="flex flex-col-reverse md:flex-row items-center justify-center gap-6 md:gap-10">
-                                <div className="flex-1 flex flex-col items-start justify-center gap-6 md:gap-10 md:pr-0 lg:pr-[100px]">
+                            <div className="flex flex-col-reverse md:flex-row items-start justify-center gap-6 md:gap-10">
+                                <div className="flex-1 flex flex-col items-start justify-center gap-6 md:gap-[73px] md:pr-0 lg:pr-[100px]">
                                     <img src="/images/arrown_down_right.png" className="hidden md:block w-12 md:w-auto" />
                                     <div className="text-sm md:text-[14px] leading-6 md:leading-[28px] font-[500] text-[#2b425b80]">
                                     To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape their future.To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape their future.
@@ -180,7 +180,7 @@ export default function AboutUsPage() {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full relative mt-6 md:mt-10 min-h-[300px] md:min-h-[400px] lg:min-h-[500px]">
+                        <div className="w-full rounded-[36px] relative mt-6 md:mt-10 min-h-[300px] md:min-h-[400px] lg:min-h-[500px]">
                             <img 
                                 src="/images/stats-bg.png" 
                                 alt="Stats Background" 
@@ -199,7 +199,7 @@ export default function AboutUsPage() {
                                     <div className="text-4xl md:text-6xl lg:text-[170px] leading-[48px] md:leading-[72px] lg:leading-[90px] font-[600] text-[#2B425B] mt-0 md:mt-10">
                                         95<span className="text-[#3d83ff] text-2xl md:text-5xl lg:text-[100px] lg:leading-[90px] font-[600]">%</span>
                                     </div>
-                                    <div className="text-sm md:text-base lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
+                                    <div className="text-[14px] lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
                                         Effective work
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@ export default function AboutUsPage() {
                                     <div className="text-3xl md:text-5xl lg:text-[170px] leading-[40px] md:leading-[60px] lg:leading-[90px] font-[600] text-[#2B425B] mt-0 md:mt-10">
                                         7<span className="text-[#3d83ff] text-2xl md:text-5xl lg:text-[100px] lg:leading-[90px] font-[600]">Y+</span>
                                     </div>
-                                    <div className="text-sm md:text-base lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
+                                    <div className="text-[14px] lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
                                         Years Experience
                                     </div>
                                 </div>
@@ -215,14 +215,14 @@ export default function AboutUsPage() {
                                     <div className="text-3xl md:text-5xl lg:text-[170px] leading-[40px] md:leading-[60px] lg:leading-[90px] font-[600] text-[#2B425B] mt-0 md:mt-10">
                                         110<span className="text-[#3d83ff] text-2xl md:text-5xl lg:text-[100px] lg:leading-[90px] font-[600]">k</span>
                                     </div>
-                                    <div className="text-sm md:text-base lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
+                                    <div className="text-[14px] lg:text-[18px] text-[#2b425b80] mt-2 md:mt-[20px]">
                                         Clients and readers
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="max-w-7xl flex flex-col items-center justify-center gap-6 md:gap-10 my-12 md:my-20 lg:my-32 px-4 md:px-6 w-full">
-                            <div className="text-3xl md:text-4xl lg:text-[56px] leading-[40px] md:leading-[48px] lg:leading-[64px] font-[600] text-[#2B425B] text-center">
+                        <div className="max-w-7xl flex flex-col items-center justify-center gap-6 md:gap-[90px] my-12 md:mt-[120px] md:mb-[180px] px-4 md:px-0 w-full">
+                            <div className="text-3xl md:text-[56px] leading-[40px] md:leading-[48px] lg:leading-[64px] font-[600] text-[#2B425B] text-center">
                                 Core Values
                             </div>
                             <div className="flex flex-col md:flex-row text-[#2b425b80] gap-6 md:gap-8 lg:gap-10 w-full">
@@ -230,7 +230,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/ChartLineUp.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                         We relentlessly pursue excellence by holding ourselves and our work to the highest standards, never settling for 'good enough'.
                                     </p>
                                 </div>
@@ -238,7 +238,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/ChartDonut.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                     We approach every challenge with curiosity and rigor, digging beneath the surface to fully understand the details
                                     </p>
                                 </div>
@@ -246,7 +246,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/Lightbulb.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                     We move quickly and decisively, taking initiative to turn ideas into results and solve problems without waiting for perfect conditions.
                                     </p>
                                 </div>
@@ -256,7 +256,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/Swap.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                     We empower ourselves to take initiative and drive change without hesitation
                                     </p>
                                 </div>
@@ -264,7 +264,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/UsersFour.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                     We empower ourselves to take initiative and drive change without hesitation
                                     </p>
                                 </div>
@@ -272,7 +272,7 @@ export default function AboutUsPage() {
                                     <div className="w-12 h-12 md:w-[50px] md:h-[50px] flex items-center justify-center rounded-md bg-white">
                                         <img src="/images/aboutPage/RocketLaunch.png" className="w-6 h-6 md:w-auto md:h-auto" />
                                     </div>
-                                    <p className="mt-4 md:mt-10 text-sm md:text-base">
+                                    <p className="mt-4 md:mt-[24px] text-[14px]">
                                     We act like owners—taking responsibility, making decisions with care, and holding ourselves accountable for results
                                     </p>
                                 </div>

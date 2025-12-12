@@ -48,7 +48,7 @@ export default function CareersCard({ data }) {
         <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
           {categoryLabel}
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-[24px] md:gap-[50px]">
           <p className="flex items-center gap-1.5 text-[#98A2B3] text-[11px] md:text-sm font-medium">
             <Icon icon="tabler:clock" width={14} height={14} />
             {data.type?.toUpperCase() || ""}

@@ -7,6 +7,7 @@ import { CAREERS_DATA } from "@/services/const";
 import CareersCard from "@/components/common/CareersCard";
 import CareersIcon from "@/assets/icons/careers.svg";
 import Footer from "@/components/common/Footer";
+import Pagination from "@/components/common/Pagination";
 
 export default function CareersPage() {
     const router = useRouter();
@@ -132,11 +133,11 @@ export default function CareersPage() {
                             <span className="text-[#3d83ff]">Be a part</span> of our<br/>
                             mission
                         </div>
-                        <div className="text-sm md:text-[15px] lg:text-[18px] leading-6 md:leading-[28px] lg:leading-[32px] text-[#2B425B80] font-medium mt-4 md:mt-[23px] max-w-2xl text-center px-4">
+                        <div className="text-sm md:text-[15px] lg:text-[18px] leading-6 md:leading-[28px] lg:leading-[32px] text-[#2B425B80] font-medium mt-4 md:mt-[23px] text-center px-4">
                             Everyone can make opinions and decisions, whether that is financial, political, regardless of their background.
                         </div>
                     </div>
-                    <div className="w-full mt-12 md:mt-20 lg:mt-32 flex flex-col items-center justify-center px-4 md:px-6">
+                    <div className="w-full mt-12 md:mt-20 lg:mt-32 flex flex-col items-center justify-center px-4 md:px-6 mb-[70px] md:mb-[180px]">
                         <div className="max-w-7xl w-full">
                             <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
                                 {/* Left Sidebar - Filters */}
@@ -161,6 +162,15 @@ export default function CareersPage() {
                                             <CareersCard key={item.short_description} data={item} />
                                         ))}
                                     </div>
+                                    {/* Pagination */}
+                                    {totalPages >= 1 && (
+                                        <Pagination
+                                            totalPages={totalPages}
+                                            page={page}
+                                            setPage={setPage}
+                                            className="mt-6 md:mt-[50px]"
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
