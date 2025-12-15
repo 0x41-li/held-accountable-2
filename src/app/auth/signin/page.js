@@ -90,32 +90,32 @@ const SignIn = () => {
   return (
     <div className="flex flex-col md:grid md:grid-cols-2 h-[100dvh]">
       {/* Left Sidebar - Promotional Area */}
-      <div className="relative hidden md:flex flex-col justify-center items-center h-full overflow-hidden p-8 md:p-12">
+      <div className="relative hidden md:flex flex-col justify-center items-center h-full p-8 md:p-12">
         {/* Background Image with Padding */}
         <div className="absolute inset-0 m-4 md:m-12 rounded-3xl overflow-hidden" style={{ backgroundImage: 'url(/images/auth-side-bg.png)', backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}></div>
         
-        <div className="absolute right-[-100px] top-0 bottom-[64px] z-10 flex flex-col items-center justify-center w-full max-w-2xl gap-6 md:gap-8">
+        <div className="absolute right-[-140px] top-0 bottom-[64px] z-10 flex flex-col items-center justify-center w-full max-w-2xl gap-6 md:gap-8">
           <div className="w-full">
             <CustomPlayer
               video="https://player.vimeo.com/video/1120069862?autoplay=1&loop=1&controls=0"
-              className="!w-full"
+              className="!w-[1/2]"
               videoClass="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
             />
           </div>
         </div>
-        <div className="absolute bottom-24 left-32 right-16 z-10 flex flex-col gap-2">
+        <div className="absolute bottom-24 left-[10%] right-16 z-10 flex flex-col gap-2">
             <p className="text-white/80 text-[10px] md:text-xs uppercase tracking-[0.2em] font-normal">HELD ACCOUNTABLE</p>
-            <p className="text-white text-[54px] font-bold leading-tight">
+            <p className="text-white text-[32px] font-bold leading-tight">
               We provide a holistic perspective on news and public information
             </p>
           </div>
 
         {/* Play Video Button - Bottom Right */}
-        <button className="absolute bottom-16 right-24 z-10 flex items-center gap-2 text-white/90 hover:text-white transition-colors">
-          <div className="w-10 h-10 rounded-full bg-[#f7f8ff] flex items-center justify-center">
+        <button className="absolute bottom-[8%] right-[10%] z-10 flex items-center gap-2 text-white/90 hover:text-white transition-colors">
+          <div className="w-8 h-8 rounded-full bg-[#f7f8ff] flex items-center justify-center">
             <Icon icon="mdi:play" width={18} height={18} className="ml-0.5 text-[#3D83FF]" />
           </div>
-          <span className="text-sm text-[#2b425b] font-medium">Play video about us</span>
+          <span className="text-[12px] text-[#2b425b] font-medium">Play video about us</span>
         </button>
       </div>
 
@@ -194,7 +194,7 @@ const SignIn = () => {
 
             {/* Sign In Button */}
             <button
-              className="gradient-button text-white h-12 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="gradient-button text-white h-12 rounded-[24px] font-semibold hover:opacity-90 transition-opacity"
               onClick={handleLogin}
             >
               Sign In
@@ -209,8 +209,9 @@ const SignIn = () => {
 
             {/* Google Sign In Button */}
             <button
-              className="flex items-center justify-center gap-3 h-12 rounded-lg border border-[#D0D5DD] bg-white text-[#344054] font-medium hover:bg-[#F9FAFB] transition-colors"
+              className="flex items-center justify-center gap-3 h-12 rounded-[24px] hover:opacity-90 transition-opacity bg-[#f7f8ff80] text-[#344054] font-medium hover:bg-[#F9FAFB] transition-colors"
               onClick={handleGoogleLogin}
+              style={{ boxShadow: '0px 5px 40px 0px rgba(27, 53, 132, 0.15)' }}
             >
               <Icon icon="devicon:google" width={20} height={20} />
               <span>Sign in with Google</span>
