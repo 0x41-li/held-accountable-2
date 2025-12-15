@@ -2,7 +2,7 @@
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TrustedIcon from "@/assets/icons/trusted.svg";
 import Footer from "@/components/common/Footer";
 
@@ -36,6 +36,28 @@ const subscriptionItems = [
 export default function LandingPage() {
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const informedRef = useRef(null);
+    const [informedVisible, setInformedVisible] = useState(false);
+    const [currentSlide, setCurrentSlide] = useState("/images/viralslide.png");
+
+    useEffect(() => {
+        const node = informedRef.current;
+        if (!node) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setInformedVisible(true);
+                    }
+                });
+            },
+            { threshold: 0.25 }
+        );
+
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className='fixed top-0 left-0 right-0 bottom-0 w-full min-h-screen relative bg-[#EAECFB] overflow-auto'>
@@ -150,9 +172,32 @@ export default function LandingPage() {
                     </div>
                     <div className="w-full flex items-center justify-center">
                         <div className="w-full">
-                            <div className="flex flex-col flex-col-reverse md:flex-row items-center justify-center md:pr-[100px]">
-                                <div className="flex-1 items-center justify-center">
-                                    <img src="/images/informed.png" />
+                            <div
+                                ref={informedRef}
+                                className="flex flex-col flex-col-reverse md:flex-row items-center justify-center md:pr-[100px]"
+                            >
+                                <div className="flex-1 relative">
+                                    <img src="/images/informed_bg.png" className="w-full" />
+                                    <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center flex-col">
+                                        <img
+                                            src="/images/informed1.png"
+                                            className={`mb-[-8%] transition-all duration-700 ease-out ${
+                                                informedVisible
+                                                    ? "opacity-100 translate-y-0 float-y-up"
+                                                    : "opacity-0 -translate-y-6"
+                                            }`}
+                                            alt="Informed top"
+                                        />
+                                        <img
+                                            src="/images/informed2.png"
+                                            className={`mt-[-8%] transition-all duration-700 ease-out delay-150 ${
+                                                informedVisible
+                                                    ? "opacity-100 translate-y-0 float-y-down"
+                                                    : "opacity-0 translate-y-6"
+                                            }`}
+                                            alt="Informed bottom"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex-1 flex flex-col items-start justify-center">
                                     <div className="text-[30px] leading-[36px] md:text-[56px] md:leading-[64px] font-[600] text-[#2B425B]">
@@ -185,24 +230,37 @@ export default function LandingPage() {
                                     </div>
                                     <div className="flex overflow-x-auto md:overflow-x-visible min-w-0 w-full md:w-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
                                         <div className="flex flex-row md:flex-col items-start text-[18px] leading-[24px]">
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#3D83FF] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
+                                            <div
+                                                onMouseMove={() => setCurrentSlide("/images/viralslide.png")}
+                                                className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/viralslide.png" ? "border-[#3D83FF]" : ""}`}
+                                            >
                                                 Viral Detection
                                             </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
+                                            <div onMouseMove={() => setCurrentSlide("/images/snapshotslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/snapshotslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Snapshots
                                             </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
+                                            <div onMouseMove={() => setCurrentSlide("/images/careerslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/careerslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Careers
                                             </div>
-                                            <div className="flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px]">
+                                            <div onMouseMove={() => setCurrentSlide("/images/supportslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/supportslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Support
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex-1 items-center justify-center">
-                                    <img src="/images/dashboard.png" className="hidden md:block" />
-                                    <img src="/images/mobile-dashboard.png" className="block md:hidden" />
+                                    <div className="hidden md:block relative">
+                                        <img src="/images/dashboard_bg.png" alt="Dashboard background" />
+                                        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center flex-col">
+                                            <img
+                                                key={currentSlide}
+                                                src={currentSlide}
+                                                alt="Dashboard slide"
+                                                className="fade-in"
+                                            />
+                                        </div>
+                                    </div>
+                                    <img src="/images/mobile-dashboard.png" className="block md:hidden" alt="Mobile dashboard" />
                                 </div>
                             </div>
                         </div>

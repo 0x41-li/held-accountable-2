@@ -200,3 +200,68 @@ body {
   font-weight: 600;
   color: #414651;
 }
+
+/* subtle vertical float for hero/informed images */
+.float-y {
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.float-y-up {
+  animation: floatYUp 4s ease-in-out infinite;
+}
+
+.float-y-down {
+  animation: floatYDown 4s ease-in-out infinite;
+}
+
+/* generic fade-in helper */
+.fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatY {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatYUp {
+  0% {
+    transform: translateY(6px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes floatYDown {
+  0% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
+}
