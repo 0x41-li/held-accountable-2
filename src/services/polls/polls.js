@@ -1374,3 +1374,55 @@ Style whole blog content well with headings, subheadings, and bullet points for 
     return null;
   }
 }
+
+export async function getBusinessNewsForCompaniesFromNewsAi() {
+  const url = "https://eventregistry.org/api/v1/article/getArticles";
+  const today = (new Date()).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10);
+  const companies = FAMOUS_COMPANIES_DATA;
+  const body = JSON.stringify({
+    "articlesCount": "100",
+    "includeArticleImage": "true",
+    "includeArticleShares": "true",
+    "includeArticleSentiment": "true",
+    "query": JSON.stringify({
+        "$query":
+        {
+          "$and": 
+          [
+            {"categoryUri": "news/Business"},
+            {"sourceGroupUri":"business/top100"},
+            {"lang": "eng"}
+          ]
+        },
+        "$filter": {
+          "forceMaxDataTimeWindow": "31",
+          "isDuplicate": "skipDuplicates",
+          "dataType": ["news", "blog"]
+        }
+      }),
+    "resultType": "articles",
+    "articlesSortBy": "date",
+    "apiKey": process.env.NEWSAPI_KEY,
+    "articlesConceptLang": "eng",
+    "includeArticleConcepts": "true",
+    "_origin": "sandbox"
+  });
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching business news:", error);
+    return null;
+  }
+}
+

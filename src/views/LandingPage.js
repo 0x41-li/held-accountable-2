@@ -232,17 +232,17 @@ export default function LandingPage() {
                                         <div className="flex flex-row md:flex-col items-start text-[18px] leading-[24px]">
                                             <div
                                                 onMouseMove={() => setCurrentSlide("/images/viralslide.png")}
-                                                className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/viralslide.png" ? "border-[#3D83FF]" : ""}`}
+                                                className={`cursor-pointer flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/viralslide.png" ? "border-[#3D83FF]" : ""}`}
                                             >
                                                 Viral Detection
                                             </div>
-                                            <div onMouseMove={() => setCurrentSlide("/images/snapshotslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/snapshotslide.png" ? "border-[#3D83FF]" : ""}`}>
+                                            <div onMouseMove={() => setCurrentSlide("/images/snapshotslide.png")} className={`cursor-pointer flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/snapshotslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Snapshots
                                             </div>
-                                            <div onMouseMove={() => setCurrentSlide("/images/careerslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/careerslide.png" ? "border-[#3D83FF]" : ""}`}>
+                                            <div onMouseMove={() => setCurrentSlide("/images/careerslide.png")} className={`cursor-pointer flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/careerslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Careers
                                             </div>
-                                            <div onMouseMove={() => setCurrentSlide("/images/supportslide.png")} className={`flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/supportslide.png" ? "border-[#3D83FF]" : ""}`}>
+                                            <div onMouseMove={() => setCurrentSlide("/images/supportslide.png")} className={`cursor-pointer flex-shrink-0 whitespace-nowrap border-b md:border-l md:border-b-0 border-[#2B425B20] pl-[40px] pr-[20px] md:pr-[40px] py-[10px] ${currentSlide == "/images/supportslide.png" ? "border-[#3D83FF]" : ""}`}>
                                                 Support
                                             </div>
                                         </div>
