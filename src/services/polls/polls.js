@@ -34,14 +34,14 @@ export const HOME_MOST_ANSWERED = "HOME_MOST_ANSWERED";
 // Create a new poll
 export const createPoll = async (pollData) => {
   try {
-    const topic = pollData.topic;
+    const category = pollData.category;
     // check if topic already exists
     const topicSnap = await getDocs(
       query(collection(db, TOPIC_COLLECTION), where("topic", "==", topic))
     );
     if (topicSnap.empty) {
       await addDoc(collection(db, TOPIC_COLLECTION), {
-        topic,
+        category,
         poll_count: 1,
         vote_count: 0,
         status: 1,
@@ -710,15 +710,15 @@ ${article_body}
 
 - No embellishment or inference. If a number/date is unclear, omit it rather than inventing it.
 
+- Content should be html not markdown.
+
 - All results should be English.
 
 ### Output:
-1. **headline**: Start with "Breaking News — " and write ONE crisp sentence that closely mirrors the H1, preserving all hard facts (numbers, places). End with "(Outlet)"
-2. **question**: A balanced poll question based on the article's core issue.
-3. **answers**: 2 to 4 multiple choice options.
-4. **wiki_summary**: A Wikipedia-style explanation of the topic. Avoid referring to the article.
-5. **blog_title**: Clear and compelling title.
-6. **blog_content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
+1. **company**: Company wikipedia url (e.g. http://en.wikipedia.org/wiki/Apple)
+2. **company_name**: Company name (e.g. Apple)
+3. **title**: Clear and compelling title.
+4. **content**: 250–500 words of professional analysis.  Should be html not markdown. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
    Always include analytics (stats, trends, or charts).
    Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
    Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be **bolded** for emphasis.
@@ -746,7 +746,10 @@ ${article_body}
      - IMF — [Report/Dataset Title (Year)]
      - UN / National Statistical Office — [Dataset/Release Title (Year)]
      - Wikipedia — [Topic/Page Title] ← Always last
-
+   - The whole content should be outputed as html not markdown. headings, subheadings should be replaced well with proper tags like h1, h2 etc. sections should have id in it's tag.
+   - Each section should have a unique id so that we can scroll to those sections in the article. e.g. id="big-picture"
+5. **sections_ids**: array of section ids so that we can scroll to those sections in the article using a tag like <a href="#big-picture">Big Picture</a>
+6. **sections_titles**: array of section names
 7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Crypto"]
 
 ### Final self-audit (internal; do not print):
@@ -776,27 +779,24 @@ ${article_body}
             schema: {
               type: "object",
               properties: {
-                headline: { type: "string" },
-                question: { type: "string" },
-                options: {
-                  type: "array",
-                  items: { type: "string" },
-                },
-                wiki_summary: { type: "string" },
-                blog_title: { type: "string" },
-                blog_content: { type: "string" },
+                company: { type: "string" },
+                company_name: { type: "string" },
+                title: { type: "string" },
+                content: { type: "string" },
+                sections_ids: { type: "array", items: { type: "string" } },
+                sections_titles: { type: "array", items: { type: "string" } },
                 category: {
                   type: "string",
                   enum: ["AI", "Finance", "Crypto"],
                 },
               },
               required: [
-                "headline",
-                "question",
-                "options",
-                "wiki_summary",
-                "blog_title",
-                "blog_content",
+                "company",
+                "company_name",
+                "title",
+                "content",
+                "sections_ids",
+                "sections_titles",
                 "category",
               ],
               additionalProperties: false,

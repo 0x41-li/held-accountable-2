@@ -271,3 +271,468 @@ export const FAMOUS_COMPANIES_DATA = [
     search: "http://en.wikipedia.org/wiki/Oracle"
   }
 ];
+
+export const FORTUNE_500_COMPANIES_DATA = [
+  {
+    id: "walmart",
+    name: "Walmart",
+    description: "Walmart is the world's largest retailer, operating a chain of hypermarkets, discount department stores, and grocery stores with thousands of locations worldwide.",
+    logo: "simple-icons:walmart",
+    search: "http://en.wikipedia.org/wiki/Walmart"
+  },
+  {
+    id: "exxon-mobil",
+    name: "Exxon Mobil",
+    description: "Exxon Mobil is one of the world's largest publicly traded oil and gas companies, engaged in exploration, production, refining, and marketing of petroleum products.",
+    logo: "simple-icons:exxonmobil",
+    search: "http://en.wikipedia.org/wiki/ExxonMobil"
+  },
+  {
+    id: "chevron",
+    name: "Chevron",
+    description: "Chevron is a major integrated energy company involved in oil and gas exploration, production, refining, and marketing operations globally.",
+    logo: "simple-icons:chevron",
+    search: "http://en.wikipedia.org/wiki/Chevron_Corporation"
+  },
+  {
+    id: "berkshire-hathaway",
+    name: "Berkshire Hathaway",
+    description: "Berkshire Hathaway is a multinational conglomerate holding company led by Warren Buffett, with diverse investments across insurance, utilities, manufacturing, and retail.",
+    logo: "simple-icons:berkshirehathaway",
+    search: "http://en.wikipedia.org/wiki/Berkshire_Hathaway"
+  },
+  {
+    id: "jpmorgan-chase",
+    name: "JPMorgan Chase",
+    description: "JPMorgan Chase is one of the largest financial services firms in the world, providing banking, investment, and wealth management services to consumers and businesses.",
+    logo: "simple-icons:jpmorgan",
+    search: "http://en.wikipedia.org/wiki/JPMorgan_Chase"
+  },
+  {
+    id: "verizon",
+    name: "Verizon",
+    description: "Verizon is a leading telecommunications company providing wireless services, broadband, and enterprise solutions to millions of customers across the United States.",
+    logo: "simple-icons:verizon",
+    search: "http://en.wikipedia.org/wiki/Verizon"
+  },
+  {
+    id: "att",
+    name: "AT&T",
+    description: "AT&T is a major telecommunications company offering wireless, broadband, and entertainment services, including DirecTV and streaming platforms.",
+    logo: "simple-icons:att",
+    search: "http://en.wikipedia.org/wiki/AT%26T"
+  },
+  {
+    id: "costco",
+    name: "Costco",
+    description: "Costco operates membership-only warehouse clubs, offering bulk products at discounted prices to members across the United States and internationally.",
+    logo: "simple-icons:costco",
+    search: "http://en.wikipedia.org/wiki/Costco"
+  },
+  {
+    id: "ford-motor",
+    name: "Ford Motor",
+    description: "Ford Motor Company is a leading automaker producing cars, trucks, SUVs, and electric vehicles, with a rich history in American automotive manufacturing.",
+    logo: "simple-icons:ford",
+    search: "http://en.wikipedia.org/wiki/Ford_Motor_Company"
+  },
+  {
+    id: "general-motors",
+    name: "General Motors",
+    description: "General Motors is one of the world's largest automakers, manufacturing vehicles under brands like Chevrolet, GMC, Cadillac, and Buick.",
+    logo: "simple-icons:generalmotors",
+    search: "http://en.wikipedia.org/wiki/General_Motors"
+  },
+  {
+    id: "home-depot",
+    name: "The Home Depot",
+    description: "The Home Depot is the largest home improvement retailer in the United States, offering tools, construction products, and services for DIY and professional customers.",
+    logo: "simple-icons:homedepot",
+    search: "http://en.wikipedia.org/wiki/The_Home_Depot"
+  },
+  {
+    id: "wells-fargo",
+    name: "Wells Fargo",
+    description: "Wells Fargo is a major financial services company providing banking, investment, mortgage, and consumer and commercial financial services.",
+    logo: "simple-icons:wellsfargo",
+    search: "http://en.wikipedia.org/wiki/Wells_Fargo"
+  },
+  {
+    id: "bank-of-america",
+    name: "Bank of America",
+    description: "Bank of America is one of the largest financial institutions, offering banking, investment, and wealth management services to individuals and businesses.",
+    logo: "simple-icons:bankofamerica",
+    search: "http://en.wikipedia.org/wiki/Bank_of_America"
+  },
+  {
+    id: "target",
+    name: "Target",
+    description: "Target is a major retail corporation operating discount stores offering a wide range of products including clothing, electronics, groceries, and household items.",
+    logo: "simple-icons:target",
+    search: "http://en.wikipedia.org/wiki/Target_Corporation"
+  },
+  {
+    id: "coca-cola",
+    name: "The Coca-Cola Company",
+    description: "Coca-Cola is the world's largest beverage company, producing and distributing soft drinks, juices, and other beverages in over 200 countries.",
+    logo: "simple-icons:cocacola",
+    search: "http://en.wikipedia.org/wiki/The_Coca-Cola_Company"
+  },
+  {
+    id: "pepsico",
+    name: "PepsiCo",
+    description: "PepsiCo is a global food and beverage company producing snacks, soft drinks, and consumer goods under brands like Pepsi, Frito-Lay, and Quaker.",
+    logo: "simple-icons:pepsi",
+    search: "http://en.wikipedia.org/wiki/PepsiCo"
+  },
+  {
+    id: "johnson-johnson",
+    name: "Johnson & Johnson",
+    description: "Johnson & Johnson is a multinational corporation manufacturing pharmaceuticals, medical devices, and consumer health products worldwide.",
+    logo: "simple-icons:johnsonandjohnson",
+    search: "http://en.wikipedia.org/wiki/Johnson_%26_Johnson"
+  },
+  {
+    id: "pfizer",
+    name: "Pfizer",
+    description: "Pfizer is a leading pharmaceutical company developing and manufacturing medicines and vaccines for various diseases and health conditions.",
+    logo: "simple-icons:pfizer",
+    search: "http://en.wikipedia.org/wiki/Pfizer"
+  },
+  {
+    id: "merck",
+    name: "Merck",
+    description: "Merck is a global healthcare company focused on discovering, developing, and providing innovative medicines, vaccines, and animal health products.",
+    logo: "simple-icons:merck",
+    search: "http://en.wikipedia.org/wiki/Merck_%26_Co."
+  },
+  {
+    id: "visa",
+    name: "Visa",
+    description: "Visa is a global payments technology company facilitating electronic funds transfers and providing credit, debit, and prepaid card services worldwide.",
+    logo: "simple-icons:visa",
+    search: "http://en.wikipedia.org/wiki/Visa_Inc."
+  },
+  {
+    id: "mastercard",
+    name: "Mastercard",
+    description: "Mastercard is a leading global payments technology company connecting consumers, businesses, and financial institutions through secure payment solutions.",
+    logo: "simple-icons:mastercard",
+    search: "http://en.wikipedia.org/wiki/Mastercard"
+  },
+  {
+    id: "procter-gamble",
+    name: "Procter & Gamble",
+    description: "Procter & Gamble is a multinational consumer goods corporation manufacturing a wide range of household and personal care products.",
+    logo: "simple-icons:proctergamble",
+    search: "http://en.wikipedia.org/wiki/Procter_%26_Gamble"
+  },
+  {
+    id: "unilever",
+    name: "Unilever",
+    description: "Unilever is a British-Dutch multinational consumer goods company producing food, beverages, cleaning agents, and personal care products.",
+    logo: "simple-icons:unilever",
+    search: "http://en.wikipedia.org/wiki/Unilever"
+  },
+  {
+    id: "boeing",
+    name: "Boeing",
+    description: "Boeing is a major aerospace manufacturer producing commercial airplanes, defense systems, and space technology for customers worldwide.",
+    logo: "simple-icons:boeing",
+    search: "http://en.wikipedia.org/wiki/Boeing"
+  },
+  {
+    id: "lockheed-martin",
+    name: "Lockheed Martin",
+    description: "Lockheed Martin is a global aerospace, defense, and security company developing advanced technology systems for defense and commercial applications.",
+    logo: "simple-icons:lockheedmartin",
+    search: "http://en.wikipedia.org/wiki/Lockheed_Martin"
+  },
+  {
+    id: "general-electric",
+    name: "General Electric",
+    description: "General Electric is a multinational conglomerate operating in power, renewable energy, aviation, healthcare, and digital industrial sectors.",
+    logo: "simple-icons:generalelectric",
+    search: "http://en.wikipedia.org/wiki/General_Electric"
+  },
+  {
+    id: "caterpillar",
+    name: "Caterpillar",
+    description: "Caterpillar is the world's leading manufacturer of construction and mining equipment, diesel and natural gas engines, and industrial turbines.",
+    logo: "simple-icons:caterpillar",
+    search: "http://en.wikipedia.org/wiki/Caterpillar_Inc."
+  },
+  {
+    id: "deere",
+    name: "Deere & Company",
+    description: "Deere & Company manufactures agricultural, construction, and forestry machinery, diesel engines, and lawn care equipment under the John Deere brand.",
+    logo: "simple-icons:johndeere",
+    search: "http://en.wikipedia.org/wiki/Deere_%26_Company"
+  },
+  {
+    id: "3m",
+    name: "3M",
+    description: "3M is a multinational conglomerate producing a diverse range of products including adhesives, abrasives, medical devices, and consumer goods.",
+    logo: "simple-icons:3m",
+    search: "http://en.wikipedia.org/wiki/3M"
+  },
+  {
+    id: "goldman-sachs",
+    name: "Goldman Sachs",
+    description: "Goldman Sachs is a leading global investment banking, securities, and investment management firm serving corporations, governments, and individuals.",
+    logo: "simple-icons:goldmansachs",
+    search: "http://en.wikipedia.org/wiki/Goldman_Sachs"
+  },
+  {
+    id: "morgan-stanley",
+    name: "Morgan Stanley",
+    description: "Morgan Stanley is a global financial services firm providing investment banking, securities, wealth management, and investment management services.",
+    logo: "simple-icons:morganstanley",
+    search: "http://en.wikipedia.org/wiki/Morgan_Stanley"
+  },
+  {
+    id: "citigroup",
+    name: "Citigroup",
+    description: "Citigroup is a global financial services corporation providing banking, credit cards, investment services, and consumer finance to customers worldwide.",
+    logo: "simple-icons:citigroup",
+    search: "http://en.wikipedia.org/wiki/Citigroup"
+  },
+  {
+    id: "american-express",
+    name: "American Express",
+    description: "American Express is a global financial services company known for credit cards, charge cards, and travel services for consumers and businesses.",
+    logo: "simple-icons:americanexpress",
+    search: "http://en.wikipedia.org/wiki/American_Express"
+  },
+  {
+    id: "fedex",
+    name: "FedEx",
+    description: "FedEx is a global logistics and shipping company providing express delivery, freight, and supply chain management services worldwide.",
+    logo: "simple-icons:fedex",
+    search: "http://en.wikipedia.org/wiki/FedEx"
+  },
+  {
+    id: "ups",
+    name: "United Parcel Service",
+    description: "UPS is a global package delivery and supply chain management company providing logistics and transportation services to businesses and consumers.",
+    logo: "simple-icons:ups",
+    search: "http://en.wikipedia.org/wiki/United_Parcel_Service"
+  },
+  {
+    id: "delta-air-lines",
+    name: "Delta Air Lines",
+    description: "Delta Air Lines is one of the world's largest airlines, operating flights to destinations across the globe with a focus on customer service and reliability.",
+    logo: "simple-icons:delta",
+    search: "http://en.wikipedia.org/wiki/Delta_Air_Lines"
+  },
+  {
+    id: "united-airlines",
+    name: "United Airlines",
+    description: "United Airlines is a major American airline operating domestic and international flights, serving destinations worldwide with a comprehensive route network.",
+    logo: "simple-icons:unitedairlines",
+    search: "http://en.wikipedia.org/wiki/United_Airlines"
+  },
+  {
+    id: "american-airlines",
+    name: "American Airlines",
+    description: "American Airlines is one of the world's largest airlines, operating flights to hundreds of destinations across the Americas, Europe, and Asia.",
+    logo: "simple-icons:americanairlines",
+    search: "http://en.wikipedia.org/wiki/American_Airlines"
+  },
+  {
+    id: "comcast",
+    name: "Comcast",
+    description: "Comcast is a global media and technology company providing cable, internet, phone, and streaming services, including NBCUniversal and Xfinity.",
+    logo: "simple-icons:comcast",
+    search: "http://en.wikipedia.org/wiki/Comcast"
+  },
+  {
+    id: "disney",
+    name: "The Walt Disney Company",
+    description: "Disney is a diversified entertainment company creating movies, TV shows, theme parks, and streaming platforms like Disney+, enchanting audiences globally.",
+    logo: "tabler:brand-disney",
+    search: "http://en.wikipedia.org/wiki/The_Walt_Disney_Company"
+  },
+  {
+    id: "starbucks",
+    name: "Starbucks",
+    description: "Starbucks is the world's largest coffeehouse chain, operating thousands of stores globally and offering coffee, tea, and food products.",
+    logo: "simple-icons:starbucks",
+    search: "http://en.wikipedia.org/wiki/Starbucks"
+  },
+  {
+    id: "chipotle",
+    name: "Chipotle Mexican Grill",
+    description: "Chipotle is a fast-casual restaurant chain specializing in Mexican-inspired food, known for its commitment to fresh ingredients and sustainable sourcing.",
+    logo: "simple-icons:chipotle",
+    search: "http://en.wikipedia.org/wiki/Chipotle_Mexican_Grill"
+  },
+  {
+    id: "adobe",
+    name: "Adobe",
+    description: "Adobe is a software company known for creative and digital marketing solutions, including Photoshop, Illustrator, and cloud-based services.",
+    logo: "simple-icons:adobe",
+    search: "http://en.wikipedia.org/wiki/Adobe_Inc."
+  },
+  {
+    id: "salesforce",
+    name: "Salesforce",
+    description: "Salesforce is a cloud-based software company providing customer relationship management (CRM) and enterprise cloud computing solutions.",
+    logo: "simple-icons:salesforce",
+    search: "http://en.wikipedia.org/wiki/Salesforce"
+  },
+  {
+    id: "cisco",
+    name: "Cisco Systems",
+    description: "Cisco is a technology conglomerate specializing in networking hardware, software, and telecommunications equipment for businesses and service providers.",
+    logo: "simple-icons:cisco",
+    search: "http://en.wikipedia.org/wiki/Cisco"
+  },
+  {
+    id: "qualcomm",
+    name: "Qualcomm",
+    description: "Qualcomm is a semiconductor and telecommunications equipment company, known for developing mobile chipsets and wireless communication technologies.",
+    logo: "simple-icons:qualcomm",
+    search: "http://en.wikipedia.org/wiki/Qualcomm"
+  },
+  {
+    id: "nvidia",
+    name: "NVIDIA",
+    description: "NVIDIA is a technology company designing graphics processing units (GPUs) for gaming, data centers, and artificial intelligence applications.",
+    logo: "simple-icons:nvidia",
+    search: "http://en.wikipedia.org/wiki/Nvidia"
+  },
+  {
+    id: "amd",
+    name: "Advanced Micro Devices",
+    description: "AMD is a semiconductor company designing and manufacturing microprocessors, graphics processors, and other computing technologies.",
+    logo: "simple-icons:amd",
+    search: "http://en.wikipedia.org/wiki/Advanced_Micro_Devices"
+  },
+  {
+    id: "paypal",
+    name: "PayPal",
+    description: "PayPal is a financial technology company operating an online payment system that supports money transfers and serves as an electronic alternative to traditional methods.",
+    logo: "simple-icons:paypal",
+    search: "http://en.wikipedia.org/wiki/PayPal"
+  },
+  {
+    id: "ebay",
+    name: "eBay",
+    description: "eBay is an e-commerce platform enabling individuals and businesses to buy and sell goods through online auctions and fixed-price listings.",
+    logo: "simple-icons:ebay",
+    search: "http://en.wikipedia.org/wiki/EBay"
+  },
+  {
+    id: "best-buy",
+    name: "Best Buy",
+    description: "Best Buy is a consumer electronics retailer operating stores and online platforms, offering electronics, appliances, and technology services.",
+    logo: "simple-icons:bestbuy",
+    search: "http://en.wikipedia.org/wiki/Best_Buy"
+  },
+  {
+    id: "lowes",
+    name: "Lowe's",
+    description: "Lowe's is a major home improvement retailer offering tools, appliances, building materials, and services for DIY and professional customers.",
+    logo: "simple-icons:lowes",
+    search: "http://en.wikipedia.org/wiki/Lowe%27s"
+  },
+  {
+    id: "kraft-heinz",
+    name: "The Kraft Heinz Company",
+    description: "Kraft Heinz is a food and beverage company manufacturing and marketing processed foods, condiments, and beverages under various well-known brands.",
+    logo: "simple-icons:kraftheinz",
+    search: "http://en.wikipedia.org/wiki/The_Kraft_Heinz_Company"
+  },
+  {
+    id: "general-mills",
+    name: "General Mills",
+    description: "General Mills is a multinational manufacturer and marketer of branded consumer foods, including cereals, snacks, and baking products.",
+    logo: "simple-icons:generalmills",
+    search: "http://en.wikipedia.org/wiki/General_Mills"
+  },
+  {
+    id: "kellogg",
+    name: "Kellogg Company",
+    description: "Kellogg's is a multinational food manufacturing company producing cereals, snacks, and convenience foods under various popular brands.",
+    logo: "simple-icons:kelloggs",
+    search: "http://en.wikipedia.org/wiki/Kellogg%27s"
+  },
+  {
+    id: "honeywell",
+    name: "Honeywell",
+    description: "Honeywell is a multinational conglomerate producing commercial and consumer products, engineering services, and aerospace systems.",
+    logo: "simple-icons:honeywell",
+    search: "http://en.wikipedia.org/wiki/Honeywell"
+  },
+  {
+    id: "raytheon",
+    name: "Raytheon Technologies",
+    description: "Raytheon Technologies is an aerospace and defense company providing advanced systems and services for commercial, military, and government customers.",
+    logo: "simple-icons:raytheon",
+    search: "http://en.wikipedia.org/wiki/Raytheon_Technologies"
+  },
+  {
+    id: "northrop-grumman",
+    name: "Northrop Grumman",
+    description: "Northrop Grumman is a global aerospace and defense technology company developing advanced systems for military and commercial applications.",
+    logo: "simple-icons:northropgrumman",
+    search: "http://en.wikipedia.org/wiki/Northrop_Grumman"
+  },
+  {
+    id: "deutsche-bank",
+    name: "Deutsche Bank",
+    description: "Deutsche Bank is a global investment bank and financial services company providing banking, investment, and asset management services.",
+    logo: "simple-icons:deutschebank",
+    search: "http://en.wikipedia.org/wiki/Deutsche_Bank"
+  },
+  {
+    id: "ubs",
+    name: "UBS",
+    description: "UBS is a global financial services company providing wealth management, investment banking, and asset management services to clients worldwide.",
+    logo: "simple-icons:ubs",
+    search: "http://en.wikipedia.org/wiki/UBS"
+  },
+  {
+    id: "sap",
+    name: "SAP",
+    description: "SAP is a German software corporation providing enterprise software for managing business operations and customer relations.",
+    logo: "simple-icons:sap",
+    search: "http://en.wikipedia.org/wiki/SAP_SE"
+  },
+  {
+    id: "accenture",
+    name: "Accenture",
+    description: "Accenture is a global professional services company providing consulting, technology, and outsourcing services to help businesses improve performance.",
+    logo: "simple-icons:accenture",
+    search: "http://en.wikipedia.org/wiki/Accenture"
+  },
+  {
+    id: "deloitte",
+    name: "Deloitte",
+    description: "Deloitte is one of the Big Four accounting firms, providing audit, consulting, tax, and advisory services to clients globally.",
+    logo: "simple-icons:deloitte",
+    search: "http://en.wikipedia.org/wiki/Deloitte"
+  },
+  {
+    id: "pwc",
+    name: "PricewaterhouseCoopers",
+    description: "PwC is a global professional services network providing assurance, tax, and advisory services, and is one of the Big Four accounting firms.",
+    logo: "simple-icons:pwc",
+    search: "http://en.wikipedia.org/wiki/PricewaterhouseCoopers"
+  },
+  {
+    id: "ernst-young",
+    name: "Ernst & Young",
+    description: "EY is a global professional services firm providing assurance, tax, consulting, and advisory services, and is one of the Big Four accounting firms.",
+    logo: "simple-icons:ernstyoung",
+    search: "http://en.wikipedia.org/wiki/Ernst_%26_Young"
+  },
+  {
+    id: "kpmg",
+    name: "KPMG",
+    description: "KPMG is a global professional services network providing audit, tax, and advisory services, and is one of the Big Four accounting firms.",
+    logo: "simple-icons:kpmg",
+    search: "http://en.wikipedia.org/wiki/KPMG"
+  }
+];

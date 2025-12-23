@@ -2,8 +2,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   HOME_LATEST,
-  getHomePolls,
-  getPollsByTopic,
   getUserById,
   getViralDetections,
 } from "@/services/polls/polls";
@@ -13,8 +11,7 @@ import { auth } from "../../lib/firebase";
 import { toast } from "react-toastify";
 import Tabs from "@/components/ui/Tabs";
 import Poll from "@/components/Poll";
-import GoldenInsightDetail from "@/components/GoldenInsightDetail";
-import GoldenInsightDetailPage from "@/app/app/golden-insights/[id]/page";
+import PollDetailPage from "@/app/app/polls/[id]/page";
 import { Icon } from "@iconify/react";
 import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import Link from "next/link";
@@ -115,27 +112,58 @@ export default function Home() {
   const [pageCursors, setPageCursors] = useState({});
   const [totalPages, setTotalPages] = useState(1);
   const [companyPollAssignments, setCompanyPollAssignments] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [companiesLoading, setCompaniesLoading] = useState(true);
 
   const timerInterval = useRef(null);
   const companyDropdownRef = useRef(null);
 
   const { ref, inView } = useInView();
 
+  // Fetch companies from API
+  const fetchCompanies = useCallback(async () => {
+    try {
+      setCompaniesLoading(true);
+      const response = await fetch('/api/companies');
+      if (!response.ok) {
+        throw new Error('Failed to fetch companies');
+      }
+      const data = await response.json();
+      
+      // Transform API companies to match expected format
+      const transformedCompanies = (data.companies || []).map(company => ({
+        id: company.id.toString(),
+        name: company.name,
+        logo: company.logo || '', // API returns logo as string (icon name or URL)
+        url: company.url || '',
+        description: '', // Not in API, can be added later
+        search: company.url || ''
+      }));
+      
+      setCompanies(transformedCompanies);
+    } catch (error) {
+      console.error('Error fetching companies:', error);
+      // Fallback to static data if API fails
+      setCompanies(FAMOUS_COMPANIES_DATA);
+    } finally {
+      setCompaniesLoading(false);
+    }
+  }, []);
+
   // Get first 6 companies for the filter
-  const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
+  const filterCompanies = companies.length > 0 ? companies.slice(0, 6) : FAMOUS_COMPANIES_DATA.slice(0, 6);
 
   // Function to assign polls to companies (defined early to avoid initialization error)
   const assignPollsToCompanies = useCallback((pollsList) => {
+    if (companies.length === 0) return;
     // Randomly assign 2-5 polls per company (only once)
     const assignments = [];
-    const filterCompanies = FAMOUS_COMPANIES_DATA.slice(0, 6);
+    const companiesToUse = companies;
     let pollIndex = 0;
     
-    filterCompanies.forEach((company) => {
-      // Random number between 2 and 5
-      const pollsCount = Math.floor(Math.random() * 4) + 2; // 2-5 polls
-      const companyPolls = pollsList.slice(pollIndex, pollIndex + pollsCount);
-      
+    companiesToUse.forEach((company) => {
+      const companyPolls = pollsList.filter(poll => parseInt(poll.company_id) === parseInt(company.id));
+      console.log(companyPolls, company.id, pollsList);
       if (companyPolls.length > 0) {
         assignments.push({
           company,
@@ -148,7 +176,7 @@ export default function Home() {
     });
     
     setCompanyPollAssignments(assignments);
-  }, []);
+  }, [companies]);
 
   // Mobile detection
   useEffect(() => {
@@ -182,28 +210,145 @@ export default function Home() {
     }
   }, [showCompanyModal]);
 
+  // Fetch polls from API with pagination
+  const fetchPollsFromAPI = useCallback(async (category = null, companyIds = [], page = 1, limit = 10) => {
+    try {
+      let url = '/api/company-polls?';
+      const params = new URLSearchParams();
+      
+      if (category && category !== "All") {
+        params.append('category', category);
+      }
+      // Note: API currently supports single company filter via 'company' param
+      // For multiple companies, we'll fetch all and filter client-side
+      // TODO: Enhance API to support multiple company_ids
+      if (companyIds.length === 1) {
+        params.append('company', companyIds[0].toString());
+      }
+      params.append('status', '1'); // Only active polls
+      params.append('page', page.toString());
+      params.append('limit', limit.toString());
+      
+      url += params.toString();
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch polls');
+      }
+      
+      const data = await response.json();
+      let polls = data.polls || [];
+      
+      // Filter by multiple companies client-side if needed
+      if (companyIds.length > 1) {
+        polls = polls.filter(poll => companyIds.includes(poll.company_id));
+      }
+      
+      // Return polls with pagination metadata
+      return {
+        polls,
+        pagination: data.pagination || {
+          page,
+          limit,
+          totalCount: polls.length,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPreviousPage: false
+        }
+      };
+    } catch (error) {
+      console.error('Error fetching polls from API:', error);
+      return { polls: [], pagination: null };
+    }
+  }, []);
+
+  // Transform API poll data to match Firebase format expected by Poll component
+  const transformPollData = useCallback((apiPoll) => {
+    // Parse section_ids and section_titles if they're JSON strings
+    let sectionIds = [];
+    let sectionTitles = [];
+    
+    try {
+      if (apiPoll.section_ids) {
+        sectionIds = typeof apiPoll.section_ids === 'string' 
+          ? JSON.parse(apiPoll.section_ids) 
+          : apiPoll.section_ids;
+      }
+      if (apiPoll.section_titles) {
+        sectionTitles = typeof apiPoll.section_titles === 'string'
+          ? JSON.parse(apiPoll.section_titles)
+          : apiPoll.section_titles;
+      }
+    } catch (e) {
+      console.warn('Error parsing section data:', e);
+    }
+
+    // Convert createdAt string to Firebase timestamp format
+    const createdAt = apiPoll.created_at ? new Date(apiPoll.created_at) : new Date();
+    
+    return {
+      id: apiPoll.id.toString(),
+      title: apiPoll.title || '',
+      content: apiPoll.content || '',
+      category: apiPoll.category || '',
+      topic: apiPoll.category || '', // Map category to topic for compatibility
+      company: apiPoll.company_id || null,
+      url: apiPoll.url || '',
+      image_url: apiPoll.image_url || '',
+      status: apiPoll.status || 0,
+      vote_result: apiPoll.vote_result || 0,
+      comment_count: apiPoll.comment_count || 0,
+      sections_ids: sectionIds,
+      sections_titles: sectionTitles,
+      createdAt: {
+        seconds: Math.floor(createdAt.getTime() / 1000),
+        nanoseconds: (createdAt.getTime() % 1000) * 1000000
+      },
+      updatedAt: apiPoll.updated_at ? {
+        seconds: Math.floor(new Date(apiPoll.updated_at).getTime() / 1000),
+        nanoseconds: 0
+      } : null,
+      // Default values for fields that Poll component might expect
+      // Poll component expects questions array with at least one question
+      questions: apiPoll.questions || [{
+        headline: apiPoll.title || '',
+        summary: apiPoll.content.replace(/<[^>]*>?/g, '').replace(/\*/g, "").replace(/#/g, ""),
+      }],
+      like_users: apiPoll.like_users || [],
+      dislike_users: apiPoll.dislike_users || [],
+      likes: apiPoll.likes || 0,
+      dislikes: apiPoll.dislikes || 0,
+      trendScore: 0,
+      user: {
+        id: '',
+        fullname: '',
+        username: '',
+        avatar: ''
+      },
+      golden_insights: apiPoll.golden_insights || []
+    };
+  }, []);
+
   const loadNewPolls = useCallback(async () => {
     if (loading) return;
     setLoading(true);
     try {
-      let poll_list = [],
-        lastDoc;
+      const result = await fetchPollsFromAPI(
+        currentTopic === "All" ? null : currentTopic,
+        selectedCompanies,
+        1,
+        10
+      );
 
-      if (currentTopic === "All") {
-        const { result } = await getHomePolls(viewType, null);
-        poll_list = result;
-      } else {
-        const { result } = await getPollsByTopic(currentTopic, null);
-        poll_list = result;
-      }
-
-      if (poll_list.length === 0) {
+      if (result.polls.length === 0) {
         return;
       }
 
-      if (poll_list.length > 0) {
+      const transformedPolls = result.polls.map(transformPollData);
+      
+      if (transformedPolls.length > 0) {
         setPolls((prevPolls) => [
-          ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id)),
+          ...transformedPolls.filter((p) => !prevPolls.some((p1) => p1.id === p.id)),
           ...prevPolls,
         ]);
       }
@@ -212,7 +357,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, viewType]);
+  }, [loading, currentTopic, selectedCompanies, fetchPollsFromAPI, transformPollData]);
 
   const updateRemainingSeconds = useCallback(() => {
     if (polls.length > 0) {
@@ -241,60 +386,54 @@ export default function Home() {
     if (loading) return;
     setLoading(true);
     try {
-      let poll_list = [],
-        lastDoc,
-        totalCount;
-
       // Determine items per page based on mobile/desktop
       const itemsPerPage = (isMobile && isPageLoad) ? 5 : 10;
-      const cursor = isMobile && isPageLoad ? from : (from || start);
+      
+      // Fetch polls with pagination from API
+      const result = await fetchPollsFromAPI(
+        currentTopic === "All" ? null : currentTopic,
+        selectedCompanies,
+        pageNum,
+        itemsPerPage
+      );
 
-      if (currentTopic === "All") {
-        const { result, lastDoc: last, totalCount: count } = await getHomePolls(viewType, cursor, itemsPerPage);
-        poll_list = result;
-        lastDoc = last;
-        totalCount = count;
-      } else {
-        const { result, lastDoc: last, totalCount: count } = await getPollsByTopic(
-          currentTopic,
-          cursor,
-          itemsPerPage
-        );
-        poll_list = result;
-        lastDoc = last;
-        totalCount = count;
-      }
+      const transformedPolls = result.polls.map(transformPollData);
+      const pagination = result.pagination;
 
       if (isMobile && isPageLoad) {
         // For mobile pagination, replace polls instead of appending
-        setPolls(poll_list);
-        // Store cursor for next page
-        if (lastDoc) {
-          setPageCursors(prev => ({ ...prev, [pageNum + 1]: lastDoc }));
+        setPolls(transformedPolls);
+        
+        // Use pagination metadata from API
+        if (pagination) {
+          setTotalPages(pagination.totalPages > 0 ? pagination.totalPages : 1);
+        } else {
+          // Fallback: estimate total pages
+          const calculatedTotalPages = transformedPolls.length < itemsPerPage 
+            ? pageNum 
+            : pageNum + 1;
+          setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
         }
-        // Calculate total pages from total count
-        const calculatedTotalPages = Math.ceil(totalCount / 5);
-        setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
         
         // Assign polls to companies only on first page load and only if not already assigned
         if (pageNum === 1 && companyPollAssignments.length === 0) {
-          assignPollsToCompanies(poll_list);
+          assignPollsToCompanies(transformedPolls);
         }
         
-        // Don't update start cursor on mobile to prevent desktop scroll from interfering
         return;
       } else if (!isMobile && !isPageLoad) {
         // Desktop infinite scroll behavior - only when not mobile and not a page load
-        if (poll_list.length === 0) {
+        if (transformedPolls.length === 0) {
           setHasMore(false);
           return;
         }
-        if (poll_list.length > 0) {
-          setStart(lastDoc);
+        if (transformedPolls.length > 0) {
+          // For desktop, we'll track the last loaded page
+          setStart(pageNum);
           setPolls((prevPolls) => {
             const newPolls = [
               ...prevPolls,
-              ...poll_list.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
+              ...transformedPolls.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
             ];
             
             // Assign polls to companies only on first load (when prevPolls is empty)
@@ -304,6 +443,16 @@ export default function Home() {
             
             return newPolls;
           });
+          
+          // Use pagination metadata to determine if there are more pages
+          if (pagination) {
+            setHasMore(pagination.hasNextPage);
+          } else {
+            // Fallback: if we got fewer items than requested, we've reached the end
+            if (transformedPolls.length < itemsPerPage) {
+              setHasMore(false);
+            }
+          }
         } else {
           setHasMore(false);
         }
@@ -313,7 +462,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, viewType, start, isMobile, assignPollsToCompanies, companyPollAssignments.length]);
+  }, [loading, currentTopic, selectedCompanies, isMobile, assignPollsToCompanies, companyPollAssignments.length, fetchPollsFromAPI, transformPollData]);
 
   const onRefresh = useCallback(() => {
     setStart(null);
@@ -325,19 +474,43 @@ export default function Home() {
   // Desktop infinite scroll
   useEffect(() => {
     if (!isMobile && !loading && inView && hasMore) {
-      loadPolls(start, false, 1);
+      // Use start as page number for API pagination
+      const nextPage = start ? start + 1 : 1;
+      loadPolls(null, false, nextPage);
     }
   }, [inView, loading, hasMore, currentTopic, viewType, isMobile, start, loadPolls]);
 
   // Mobile pagination - load data when page changes
   useEffect(() => {
     if (isMobile) {
-      const cursor = currentPage === 1 ? null : pageCursors[currentPage];
-      if (currentPage === 1 || cursor !== undefined) {
-        loadPolls(cursor, true, currentPage);
-      }
+      loadPolls(null, true, currentPage);
     }
   }, [currentPage, currentTopic, viewType, isMobile, loadPolls]);
+
+  // Load companies on mount
+  useEffect(() => {
+    fetchCompanies();
+  }, [fetchCompanies]);
+
+  // Initial load of polls
+  useEffect(() => {
+    if (polls.length === 0 && !loading) {
+      loadPolls(null, isMobile, 1);
+    }
+  }, []); // Only run on mount
+
+  // Reload polls when company filter changes
+  useEffect(() => {
+    if (polls.length > 0) {
+      setStart(null);
+      setHasMore(true);
+      setPolls([]);
+      setCurrentPage(1);
+      setPageCursors({});
+      setCompanyPollAssignments([]);
+      loadPolls(null, isMobile, 1);
+    }
+  }, [selectedCompanies]); // Reload when company filter changes
 
   useEffect(() => {
     getViralDetections().then(data => {
@@ -357,6 +530,8 @@ export default function Home() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  console.log(companyPollAssignments);
 
   return (
     <div className="w-full h-full">
@@ -411,7 +586,7 @@ export default function Home() {
                 {selectedCompanies.length > 0 && (
                   <div className="hidden md:flex items-center gap-2 flex-wrap">
                     {selectedCompanies.map((companyId) => {
-                      const company = FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
+                      const company = companies.find(c => c.id === companyId) || FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
                       if (!company) return null;
                       return (
                         <div key={companyId} className="flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FF] rounded-full border border-[#E4E7EC]">
@@ -434,7 +609,7 @@ export default function Home() {
                 {showCompanyDropdown && !isMobile && (
                   <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl p-6 shadow-lg border border-[#E4E7EC] z-50 w-[400px] max-w-[90vw]">
                     <div className="grid grid-cols-3 gap-4">
-                      {filterCompanies.map((company) => (
+                      {(companiesLoading ? FAMOUS_COMPANIES_DATA.slice(0, 6) : filterCompanies).map((company) => (
                         <button
                           key={company.id}
                           onClick={() => {
@@ -481,6 +656,8 @@ export default function Home() {
                       setCurrentPage(1);
                       setPageCursors({});
                       setCompanyPollAssignments([]);
+                      // Trigger reload
+                      loadPolls(null, isMobile, 1);
                     }}
                     className={`px-4 py-3 text-sm font-medium transition-colors relative ${
                       currentTopic === topic
@@ -640,7 +817,7 @@ export default function Home() {
         </div>
       </div>
       {
-        detailId != -1 && <GoldenInsightDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
+        detailId != -1 && <PollDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
       }
 
       {/* Company Selection Modal (Mobile) */}
@@ -677,7 +854,7 @@ export default function Home() {
             {tempSelectedCompanies.length > 0 && (
               <div className="flex flex-wrap gap-2 p-4 border-b border-[#E4E7EC]">
                 {tempSelectedCompanies.map((companyId) => {
-                  const company = FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
+                  const company = companies.find(c => c.id === companyId) || FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
                   if (!company) return null;
                   return (
                     <div key={companyId} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F9FAFB] rounded-lg border border-[#E4E7EC]">
@@ -699,7 +876,7 @@ export default function Home() {
             {/* Company Grid */}
             <div className="flex-1 overflow-y-auto p-6">
               <div className="grid grid-cols-2 gap-4">
-                {filterCompanies.map((company) => {
+                {(companiesLoading ? FAMOUS_COMPANIES_DATA.slice(0, 6) : filterCompanies).map((company) => {
                   const isSelected = tempSelectedCompanies.includes(company.id);
                   return (
                     <button

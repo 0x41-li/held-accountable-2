@@ -27,13 +27,14 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   }, [poll]);
 
   const like = useMemo(() => {
-    return poll.like_users.includes(auth.currentUser.uid);
+    if (!auth.currentUser) return false;
+    return poll.like_users && poll.like_users.includes(auth.currentUser.uid);
   }, [poll]);
 
   const onDetail = (id) => {
     console.log(id);
     if (!showDetail) {
-      router.push(`/golden-insights/${id}`);
+      router.push(`/app/polls/${id}`);
       return;
     }
     showDetail(id);
@@ -76,10 +77,16 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   const firstInsight = poll.golden_insights && poll.golden_insights.length > 0 ? poll.golden_insights[0] : null;
   
   const handleLike = async () => {
-    if (poll.like_users.includes(auth.currentUser.uid)) return;
+    if (!auth.currentUser) {
+      // Redirect to login or show message
+      router.push('/auth/signin');
+      return;
+    }
+
+    if (poll.like_users && poll.like_users.includes(auth.currentUser.uid)) return;
     let additionalChange = {};
 
-    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+    if (poll.dislike_users && poll.dislike_users.includes(auth.currentUser.uid)) {
         additionalChange = {
             dislikes: increment(-1),
             dislike_users: arrayRemove(auth.currentUser.uid)
@@ -93,7 +100,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
     });
 
     additionalChange = {};
-    if (poll.dislike_users.includes(auth.currentUser.uid)) {
+    if (poll.dislike_users && poll.dislike_users.includes(auth.currentUser.uid)) {
         additionalChange = {
             dislikes: poll.dislikes - 1,
             dislike_users: poll.dislike_users.filter(uid => uid !== auth.currentUser.uid)
@@ -104,7 +111,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         ...poll,
         likes: poll.likes + 1,
         like_users: [
-            ...poll.like_users,
+            ...(poll.like_users || []),
             auth.currentUser.uid
         ],
         ...additionalChange
@@ -130,9 +137,8 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   return (
     <div className="relative flex flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
       {/* Learn in 2 min & Invest button positioned at top right of card */}
-      {firstInsight && (
-        <Link 
-          href={`/golden-insights/${poll.id}`}
+      <Link 
+          href={`/app/polls/${poll.id}`}
           onClick={(e) => {
             if (showDetail) {
               e.preventDefault();
@@ -141,25 +147,23 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           }}
           className="hidden md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
         >
-          Learn in 2 min & Invest
-          <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
-            style={{
-              boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
-            }}
-          >
-            <Icon icon="mdi:arrow-top-right" width={20} height={20} className="text-[#2B425B66]" />
-          </div>
-        </Link>
-      )}
+         Learn in 2 min & Invest
+         <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
+           style={{
+             boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
+           }}
+         >
+           <Icon icon="mdi:arrow-top-right" width={20} height={20} className="text-[#2B425B66]" />
+         </div>
+       </Link>
       
       {/* Image on the left */}
       <div className="flex flex-shrink-0 self-stretch items-stretch relative">
         <div className="relative w-[140px] md:w-[250px] h-full">
-          <Image
-            src="/images/narrative_detail.png"
+          <img
+            src={poll.image_url || "/images/narrative_detail.png"}
             alt="Narrative"
-            fill
-            className="rounded-[32px] object-cover p-2"
+            className="rounded-[32px] h-full p-2"
           />
           {/* Heart icon overlay on top right of image */}
           <button
@@ -206,43 +210,19 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         </p>
       )}
       
-      <div className="hidden items-center justify-between mb-4">
-        <div className="flex items-center gap-4 text-[#404040] font-medium text-[12px]">
-          <p
-            className="flex items-center gap-1 cursor-pointer select-none"
-            onClick={() => handleLike()}
-          >
-            <Icon
-              icon={like ? "flat-color-icons:like" : "icon-park-outline:like"}
-              width={20}
-              height={20}
-            />
-            {poll.likes || 0} Likes
-          </p>
-          <button 
-            onClick={()=>setShowShareModal(true)} 
-            className="text-[#404040] flex items-center cursor-pointer select-none gap-1"
-          >
-            <Icon icon="ix:share" width={20} height={20} />
-            Share
-          </button>
-        </div>
-      </div>
-      
-        {firstInsight && (
-          <Link 
-            href={`/golden-insights/${poll.id}`}
-            onClick={(e) => {
-              if (showDetail) {
-                e.preventDefault();
-                showDetail(poll.id);
-              }
-            }}
-            className="md:hidden uppercase text-[#1D74D6] font-bold text-[11px] hover:text-blue-700"
-          >
-          Learn in 2 min & Invest
-          </Link>
-        )}
+        
+       <Link 
+         href={`/app/polls/${poll.id}`}
+         onClick={(e) => {
+           if (showDetail) {
+             e.preventDefault();
+             showDetail(poll.id);
+           }
+         }}
+         className="md:hidden uppercase text-[#1D74D6] font-bold text-[11px] hover:text-blue-700"
+       >
+       Learn in 2 min & Invest
+       </Link>
         
         <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
       </div>
