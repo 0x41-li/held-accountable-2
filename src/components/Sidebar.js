@@ -181,7 +181,7 @@ export default function Sidebar() {
                     <Icon icon="material-symbols:close" />
                   </div> */}
                 </div>
-                <p className="">Join our community</p>
+                {/* <p className="">Join our community</p> */}
                 {/* <p>
                   Upgrade your plan to leverage your abilities with Held
                   Accountable’s premium features.

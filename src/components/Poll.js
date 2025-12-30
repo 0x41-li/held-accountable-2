@@ -16,6 +16,8 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   const [readProgress, setReadProgress] = useState(0);
   const router = useRouter();
   const [showSummary, setShowSummary] = useState(false);
+  const [userVote, setUserVote] = useState(null);
+  const [userVotedCorrectly, setUserVotedCorrectly] = useState(false);
   if (!poll.questions) return "";
 
   const handleShowSummary = () => {
@@ -119,7 +121,12 @@ export default function Poll({ poll: initialPoll, showDetail }) {
     });
   }
 
-  const postedDate = new Date(poll.createdAt.seconds * 1000);
+  // Handle both Firebase and API date formats
+  const postedDate = poll.createdAt?.seconds 
+    ? new Date(poll.createdAt.seconds * 1000)
+    : poll.created_at 
+    ? new Date(poll.created_at)
+    : new Date();
   
   const getHeadlineText = (headline) => {
     if (!headline) return '';
@@ -135,24 +142,79 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   
   const headlineText = poll.questions[0].headline ? getHeadlineText(poll.questions[0].headline) : '';
 
-  // Load read progress for authenticated users
+  // Calculate voting status - handle both Firebase and API formats
+  const createdAt = poll.createdAt?.seconds 
+    ? new Date(poll.createdAt.seconds * 1000)
+    : poll.created_at 
+    ? new Date(poll.created_at)
+    : new Date();
+  const hoursRemaining = Math.max(0, Math.floor((24 * 60 * 60 * 1000 - (Date.now() - createdAt.getTime())) / (60 * 60 * 1000)));
+  const isVotingExpired = hoursRemaining === 0;
+  const voteResult = poll.vote_result !== null && poll.vote_result !== undefined && poll.vote_result !== -1 ? poll.vote_result : null;
+  const votingFinished = isVotingExpired || voteResult !== null;
+  
+  // Get voting status text and icon
+  const getVotingStatus = () => {
+    if (userVotedCorrectly && votingFinished) {
+      return {
+        text: "Vote Correct",
+        icon: "mdi:check-circle",
+        iconColor: "text-green-500"
+      };
+    }
+    if (votingFinished) {
+      return {
+        text: "Vote Ended",
+        icon: "mdi:clock-outline",
+        iconColor: null
+      };
+    }
+    return {
+      text: `${hoursRemaining} Hours to vote`,
+      icon: "mdi:clock-outline",
+      iconColor: "text-[#98A2B3]"
+    };
+  };
+
+  const votingStatus = getVotingStatus();
+  const commentCount = poll.comment_count || 0;
+
+  // Load read progress and user vote for authenticated users
   useEffect(() => {
-    const loadReadProgress = async () => {
+    const loadUserData = async () => {
       if (!auth.currentUser || !poll.id) return;
       
       try {
-        const response = await fetch(`/api/polls/${poll.id}/read-progress?user_id=${auth.currentUser.uid}`);
-        if (response.ok) {
-          const data = await response.json();
-          setReadProgress(data.progress || 0);
+        // Load read progress
+        const progressResponse = await fetch(`/api/polls/${poll.id}/read-progress?user_id=${auth.currentUser.uid}`);
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          setReadProgress(progressData.progress || 0);
+        }
+
+        // Load user vote
+        const voteResponse = await fetch(`/api/company-polls/${poll.id}/votes`);
+        if (voteResponse.ok) {
+          const voteData = await voteResponse.json();
+          const votes = voteData.votes || [];
+          const userVoteData = votes.find(v => v.user_id === auth.currentUser.uid);
+          if (userVoteData) {
+            setUserVote(userVoteData.vote);
+            // Check if user voted correctly
+            const voteResult = poll.vote_result !== null && poll.vote_result !== undefined && poll.vote_result !== -1 ? poll.vote_result : null;
+            const votingFinished = voteResult !== null;
+            if (votingFinished && userVoteData.vote === voteResult) {
+              setUserVotedCorrectly(true);
+            }
+          }
         }
       } catch (error) {
-        console.error('Error loading read progress:', error);
+        console.error('Error loading user data:', error);
       }
     };
 
-    loadReadProgress();
-  }, [poll.id, auth.currentUser]);
+    loadUserData();
+  }, [poll.id, poll.vote_result, auth.currentUser]);
 
   return (
     <div className="relative flex flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
@@ -165,9 +227,9 @@ export default function Poll({ poll: initialPoll, showDetail }) {
               showDetail(poll.id);
             }
           }}
-          className="hidden md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#1D74D6] font-bold text-sm hover:text-blue-700 transition-colors z-10"
+          className="hidden md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#2B425B66] text-sm hover:text-blue-700 transition-colors z-10"
         >
-         Learn in 2 min & Invest
+         <span className="text-[#2B425B]">{commentCount}</span> Comments
          <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
            style={{
              boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
@@ -206,7 +268,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       
       {/* Content on the right */}
       <div className="flex-1 flex flex-col relative p-2 md:p-6">
-        <div className="flex items-center gap-2 mb-2 md:pr-32">
+        <div className="flex items-center gap-2 mb-2 md:pr-32 flex-wrap">
         <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
           {category}
         </span>
@@ -214,6 +276,21 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         <span className="text-[11px] md:text-sm text-[#98A2B3]">
           {formatDateForCard(postedDate)}
         </span>
+        {/* Voting Status */}
+        <span className="text-[11px] md:text-sm text-[#98A2B3]">|</span>
+        <div className="flex items-center gap-1">
+          {votingStatus.icon && (
+            <Icon 
+              icon={votingStatus.icon} 
+              width={14} 
+              height={14} 
+              className={votingStatus.iconColor || "text-[#98A2B3]"} 
+            />
+          )}
+          <span className={`text-[11px] md:text-sm ${votingStatus.iconColor ? 'font-medium' : 'text-[#98A2B3]'}`}>
+            {votingStatus.text}
+          </span>
+        </div>
       </div>
       
       {/* Read Progress Bar */}

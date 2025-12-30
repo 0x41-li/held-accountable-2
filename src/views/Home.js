@@ -17,6 +17,8 @@ import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import Link from "next/link";
 import Pagination from "@/components/common/Pagination";
 import NotificationDropdown from "@/components/NotificationDropdown";
+import PremiumModal from "@/components/PremiumModal";
+import CrownIcon from "@/assets/icons/crown.svg";
 
 const carousel = [
   {
@@ -91,7 +93,14 @@ const carousel = [
   },
 ];
 
-const navTopic = ["All", "AI", "Finance", "Politics", "Crypto"];
+const FORTUNE_LISTS = [
+  { id: 20, name: "Fortune 20", color: "bg-white" },
+  { id: 500, name: "Fortune 500", color: "bg-gray-600" },
+  { id: 1000, name: "Fortune 1000", color: "bg-orange-500" }
+];
+
+// Fortune 20 is free, so it's the default
+const DEFAULT_FORTUNE_LIST = FORTUNE_LISTS[0]; // Fortune 20
 
 export default function Home() {
   const [viewType, setViewType] = useState(HOME_LATEST);
@@ -101,83 +110,56 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
-  const [currentTopic, setCurrentTopic] = useState("All");
+  const [selectedFortuneList, setSelectedFortuneList] = useState(DEFAULT_FORTUNE_LIST);
+  const [showFortuneDropdown, setShowFortuneDropdown] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [detailId,  setDetailId] = useState(-1);
-  const [selectedCompanies, setSelectedCompanies] = useState([]);
-  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
-  const [showCompanyModal, setShowCompanyModal] = useState(false);
-  const [tempSelectedCompanies, setTempSelectedCompanies] = useState([]);
   const [viralData, setViralData] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCursors, setPageCursors] = useState({});
   const [totalPages, setTotalPages] = useState(1);
-  const [companyPollAssignments, setCompanyPollAssignments] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [companiesLoading, setCompaniesLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isPremium, setIsPremium] = useState(false);
 
   const timerInterval = useRef(null);
-  const companyDropdownRef = useRef(null);
+  const fortuneDropdownRef = useRef(null);
+  const initialLoadDone = useRef(false);
+  const loadingRef = useRef(false);
 
   const { ref, inView } = useInView();
 
-  // Fetch companies from API
-  const fetchCompanies = useCallback(async () => {
-    try {
-      setCompaniesLoading(true);
-      const response = await fetch('/api/companies');
-      if (!response.ok) {
-        throw new Error('Failed to fetch companies');
+  // Load user data and check premium status
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!auth.currentUser) {
+        setUser(null);
+        setIsPremium(false);
+        return;
       }
-      const data = await response.json();
-      
-      // Transform API companies to match expected format
-      const transformedCompanies = (data.companies || []).map(company => ({
-        id: company.id.toString(),
-        name: company.name,
-        logo: company.logo || '', // API returns logo as string (icon name or URL)
-        url: company.url || '',
-        description: '', // Not in API, can be added later
-        search: company.url || ''
-      }));
-      
-      setCompanies(transformedCompanies);
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-      // Fallback to static data if API fails
-      setCompanies(FAMOUS_COMPANIES_DATA);
-    } finally {
-      setCompaniesLoading(false);
-    }
-  }, []);
 
-  // Get first 6 companies for the filter
-  const filterCompanies = companies.length > 0 ? companies.slice(0, 6) : FAMOUS_COMPANIES_DATA.slice(0, 6);
+      try {
+        const userData = await getUserById(auth.currentUser.uid);
+        if (userData) {
+          setUser(userData);
+          // Check if user has premium subscription
+          const hasPremium = userData.subscripted_at && userData.subscripted_at > Date.now();
+          setIsPremium(hasPremium);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
 
-  // Function to assign polls to companies (defined early to avoid initialization error)
-  const assignPollsToCompanies = useCallback((pollsList) => {
-    if (companies.length === 0) return;
-    // Randomly assign 2-5 polls per company (only once)
-    const assignments = [];
-    const companiesToUse = companies;
-    let pollIndex = 0;
+    loadUserData();
     
-    companiesToUse.forEach((company) => {
-      const companyPolls = pollsList.filter(poll => parseInt(poll.company_id) === parseInt(company.id));
-      console.log(companyPolls, company.id, pollsList);
-      if (companyPolls.length > 0) {
-        assignments.push({
-          company,
-          polls: companyPolls,
-          startIndex: pollIndex,
-          endIndex: pollIndex + companyPolls.length
-        });
-        pollIndex += companyPolls.length;
-      }
+    // Listen for auth state changes
+    const unsubscribe = auth.onAuthStateChanged(() => {
+      loadUserData();
     });
-    
-    setCompanyPollAssignments(assignments);
-  }, [companies]);
+
+    return () => unsubscribe();
+  }, []);
 
   // Mobile detection
   useEffect(() => {
@@ -204,28 +186,56 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Initialize temp selection when modal opens
-  useEffect(() => {
-    if (showCompanyModal) {
-      setTempSelectedCompanies([...selectedCompanies]);
+  // Handle Fortune list selection
+  const handleFortuneListSelect = (fortuneList) => {
+    // Check if user is premium
+    if (!isPremium && !auth.currentUser) {
+      router.push('/auth/signin');
+      return;
     }
-  }, [showCompanyModal]);
+
+    if (!isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
+
+    // User is premium, allow selection
+    setSelectedFortuneList(fortuneList);
+    setShowFortuneDropdown(false);
+    
+    // Reset polls and reload
+    setStart(null);
+    setHasMore(true);
+    setPolls([]);
+    setCurrentPage(1);
+    setPageCursors({});
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (fortuneDropdownRef.current && !fortuneDropdownRef.current.contains(event.target)) {
+        setShowFortuneDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Fetch polls from API with pagination
-  const fetchPollsFromAPI = useCallback(async (category = null, companyIds = [], page = 1, limit = 10) => {
+  const fetchPollsFromAPI = useCallback(async (fortuneListId = null, page = 1, limit = 10) => {
     try {
       let url = '/api/company-polls?';
       const params = new URLSearchParams();
       
-      if (category && category !== "All") {
-        params.append('category', category);
+      // TODO: Add Fortune list filtering when API supports it
+      // For now, fetch all polls - filtering by Fortune list can be added later
+      if (fortuneListId) {
+        // params.append('fortune_list', fortuneListId.toString());
       }
-      // Note: API currently supports single company filter via 'company' param
-      // For multiple companies, we'll fetch all and filter client-side
-      // TODO: Enhance API to support multiple company_ids
-      if (companyIds.length === 1) {
-        params.append('company', companyIds[0].toString());
-      }
+      
       params.append('status', '1'); // Only active polls
       params.append('page', page.toString());
       params.append('limit', limit.toString());
@@ -240,10 +250,8 @@ export default function Home() {
       const data = await response.json();
       let polls = data.polls || [];
       
-      // Filter by multiple companies client-side if needed
-      if (companyIds.length > 1) {
-        polls = polls.filter(poll => companyIds.includes(poll.company_id));
-      }
+      // TODO: Filter by Fortune list client-side when API doesn't support it
+      // For now, return all polls
       
       // Return polls with pagination metadata
       return {
@@ -335,8 +343,7 @@ export default function Home() {
     setLoading(true);
     try {
       const result = await fetchPollsFromAPI(
-        currentTopic === "All" ? null : currentTopic,
-        selectedCompanies,
+        selectedFortuneList?.id || null,
         1,
         10
       );
@@ -358,7 +365,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [loading, currentTopic, selectedCompanies, fetchPollsFromAPI, transformPollData]);
+  }, [loading, selectedFortuneList, fetchPollsFromAPI, transformPollData]);
 
   const updateRemainingSeconds = useCallback(() => {
     if (polls.length > 0) {
@@ -384,7 +391,8 @@ export default function Home() {
   }, [loadNewPolls]);
 
   const loadPolls = useCallback(async (from = null, isPageLoad = false, pageNum = 1) => {
-    if (loading) return;
+    if (loading || loadingRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
     try {
       // Determine items per page based on mobile/desktop
@@ -392,8 +400,7 @@ export default function Home() {
       
       // Fetch polls with pagination from API
       const result = await fetchPollsFromAPI(
-        currentTopic === "All" ? null : currentTopic,
-        selectedCompanies,
+        null,
         pageNum,
         itemsPerPage
       );
@@ -416,11 +423,6 @@ export default function Home() {
           setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
         }
         
-        // Assign polls to companies only on first page load and only if not already assigned
-        if (pageNum === 1 && companyPollAssignments.length === 0) {
-          assignPollsToCompanies(transformedPolls);
-        }
-        
         return;
       } else if (!isMobile && !isPageLoad) {
         // Desktop infinite scroll behavior - only when not mobile and not a page load
@@ -436,11 +438,6 @@ export default function Home() {
               ...prevPolls,
               ...transformedPolls.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
             ];
-            
-            // Assign polls to companies only on first load (when prevPolls is empty)
-            if (prevPolls.length === 0 && companyPollAssignments.length === 0) {
-              assignPollsToCompanies(newPolls);
-            }
             
             return newPolls;
           });
@@ -461,9 +458,10 @@ export default function Home() {
     } catch (error) {
       console.error("Error loading polls:", error);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
-  }, [loading, currentTopic, selectedCompanies, isMobile, assignPollsToCompanies, companyPollAssignments.length, fetchPollsFromAPI, transformPollData]);
+  }, [loading, selectedFortuneList, isMobile, fetchPollsFromAPI, transformPollData]);
 
   const onRefresh = useCallback(() => {
     setStart(null);
@@ -479,39 +477,32 @@ export default function Home() {
       const nextPage = start ? start + 1 : 1;
       loadPolls(null, false, nextPage);
     }
-  }, [inView, loading, hasMore, currentTopic, viewType, isMobile, start, loadPolls]);
+  }, [inView, loading, hasMore, viewType, isMobile, start, loadPolls]);
 
-  // Mobile pagination - load data when page changes
+  // Mobile pagination - load data when page changes or filters change
   useEffect(() => {
-    if (isMobile) {
-      loadPolls(null, true, currentPage);
+    if (isMobile && !loadingRef.current && initialLoadDone.current) {
+      // Use a small delay to batch state updates and prevent multiple rapid calls
+      const timeoutId = setTimeout(() => {
+        if (!loadingRef.current) {
+          loadPolls(null, true, currentPage);
+        }
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentPage, currentTopic, viewType, isMobile, loadPolls]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, isMobile, selectedFortuneList]); // Include Fortune filter to refetch when it changes
 
-  // Load companies on mount
-  useEffect(() => {
-    fetchCompanies();
-  }, [fetchCompanies]);
 
-  // Initial load of polls
+  // Initial load of polls - only run once on mount
   useEffect(() => {
-    if (polls.length === 0 && !loading) {
+    if (!initialLoadDone.current && polls.length === 0 && !loading) {
+      initialLoadDone.current = true;
       loadPolls(null, isMobile, 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
 
-  // Reload polls when company filter changes
-  useEffect(() => {
-    if (polls.length > 0) {
-      setStart(null);
-      setHasMore(true);
-      setPolls([]);
-      setCurrentPage(1);
-      setPageCursors({});
-      setCompanyPollAssignments([]);
-      loadPolls(null, isMobile, 1);
-    }
-  }, [selectedCompanies]); // Reload when company filter changes
 
   useEffect(() => {
     getViralDetections().then(data => {
@@ -519,20 +510,6 @@ export default function Home() {
     });
   }, []);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (companyDropdownRef.current && !companyDropdownRef.current.contains(event.target)) {
-        setShowCompanyDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  console.log(companyPollAssignments);
 
   return (
     <div className="w-full h-full">
@@ -569,186 +546,105 @@ export default function Home() {
         {/* Main Content */}
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           <div className="flex flex-col flex-1">
-            {/* Company Filter and Category Tabs */}
-            <div className="flex flex-row gap-2 items-center justify-center md:justify-between md:gap-4 px-2 md:px-6">
-              {/* Company Filter */}
-              <div className="flex gap-3 relative items-center justify-center" ref={companyDropdownRef}>
-                <button
-                  onClick={() => {
-                    if (isMobile) {
-                      setShowCompanyModal(true);
-                    } else {
-                      setShowCompanyDropdown(!showCompanyDropdown);
-                    }
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#2b425b] hover:bg-[#F7F8FF] rounded-lg transition-colors"
-                >
-                  <Icon icon="solar:filter-linear" width={20} height={20} />
-                  <span className="hidden md:inline">MANAGE</span>
-                </button>
-                
-                {selectedCompanies.length > 0 && (
-                  <div className="hidden md:flex items-center gap-2 flex-wrap">
-                    {selectedCompanies.map((companyId) => {
-                      const company = companies.find(c => c.id === companyId) || FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
-                      if (!company) return null;
-                      return (
-                        <div key={companyId} className="flex items-center gap-2 px-3 py-1.5 bg-[#F7F8FF] rounded-full border border-[#E4E7EC]">
-                          <span className="text-sm font-medium text-[#2b425b]">
-                            {company.name.toUpperCase()}
-                          </span>
-                          <button
-                            onClick={() => setSelectedCompanies(selectedCompanies.filter(id => id !== companyId))}
-                            className="text-[#98A2B3] hover:text-[#2b425b]"
-                          >
-                            <Icon icon="mdi:close" width={16} height={16} />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Company Dropdown (Desktop) */}
-                {showCompanyDropdown && !isMobile && (
-                  <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl p-6 shadow-lg border border-[#E4E7EC] z-50 w-[400px] max-w-[90vw]">
-                    <div className="grid grid-cols-3 gap-4">
-                      {(companiesLoading ? FAMOUS_COMPANIES_DATA.slice(0, 6) : filterCompanies).map((company) => (
-                        <button
-                          key={company.id}
-                          onClick={() => {
-                            if (selectedCompanies.includes(company.id)) {
-                              setSelectedCompanies(selectedCompanies.filter(id => id !== company.id));
-                            } else {
-                              setSelectedCompanies([...selectedCompanies, company.id]);
-                            }
-                          }}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-colors ${
-                            selectedCompanies.includes(company.id)
-                              ? "bg-[#F7F8FF] border-2 border-[#3D83FF]"
-                              : "bg-[#F9FAFB] border border-transparent hover:bg-[#F7F8FF]"
-                          }`}
-                        >
-                          <Icon 
-                            icon={company.logo} 
-                            className={`${selectedCompanies.includes(company.id) ? "text-[#3D83FF]" : ""}`}
-                            width={48} 
-                            height={48} 
-                          />
-                          <span className={`text-xs font-medium ${
-                            selectedCompanies.includes(company.id) ? "text-[#3D83FF]" : "text-[#2b425b]"
-                          }`}>
-                            {company.name}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Category Tabs */}
-              <div className="flex gap-1 mt-2">
-                {navTopic.map((topic) => (
+            {/* Fortune List Filter */}
+            <div className="flex flex-row gap-2 items-center justify-center md:justify-start md:gap-4 px-2 md:px-6">
+              <div className="flex gap-3 relative items-center w-full md:w-auto" ref={fortuneDropdownRef}>
+                <div className="flex flex-col p-[12px] bg-[#F7F8FF80] rounded-[12px]">
                   <button
-                    key={topic}
-                    onClick={() => {
-                      setCurrentTopic(topic);
-                      setStart(null);
-                      setHasMore(true);
-                      setPolls([]);
-                      setCurrentPage(1);
-                      setPageCursors({});
-                      setCompanyPollAssignments([]);
-                      // Trigger reload
-                      loadPolls(null, isMobile, 1);
-                    }}
-                    className={`px-4 py-3 text-sm font-medium transition-colors relative ${
-                      currentTopic === topic
-                        ? "text-blue-700 md:border border-dashed border-[#2B425B40] rounded-full px-4 py-2"
-                        : "text-[#2b425b] hover:text-[#101828]"
-                    }`}
+                    onClick={() => setShowFortuneDropdown(!showFortuneDropdown)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#2b425b] hover:bg-[#F7F8FF] rounded-[12px] transition-colors bg-[#C1D4F0A8] border border-[#E4E7EC] w-full md:w-auto justify-between"
                   >
-                    {topic}
-                    {currentTopic === topic && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {selectedFortuneList ? (
+                        <>
+                          <div className={`w-[40px] h-[40px] text-[10px] ${selectedFortuneList.color} rounded flex items-center justify-center ${selectedFortuneList.color === "bg-white" ? "text-[#2b425b]" : "text-white"} font-bold text-sm`}>
+                            {selectedFortuneList.id}
+                          </div>
+                          <span className="hidden sm:inline">{selectedFortuneList.name}</span>
+                          <span className="sm:hidden">{selectedFortuneList.name}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon="solar:filter-linear" width={20} height={20} />
+                          <span>Select Fortune List</span>
+                        </>
+                      )}
+                    </div>
+                    <Icon 
+                      icon={showFortuneDropdown ? "mdi:chevron-up" : "mdi:chevron-down"} 
+                      width={20} 
+                      height={20} 
+                    />
                   </button>
-                ))}
+                </div>
+
+                {/* Fortune List Dropdown */}
+                {showFortuneDropdown && (
+                  <>
+                    {/* Backdrop for mobile */}
+                    {isMobile && (
+                      <div 
+                        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                        onClick={() => setShowFortuneDropdown(false)}
+                      />
+                    )}
+                    <div className={`${isMobile ? 'fixed flex items-center justify-center' : 'absolute top-full'} ${isMobile ? 'left-4 right-4' : 'left-0 bg-[#F7F8FF80]'} mt-2 backdrop-blur-md rounded-r-[32px] rounded-bl-[32px] p-4 shadow-lg z-50 w-full md:w-[450px] max-w-[calc(100vw-2rem)] md:max-w-[90vw]`}>
+                      <div className="flex flex-col gap-2">
+                        {FORTUNE_LISTS.map((fortuneList) => (
+                          <button
+                            key={fortuneList.id}
+                            onClick={() => handleFortuneListSelect(fortuneList)}
+                            className={`flex items-center justify-between p-3 rounded-xl transition-colors`}
+                          >
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <div className={`w-[40px] h-[40px] ${fortuneList.color} rounded-[8px] text-[10px] flex items-center justify-center font-bold flex-shrink-0 ${fortuneList.color === "bg-white" ? "text-[#2b425b]" : "text-white"}`}>
+                                {fortuneList.id}
+                              </div>
+                              <div className="flex flex-col items-start min-w-0 flex-1">
+                                <span className={`text-sm font-bold text-[#2b425b]`}>
+                                  {fortuneList.name}
+                                </span>
+                                <span className="text-xs text-[#515151] line-clamp-1">
+                                  Lorem ipsum dolor sit amet, consectetur
+                                </span>
+                              </div>
+                            </div>
+                            {selectedFortuneList?.id === fortuneList.id && (
+                              <span className="text-xs font-medium text-[#3D83FF] bg-[#3D83FF]/10 px-3 py-1 rounded-full whitespace-nowrap ml-2 flex-shrink-0">
+                                Following
+                              </span>
+                            )}
+                            {selectedFortuneList?.id !== fortuneList.id && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleFortuneListSelect(fortuneList);
+                                }}
+                                className="gradient-button text-xs font-medium text-white px-3 py-1 rounded-full hover:bg-[#3D83FF]/20 transition-colors whitespace-nowrap ml-2 flex-shrink-0 flex items-center gap-2"
+                              >
+                                <CrownIcon />
+                                Follow
+                              </button>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Left Column - Polls */}
             <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-6 md:px-10 pt-[20px]`}>
               <div className="flex flex-col gap-6">
-                {/* Group polls by company - Test View */}
-                {/* Only show company groupings on first page of mobile, or always on desktop */}
-                {companyPollAssignments.length > 0 && (!isMobile || currentPage === 1) ? (
-                  <>
-                    {companyPollAssignments.map(({ company, polls: companyPolls }) => {
-                      // On mobile page 1, use assigned polls directly
-                      // On desktop or mobile page 1, check if polls exist in current polls array
-                      const validPolls = isMobile && currentPage === 1 
-                        ? companyPolls 
-                        : companyPolls.filter(poll => polls.some(p => p.id === poll.id));
-                      
-                      if (validPolls.length === 0) return null;
-                      
-                      return (
-                        <div key={company.id} className="flex flex-col gap-4">
-                          {/* Company Title */}
-                          <div className="flex items-center gap-3 pb-2">
-                            <Icon icon={company.logo} width={32} height={32} className="text-[#2B425B]" />
-                            <h2 className="text-2xl font-bold text-[#2B425B]">{company.name}</h2>
-                          </div>
-                          {/* Company Polls */}
-                          <div className="flex flex-col gap-6">
-                            {validPolls.map((poll) => (
-                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {/* Remaining polls (if any) - polls beyond assigned ones */}
-                    {(() => {
-                      if (isMobile && currentPage === 1) {
-                        const totalAssigned = companyPollAssignments.reduce((sum, assignment) => sum + assignment.polls.length, 0);
-                        const remainingPolls = polls.slice(totalAssigned);
-                        return remainingPolls.length > 0 ? (
-                          <div className="flex flex-col gap-6">
-                            {remainingPolls.map((poll) => (
-                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-                            ))}
-                          </div>
-                        ) : null;
-                      } else if (!isMobile) {
-                        // On desktop, show remaining polls that aren't in any company assignment
-                        const assignedPollIds = new Set(
-                          companyPollAssignments.flatMap(assignment => assignment.polls.map(p => p.id))
-                        );
-                        const remainingPolls = polls.filter(poll => !assignedPollIds.has(poll.id));
-                        return remainingPolls.length > 0 ? (
-                          <div className="flex flex-col gap-6">
-                            {remainingPolls.map((poll) => (
-                              <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-                            ))}
-                          </div>
-                        ) : null;
-                      }
-                      return null;
-                    })()}
-                  </>
-                ) : (
-                  // Fallback: show polls normally if assignments not ready or on mobile page > 1
-                  polls.map((poll) => (
-                    <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
-                  ))
-                )}
+                {polls.map((poll) => (
+                  <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
+                ))}
                 {/* Infinite scroll trigger for desktop only */}
                 {!isMobile && <div ref={ref} className="h-10" />}
                 {/* Pagination for mobile only */}
-                {isMobile && totalPages > 1 && (
+                {isMobile && totalPages >= 1 && (
                   <Pagination
                     totalPages={totalPages}
                     page={currentPage}
@@ -824,112 +720,8 @@ export default function Home() {
         detailId != -1 && <PollDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
       }
 
-      {/* Company Selection Modal (Mobile) */}
-      {showCompanyModal && isMobile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-[#2B425B] bg-opacity-30 backdrop-blur-sm"
-            onClick={() => setShowCompanyModal(false)}
-          />
-          
-          {/* Modal */}
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-[#E4E7EC]">
-              <h2 className="text-xl font-bold text-[#101828]">Manage</h2>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setTempSelectedCompanies([])}
-                  className="text-sm font-medium text-[#3D83FF] hover:text-[#2B5FCC]"
-                >
-                  CLEAR ALL
-                </button>
-                <button
-                  onClick={() => setShowCompanyModal(false)}
-                  className="text-[#98A2B3] hover:text-[#2b425b]"
-                >
-                  <Icon icon="mdi:close" width={24} height={24} />
-                </button>
-              </div>
-            </div>
-
-            {/* Selected Tags */}
-            {tempSelectedCompanies.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-4 border-b border-[#E4E7EC]">
-                {tempSelectedCompanies.map((companyId) => {
-                  const company = companies.find(c => c.id === companyId) || FAMOUS_COMPANIES_DATA.find(c => c.id === companyId);
-                  if (!company) return null;
-                  return (
-                    <div key={companyId} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F9FAFB] rounded-lg border border-[#E4E7EC]">
-                      <span className="text-sm font-medium text-[#2b425b]">
-                        {company.name.toUpperCase()}
-                      </span>
-                      <button
-                        onClick={() => setTempSelectedCompanies(tempSelectedCompanies.filter(id => id !== companyId))}
-                        className="text-[#98A2B3] hover:text-[#2b425b]"
-                      >
-                        <Icon icon="mdi:close" width={16} height={16} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Company Grid */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-2 gap-4">
-                {(companiesLoading ? FAMOUS_COMPANIES_DATA.slice(0, 6) : filterCompanies).map((company) => {
-                  const isSelected = tempSelectedCompanies.includes(company.id);
-                  return (
-                    <button
-                      key={company.id}
-                      onClick={() => {
-                        if (isSelected) {
-                          setTempSelectedCompanies(tempSelectedCompanies.filter(id => id !== company.id));
-                        } else {
-                          setTempSelectedCompanies([...tempSelectedCompanies, company.id]);
-                        }
-                      }}
-                      className={`flex flex-col items-center gap-3 p-4 rounded-xl transition-all ${
-                        isSelected
-                          ? "bg-white border-2 border-[#2B425B] shadow-sm"
-                          : "bg-[#F9FAFB] border border-dashed border-[#E4E7EC]"
-                      }`}
-                    >
-                      <Icon 
-                        icon={company.logo} 
-                        className={isSelected ? "text-[#2B425B]" : "text-gray-400"}
-                        width={48} 
-                        height={48} 
-                      />
-                      <span className={`text-sm font-medium ${
-                        isSelected ? "text-[#2B425B]" : "text-[#98A2B3]"
-                      }`}>
-                        {company.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="p-6 border-t border-[#E4E7EC]">
-              <button
-                onClick={() => {
-                  setSelectedCompanies([...tempSelectedCompanies]);
-                  setShowCompanyModal(false);
-                }}
-                className="gradient-button w-full rounded-full text-white font-bold py-3 transition-all"
-              >
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Premium Modal */}
+      <PremiumModal show={showPremiumModal} hideDialog={() => setShowPremiumModal(false)} />
     </div>
   );
 }

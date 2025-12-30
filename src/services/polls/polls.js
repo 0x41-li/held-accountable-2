@@ -714,51 +714,108 @@ ${article_body}
 
 - All results should be English.
 
+- Anti-repetition constraint:
+  - Each section must contribute NEW information (new mechanism, stakeholder, timeframe, example, or metric).
+  - Do not restate the headline beyond the "Explain It Like I'm New" section.
+  - Avoid repeating the same key claim in more than TWO sections.
+  - No verbatim sentence reuse across sections.
+  - If a point is already explained, reference it briefly rather than re-explaining it.
+
 ### Output:
 1. **company**: Company wikipedia url (e.g. http://en.wikipedia.org/wiki/Apple)
 2. **company_name**: Company name (e.g. Apple)
-3. **title**: Clear and compelling title.
-4. **content**: 250–500 words of professional analysis.  Should be html not markdown. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
-   Always include analytics (stats, trends, or charts).
-   Placement is flexible: analytics may be embedded naturally within the body, or presented in a "📊 Analytics & Data Points" bullet (This should be subheading) section at the end, or both. Use judgment to maximize clarity and impact.
-   Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be **bolded** for emphasis.
+3. **title**: Clear and compelling title. Closely mirror the article H1 and preserve all hard facts.
+4. **content**: 250–500 words of professional, company-focused analysis. Should be html not markdown. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
+
+   The content must read like a legitimate published article and include the following sections, in this order. Each section must use proper HTML heading tags (e.g., h2) and each heading must include a unique id attribute.
+
+   Section-specific scope (do not overlap):
+   - What People Are Noticing = observable signals only (market reaction, user behavior, executive actions, policy signals). No causes.
+   - Why This Is Happening = underlying drivers (macro, industry, technology, regulation). No timing discussion.
+   - What Changed to Make This Matter Now = recent catalysts and why timing shifted. No long-term history.
+   - How Institutions Respond = institutional behavior only (allocations, governance, compliance, procurement).
+   - What This Tends to Lead To Over Time = historical patterns and second-order effects.
+   - What Does This Mean for Me? = practical implications for individuals. No institutional analysis.
+   - Where This Eventually Shows Up = downstream effects in markets, products, pricing, jobs, or regulation.
+   - The Question This Raises = one forward-looking question only; do not answer it.
+
+   Length caps:
+   - Explain It Like I'm New: 3–4 sentences MAX.
+   - Each main section: 2–4 sentences MAX.
+   - Analytics & Data: 3–6 bullets MAX.
+   - Sources: 3–6 bullets.
+
+   Uniqueness requirement:
+   - Each section must include at least ONE unique anchor not used elsewhere (a statistic, stakeholder group, mechanism, concrete example, or timeframe).
+
+   **Explain It Like I'm New**
+   - Add a section titled **"Explain It Like I'm New"**.
+   - Explain the entire news headline in extremely simple terms.
+   - 3–4 sentences MAX.
+   - No jargon. Assume zero prior knowledge.
+
+   **What People Are Noticing**
+
+   **Why This Is Happening**
+
+   **What Changed to Make This Matter Now**
+
+   **How Institutions Respond**
+   - Focus on how large companies, institutions, or major organizations are responding.
+
+   **What This Tends to Lead To Over Time**
+
+   **What Does This Mean for Me?**
+   - Explain implications for individuals, workers, consumers, or everyday investors.
+   - No personalized or prescriptive financial advice.
+
+   **Where This Eventually Shows Up**
+   - Markets, products, pricing, regulation, jobs, or daily life.
+
+   **The Question This Raises**
+   - One clear forward-looking question implied by the situation.
+
+   **Analytics & Data**
+   - Always include analytics (stats, trends, or charts).
+   - Use only open data sources (e.g., World Bank, IMF, OECD, UN, national statistical agencies, FRED).
+   - Clearly state years, regions, and units.
 
    New — Investment Impact Section:
-   - Add a clearly labeled subsection titled **"💵 If you invested X dollars, what would that mean?"** whenever the topic is **Crypto, AI, Finance, or Politics** that specifically mentions a company or a high‑level person involved with a company.
-   - Use only open data (e.g., index/sector returns from FRED, World Bank, IMF, OECD) and Wikipedia for background. If precise asset‑level open data are unavailable, use a transparent index-level proxy (state the proxy and timeframe) or provide a formulaic illustration (e.g., compound growth at an open-data CAGR).
-   - Default **X = $1,000** unless a different amount is explicitly provided by the user or the article context; state all assumptions (time horizon, return proxy, volatility or drawdown context if used).
-   - Present outcomes numerically (e.g., end value, % change, real (inflation-adjusted) terms if applicable) and label it as a hypothetical illustration, **not financial advice**.
+   - Add a clearly labeled subsection titled **":dollar: If you invested X dollars, what would that mean?"** whenever the topic is **Crypto, AI, Finance, or Politics** that specifically mentions a company or a high-level person involved with a company.
+   - Use only open data (e.g., index/sector returns from FRED, World Bank, IMF, OECD) and Wikipedia for background.
+   - If precise asset-level open data are unavailable, use a transparent index-level proxy (state the proxy and timeframe) or provide a formulaic illustration (e.g., compound growth at an open-data CAGR).
+   - Default **X = $1,000** unless a different amount is explicitly provided by the user or the article context; state all assumptions.
+   - Present outcomes numerically and label as a hypothetical illustration, **not financial advice**.
 
    **NEW — Enterprise Adoption Add-on (must accompany the Investment Impact subsection):**
-   - Immediately after the "💵 If you invested X dollars..." subsection, add a second subsection titled **"🏢 How large companies leverage this today"**.
-   - Summarize how major firms (e.g., Fortune 500 or sector leaders) are currently adopting, deploying, or monetizing the technology/policy/asset discussed.
-   - Use only open sources (e.g., FRED sector data, OECD/IMF/World Bank industry indicators) and **Wikipedia** company pages for background. Prefer 2–4 concise, sourced examples; keep neutral, avoid marketing language.
-   - Where direct adoption data are unavailable from open sources, describe typical enterprise use cases in the sector using sector-level open data proxies (explicitly name the proxy and timeframe).
+   - Immediately after the ":dollar: If you invested X dollars..." subsection, add a second subsection titled **":office: How large companies leverage this today"**.
+   - Summarize how major firms (e.g., Fortune 500 or sector leaders) are adopting, deploying, or monetizing the technology/policy/asset discussed.
+   - Use only open sources and Wikipedia company pages for background.
+   - Prefer 2–4 concise examples; keep neutral, avoid marketing language.
 
-   **Analytics and Sources:**
-   - You may embed analytics inline or present them in a trailing section:
-     **📊 Analytics & Data Points** — bullet key figures, historical trends, or compact charts.
-   - **At the end of the Big Picture analysis, add a sources list titled "### Big Picture — Sources" with 3–6 bullet points** naming the organization and the dataset/report/page title actually used. Use only open sources (e.g., World Bank, IMF, OECD, UN, national statistical agencies, FRED). **Place the Wikipedia source as the last bullet.**
-   - **Format example (placeholders shown):**
-     ### Big Picture — Sources
-     - World Bank — [Dataset or "Commodity Markets Outlook (Year)"]
-     - U.S. Federal Reserve (FRED) — [Series name/code]
-     - IMF — [Report/Dataset Title (Year)]
-     - UN / National Statistical Office — [Dataset/Release Title (Year)]
-     - Wikipedia — [Topic/Page Title] ← Always last
-   - The whole content should be outputed as html not markdown. headings, subheadings should be replaced well with proper tags like h1, h2 etc. sections should have id in it's tag.
-   - Each section should have a unique id so that we can scroll to those sections in the article. e.g. id="big-picture"
-5. **sections_ids**: array of section ids so that we can scroll to those sections in the article using a tag like <a href="#big-picture">Big Picture</a>
+   **Sources**
+   - At the end of the article, add a sources list with 3–6 bullet points.
+   - Name the organization and the dataset/report/page title actually used.
+   - Use only open sources.
+   - Place the Wikipedia source as the last bullet.
+   - Do NOT include the news article itself.
+
+   - The whole content should be outputed as html not markdown.
+   - Headings and subheadings should use proper HTML tags (h1, h2, etc.).
+   - Each section must include a unique id attribute.
+
+5. **sections_ids**: array of section ids so that we can scroll to those sections in the article using a tag like <a href="#what-people-are-noticing">What People Are Noticing</a>
 6. **sections_titles**: array of section names
 7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Crypto"]
 
 ### Final self-audit (internal; do not print):
 
+- Company is the primary analytical subject.
 - Outlet parenthetical matches URL domain.
-- No invented dates. If no absolute date in H1/lede, none appears in title.
+- No invented dates.
 - If H1 has a number, identical number appears in the title.
 - No administration mislabel; if uncertain → neutral phrasing.
-- Title and headline length ≤ 160 characters; no duplicate with existing items (by normalized fingerprint: outlet + main nouns/proper nouns + numbers).`;
+- Title length ≤ 160 characters; no duplicate with existing items.`;
 
   try {
     const response = await fetch(url, {
