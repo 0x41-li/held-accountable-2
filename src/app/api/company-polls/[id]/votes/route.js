@@ -68,6 +68,9 @@ export async function POST(req, { params }) {
             vote,
             points
         });
+
+        // No notifications for votes - user doesn't need to be notified about other users' votes
+
         return NextResponse.json({ vote: voteData }, { status: 201 });
     } catch (error) {
         console.error('Error in POST /api/company-polls/[id]/votes:', error);

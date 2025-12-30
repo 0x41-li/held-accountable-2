@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { generatePoll, getBusinessNewsForCompaniesFromNewsAi, getUserById, updateUserById } from '@/services/polls/polls'
 import db from '../../../../lib/sqlite'
-import { companyPollService, companyService, companyPollVoteService } from '@/services/database/companyService';
+import { companyPollService, companyService, companyPollVoteService, notificationService } from '@/services/database/companyService';
 
 function deleteOldNewsArticles() {
     return db.prepare("DELETE FROM business_news_articles WHERE date < ?").run((new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).toLocaleString("en-CA", { timeZone: "America/New_York" }).substring(0, 10));
@@ -100,6 +100,24 @@ async function processExpiredPolls() {
                     }
                 });
                 
+                // Create vote ended notification for all users who voted
+                const allVoterIds = [...new Set(votes.map(v => v.user_id).filter(Boolean))];
+                for (const userId of allVoterIds) {
+                    try {
+                        await notificationService.create({
+                            user_id: userId,
+                            type: 'vote_ended',
+                            title: 'Vote Ended',
+                            content: `The voting period for "${poll.title}" has ended. ${voteResult === 0 ? 'Bullish' : 'Bearish'} won (${bullish} vs ${bearish} votes).`,
+                            poll_id: poll.id,
+                            points: null
+                        });
+                    } catch (notifError) {
+                        console.error(`Error creating vote ended notification for user ${userId}:`, notifError);
+                        // Continue processing other notifications even if one fails
+                    }
+                }
+
                 // Update points for each winning vote and user's total points in Firebase
                 let pointsAwarded = 0;
                 for (const vote of winningVotes) {
@@ -122,6 +140,20 @@ async function processExpiredPolls() {
                                     await updateUserById(vote.user_id, { 
                                         points: newUserPoints 
                                     });
+
+                                    // Create reward notification for correct vote
+                                    try {
+                                        await notificationService.create({
+                                            user_id: vote.user_id,
+                                            type: 'reward',
+                                            title: 'Reward Earned!',
+                                            content: `Congratulations! You earned ${POINTS_PER_CORRECT_VOTE} point(s) for correctly predicting the outcome of "${poll.title}".`,
+                                            poll_id: poll.id,
+                                            points: POINTS_PER_CORRECT_VOTE
+                                        });
+                                    } catch (rewardNotifError) {
+                                        console.error(`Error creating reward notification for user ${vote.user_id}:`, rewardNotifError);
+                                    }
                                 }
                             } catch (firebaseError) {
                                 console.error(`Error updating Firebase points for user ${vote.user_id}:`, firebaseError);

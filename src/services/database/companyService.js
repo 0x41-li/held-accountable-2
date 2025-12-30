@@ -77,6 +77,61 @@ async function initializeTables() {
             FOREIGN KEY (parent_id) REFERENCES company_poll_comments(id)
         )
     `);
+
+    // Notifications table
+    await database.createTable(`
+        CREATE TABLE IF NOT EXISTS notifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id VARCHAR(255) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            title VARCHAR(255),
+            content TEXT,
+            poll_id INTEGER,
+            points INTEGER,
+            is_read INTEGER DEFAULT 0,
+            created_at VARCHAR(50),
+            updated_at VARCHAR(50),
+            FOREIGN KEY (poll_id) REFERENCES company_polls(id)
+        )
+    `);
+
+    // Point history table
+    await database.createTable(`
+        CREATE TABLE IF NOT EXISTS point_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id VARCHAR(255) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            points INTEGER NOT NULL,
+            description TEXT,
+            poll_id INTEGER,
+            created_at VARCHAR(50),
+            FOREIGN KEY (poll_id) REFERENCES company_polls(id)
+        )
+    `);
+
+    // User ACC tokens table (to track ACC token balance)
+    await database.createTable(`
+        CREATE TABLE IF NOT EXISTS user_acc_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id VARCHAR(255) NOT NULL UNIQUE,
+            acc_balance INTEGER DEFAULT 0,
+            created_at VARCHAR(50),
+            updated_at VARCHAR(50)
+        )
+    `);
+
+    // Article read progress table (to track which sections user has viewed)
+    await database.createTable(`
+        CREATE TABLE IF NOT EXISTS article_read_progress (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id VARCHAR(255) NOT NULL,
+            poll_id INTEGER NOT NULL,
+            section_id VARCHAR(255) NOT NULL,
+            viewed_at VARCHAR(50),
+            UNIQUE(user_id, poll_id, section_id),
+            FOREIGN KEY (poll_id) REFERENCES company_polls(id)
+        )
+    `);
 }
 
 // Initialize tables on module load (async initialization)
@@ -347,6 +402,67 @@ export const companyPollVoteService = {
     deleteByPollAndUser: async (pollId, userId) => {
         await ensureInitialized();
         return await database.execute('DELETE FROM company_poll_votes WHERE poll_id = ? AND user_id = ?', [pollId, userId]);
+    },
+
+    // Get votes by user ID (with poll information for accuracy calculation)
+    getByUserId: async (userId) => {
+        await ensureInitialized();
+        return await database.queryAll(
+            `SELECT v.*, p.vote_result 
+             FROM company_poll_votes v 
+             LEFT JOIN company_polls p ON v.poll_id = p.id 
+             WHERE v.user_id = ? 
+             ORDER BY v.created_at DESC`,
+            [userId]
+        );
+    },
+
+    // Get user statistics (counts and sums)
+    getUserStatistics: async (userId) => {
+        await ensureInitialized();
+        
+        // Get total votes count for user
+        const votesCount = await database.queryOne(
+            'SELECT COUNT(*) as count FROM company_poll_votes WHERE user_id = ?',
+            [userId]
+        );
+        const totalVotes = typeof votesCount?.count === 'string' ? parseInt(votesCount.count) : (votesCount?.count || 0);
+
+        // Get total points sum for user
+        const pointsResult = await database.queryOne(
+            'SELECT COALESCE(SUM(points), 0) as total FROM company_poll_votes WHERE user_id = ?',
+            [userId]
+        );
+        const totalPoints = typeof pointsResult?.total === 'string' ? parseInt(pointsResult.total) : (pointsResult?.total || 0);
+
+        // Calculate vote accuracy: count votes where user's vote matches poll's vote_result
+        // vote: 0 or NULL = bullish, 1 = bearish
+        // vote_result: 0 = bullish wins, 1 = bearish wins, NULL/-1 = not calculated yet
+        const correctVotesResult = await database.queryOne(
+            `SELECT COUNT(*) as count 
+             FROM company_poll_votes v 
+             INNER JOIN company_polls p ON v.poll_id = p.id 
+             WHERE v.user_id = ? 
+             AND p.vote_result IS NOT NULL 
+             AND p.vote_result != -1
+             AND (
+                 (p.vote_result = 0 AND (v.vote = 0 OR v.vote IS NULL)) OR
+                 (p.vote_result = 1 AND v.vote = 1)
+             )`,
+            [userId]
+        );
+        const correctVotes = typeof correctVotesResult?.count === 'string' 
+            ? parseInt(correctVotesResult.count) 
+            : (correctVotesResult?.count || 0);
+        
+        const voteAccuracy = totalVotes > 0 ? Math.round((correctVotes / totalVotes) * 100) : 0;
+
+        return {
+            total_votes: totalVotes,
+            total_points: totalPoints,
+            vote_accuracy: voteAccuracy,
+            correct_votes: correctVotes
+        };
     }
 };
 
@@ -409,6 +525,16 @@ export const companyPollCommentService = {
         return await database.queryAll('SELECT * FROM company_poll_comments ORDER BY created_at DESC');
     },
 
+    // Get comments count by user ID
+    getCountByUserId: async (userId) => {
+        await ensureInitialized();
+        const result = await database.queryOne(
+            'SELECT COUNT(*) as count FROM company_poll_comments WHERE user_id = ?',
+            [userId]
+        );
+        return typeof result?.count === 'string' ? parseInt(result.count) : (result?.count || 0);
+    },
+
     // Update comment
     update: async (id, commentData) => {
         await ensureInitialized();
@@ -446,11 +572,249 @@ export const companyPollCommentService = {
     }
 };
 
+// ==================== Notifications Service ====================
+
+export const notificationService = {
+    // Create a new notification
+    create: async (notificationData) => {
+        await ensureInitialized();
+        const { user_id, type, title, content, poll_id, points } = notificationData;
+        const now = new Date().toISOString();
+        const result = await database.insert(
+            `INSERT INTO notifications (user_id, type, title, content, poll_id, points, is_read, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                user_id,
+                type,
+                title || null,
+                content || null,
+                poll_id || null,
+                points || null,
+                0, // is_read = false
+                now,
+                now
+            ]
+        );
+        return { id: result.lastInsertRowid, ...notificationData, is_read: 0, created_at: now, updated_at: now };
+    },
+
+    // Get notification by ID
+    getById: async (id) => {
+        await ensureInitialized();
+        return await database.queryOne('SELECT * FROM notifications WHERE id = ?', [id]);
+    },
+
+    // Get notifications by user ID
+    getByUserId: async (userId, filters = {}) => {
+        await ensureInitialized();
+        let query = 'SELECT * FROM notifications WHERE user_id = ?';
+        const params = [userId];
+
+        if (filters.is_read !== undefined) {
+            query += ' AND is_read = ?';
+            params.push(filters.is_read ? 1 : 0);
+        }
+
+        if (filters.type) {
+            query += ' AND type = ?';
+            params.push(filters.type);
+        }
+
+        query += ' ORDER BY created_at DESC';
+
+        if (filters.limit) {
+            query += ' LIMIT ?';
+            params.push(filters.limit);
+            if (filters.offset) {
+                query += ' OFFSET ?';
+                params.push(filters.offset);
+            }
+        }
+
+        return await database.queryAll(query, params);
+    },
+
+    // Get unread count for a user
+    getUnreadCount: async (userId) => {
+        await ensureInitialized();
+        const result = await database.queryOne(
+            'SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0',
+            [userId]
+        );
+        const count = typeof result?.count === 'string' ? parseInt(result.count) : (result?.count || 0);
+        return count;
+    },
+
+    // Mark notification as read
+    markAsRead: async (id) => {
+        await ensureInitialized();
+        const now = new Date().toISOString();
+        await database.execute(
+            'UPDATE notifications SET is_read = 1, updated_at = ? WHERE id = ?',
+            [now, id]
+        );
+        return await notificationService.getById(id);
+    },
+
+    // Mark all notifications as read for a user
+    markAllAsRead: async (userId) => {
+        await ensureInitialized();
+        const now = new Date().toISOString();
+        await database.execute(
+            'UPDATE notifications SET is_read = 1, updated_at = ? WHERE user_id = ? AND is_read = 0',
+            [now, userId]
+        );
+        return true;
+    },
+
+    // Delete notification
+    delete: async (id) => {
+        await ensureInitialized();
+        return await database.execute('DELETE FROM notifications WHERE id = ?', [id]);
+    },
+
+    // Delete all notifications for a user
+    deleteAllByUserId: async (userId) => {
+        await ensureInitialized();
+        return await database.execute('DELETE FROM notifications WHERE user_id = ?', [userId]);
+    }
+};
+
+// ==================== Point History Service ====================
+
+export const pointHistoryService = {
+    // Create a new point history entry
+    create: async (historyData) => {
+        await ensureInitialized();
+        const { user_id, type, points, description, poll_id } = historyData;
+        const now = new Date().toISOString();
+        const result = await database.insert(
+            `INSERT INTO point_history (user_id, type, points, description, poll_id, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+            [user_id, type, points, description || null, poll_id || null, now]
+        );
+        return { id: result.lastInsertRowid, ...historyData, created_at: now };
+    },
+
+    // Get point history by user ID
+    getByUserId: async (userId, limit = 100) => {
+        await ensureInitialized();
+        return await database.queryAll(
+            'SELECT * FROM point_history WHERE user_id = ? ORDER BY created_at DESC LIMIT ?',
+            [userId, limit]
+        );
+    },
+
+    // Get all point history
+    getAll: async () => {
+        await ensureInitialized();
+        return await database.queryAll('SELECT * FROM point_history ORDER BY created_at DESC');
+    }
+};
+
+// ==================== User ACC Tokens Service ====================
+
+export const userAccTokenService = {
+    // Get or create user ACC token record
+    getOrCreate: async (userId) => {
+        await ensureInitialized();
+        let userToken = await database.queryOne('SELECT * FROM user_acc_tokens WHERE user_id = ?', [userId]);
+        if (!userToken) {
+            const now = new Date().toISOString();
+            const result = await database.insert(
+                'INSERT INTO user_acc_tokens (user_id, acc_balance, created_at, updated_at) VALUES (?, ?, ?, ?)',
+                [userId, 0, now, now]
+            );
+            return { id: result.lastInsertRowid, user_id: userId, acc_balance: 0, created_at: now, updated_at: now };
+        }
+        return userToken;
+    },
+
+    // Get user ACC balance
+    getBalance: async (userId) => {
+        await ensureInitialized();
+        const userToken = await userAccTokenService.getOrCreate(userId);
+        return userToken.acc_balance || 0;
+    },
+
+    // Update user ACC balance
+    updateBalance: async (userId, newBalance) => {
+        await ensureInitialized();
+        const now = new Date().toISOString();
+        // First try to update, if no rows affected, insert
+        await database.execute(
+            `UPDATE user_acc_tokens SET acc_balance = ?, updated_at = ? WHERE user_id = ?`,
+            [newBalance, now, userId]
+        );
+        // If update didn't affect any rows, insert new record
+        const existing = await database.queryOne('SELECT * FROM user_acc_tokens WHERE user_id = ?', [userId]);
+        if (!existing) {
+            await database.insert(
+                'INSERT INTO user_acc_tokens (user_id, acc_balance, created_at, updated_at) VALUES (?, ?, ?, ?)',
+                [userId, newBalance, now, now]
+            );
+        }
+        return await userAccTokenService.getOrCreate(userId);
+    },
+
+    // Add ACC tokens to user balance
+    addTokens: async (userId, amount) => {
+        await ensureInitialized();
+        const currentBalance = await userAccTokenService.getBalance(userId);
+        const newBalance = currentBalance + amount;
+        return await userAccTokenService.updateBalance(userId, newBalance);
+    }
+};
+
+// ==================== Article Read Progress Service ====================
+
+export const articleReadProgressService = {
+    // Mark a section as viewed
+    markSectionAsViewed: async (userId, pollId, sectionId) => {
+        await ensureInitialized();
+        const now = new Date().toISOString();
+        try {
+            const result = await database.insert(
+                `INSERT OR IGNORE INTO article_read_progress (user_id, poll_id, section_id, viewed_at) VALUES (?, ?, ?, ?)`,
+                [userId, pollId, sectionId, now]
+            );
+            return { id: result.lastInsertRowid || null, user_id: userId, poll_id: pollId, section_id: sectionId, viewed_at: now };
+        } catch (error) {
+            // If insert fails due to unique constraint, try to update
+            await database.execute(
+                `UPDATE article_read_progress SET viewed_at = ? WHERE user_id = ? AND poll_id = ? AND section_id = ?`,
+                [now, userId, pollId, sectionId]
+            );
+            return await articleReadProgressService.getViewedSections(userId, pollId);
+        }
+    },
+
+    // Get all viewed sections for a user and poll
+    getViewedSections: async (userId, pollId) => {
+        await ensureInitialized();
+        return await database.queryAll(
+            'SELECT section_id FROM article_read_progress WHERE user_id = ? AND poll_id = ?',
+            [userId, pollId]
+        );
+    },
+
+    // Get read progress percentage for a user and poll
+    getReadProgress: async (userId, pollId, totalSections) => {
+        await ensureInitialized();
+        if (!totalSections || totalSections === 0) return 0;
+        const viewedSections = await articleReadProgressService.getViewedSections(userId, pollId);
+        const viewedCount = viewedSections.length;
+        return Math.round((viewedCount / totalSections) * 100);
+    }
+};
+
 // Export all services
 export default {
     companyService,
     companyPollService,
     companyPollVoteService,
-    companyPollCommentService
+    companyPollCommentService,
+    notificationService,
+    pointHistoryService,
+    userAccTokenService,
+    articleReadProgressService
 };
 

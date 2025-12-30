@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { companyPollCommentService } from '@/services/database/companyService';
+import { companyPollCommentService, companyPollService, notificationService } from '@/services/database/companyService';
 
 // GET /api/company-polls/[id]/comments - Get all comments for a poll
 export async function GET(req, { params }) {
@@ -62,6 +62,32 @@ export async function POST(req, { params }) {
             parent_id: parent_id ? parseInt(parent_id) : null,
             content
         });
+
+        // Create notifications only for comment replies
+        if (parent_id) {
+            try {
+                const poll = await companyPollService.getById(pollId);
+                if (poll) {
+                    // This is a reply - notify the parent comment author
+                    const parentComment = await companyPollCommentService.getById(parseInt(parent_id));
+                    if (parentComment && parentComment.user_id !== user_id) {
+                        // Don't notify if replying to own comment
+                        await notificationService.create({
+                            user_id: parentComment.user_id,
+                            type: 'comment_reply',
+                            title: `${user_name || 'Someone'} replied to your comment`,
+                            content: `${user_name || 'Someone'} replied to your comment on "${poll.title}": "${content.substring(0, 100)}${content.length > 100 ? '...' : ''}"`,
+                            poll_id: pollId,
+                            points: null
+                        });
+                    }
+                }
+            } catch (notifError) {
+                console.error('Error creating comment reply notification:', notifError);
+                // Don't fail the comment creation if notification fails
+            }
+        }
+
         return NextResponse.json({ comment }, { status: 201 });
     } catch (error) {
         console.error('Error in POST /api/company-polls/[id]/comments:', error);

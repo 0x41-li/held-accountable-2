@@ -94,11 +94,11 @@ const SignIn = () => {
         {/* Background Image with Padding */}
         <div className="absolute inset-0 m-4 md:m-12 rounded-3xl overflow-hidden" style={{ backgroundImage: 'url(/images/auth-side-bg.png)', backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}></div>
         
-        <div className="absolute right-[-140px] top-0 bottom-[64px] z-10 flex flex-col items-center justify-center w-full max-w-2xl gap-6 md:gap-8">
-          <div className="w-full">
+        <div className="absolute right-[-20%] top-0 bottom-[64px] z-10 flex flex-col items-center justify-center w-full gap-6 md:gap-8">
+          <div className="w-full flex items-end justify-center">
             <CustomPlayer
               video="https://player.vimeo.com/video/1120069862?autoplay=1&loop=1&controls=0"
-              className="!w-[1/2]"
+              className="!w-2/3"
               videoClass="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
             />
           </div>

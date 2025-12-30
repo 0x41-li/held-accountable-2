@@ -13,6 +13,7 @@ import Image from "next/image";
 export default function Poll({ poll: initialPoll, showDetail }) {
   const [poll, setPoll] = useState(initialPoll);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [readProgress, setReadProgress] = useState(0);
   const router = useRouter();
   const [showSummary, setShowSummary] = useState(false);
   if (!poll.questions) return "";
@@ -134,6 +135,25 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   
   const headlineText = poll.questions[0].headline ? getHeadlineText(poll.questions[0].headline) : '';
 
+  // Load read progress for authenticated users
+  useEffect(() => {
+    const loadReadProgress = async () => {
+      if (!auth.currentUser || !poll.id) return;
+      
+      try {
+        const response = await fetch(`/api/polls/${poll.id}/read-progress?user_id=${auth.currentUser.uid}`);
+        if (response.ok) {
+          const data = await response.json();
+          setReadProgress(data.progress || 0);
+        }
+      } catch (error) {
+        console.error('Error loading read progress:', error);
+      }
+    };
+
+    loadReadProgress();
+  }, [poll.id, auth.currentUser]);
+
   return (
     <div className="relative flex flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden">
       {/* Learn in 2 min & Invest button positioned at top right of card */}
@@ -186,7 +206,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       
       {/* Content on the right */}
       <div className="flex-1 flex flex-col relative p-2 md:p-6">
-        <div className="flex items-center gap-2 mb-4 md:pr-32">
+        <div className="flex items-center gap-2 mb-2 md:pr-32">
         <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
           {category}
         </span>
@@ -195,6 +215,23 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           {formatDateForCard(postedDate)}
         </span>
       </div>
+      
+      {/* Read Progress Bar */}
+      {/* {auth.currentUser && (
+        <div className="mb-3 md:mb-4 md:pr-32">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-1.5 bg-[#E4E7EC] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[#B2C7FF] to-[#398DEB] transition-all duration-300 rounded-full"
+                style={{ width: `${readProgress}%` }}
+              />
+            </div>
+            <span className="text-[10px] md:text-xs text-[#475467] font-medium min-w-[35px] text-right">
+              {readProgress}%
+            </span>
+          </div>
+        </div>
+      )} */}
       
       <h3 className="text-[16px] md:text-[18px] md:text-xl font-[500] text-[#101828] mb-2 line-clamp-2 md:pr-32">
         {headlineText}
@@ -205,7 +242,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           {firstInsight.content.replace(/\*/g, "").replace(/#/g, "")}
         </p>
       ) : (
-        <p className="text-[#2B425B66] text-[12px] md:text-base leading-6 mb-4 line-clamp-3">
+        <p className="text-[#2B425B66] text-[12px] md:text-base leading-6 mb-4 line-clamp-1 md:line-clamp-3">
           {poll.questions[0].summary || "No content available"}
         </p>
       )}

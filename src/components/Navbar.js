@@ -10,23 +10,13 @@ import HomeIcon from "@/assets/icons/home.svg";
 import ViralIcon from "@/assets/icons/viral.svg";
 import SnapshotIcon from "@/assets/icons/snapshots.svg";
 import SupportIcon from "@/assets/icons/support.svg";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState();
   const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        return;
-      }
-      getUserById(auth.currentUser.uid).then((u) => setUser(u));
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     setShow(false);
@@ -46,6 +36,7 @@ export default function Navbar() {
           Held Accountable
         </span>
       </Link>
+      <NotificationDropdown />
       <button
         className="rounded-[8px] w-[40px] h-[40px] flex items-center justify-center text-[20px]"
         onClick={() => setShow(!show)}

@@ -9,6 +9,7 @@ import {
   Elements
 } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
@@ -32,11 +33,10 @@ const features = [
 ];
 
 const subscriptionItems = [
-    "Share narratives on polls",
-    "Earn money with your engagement",
-    "Get improved insights",
-    "Withdraw with crypto",
-    "Cancel anytime"
+    "Unlimited access - Read all finance and crypto headlines without limits.",
+    "Viral detection - Identify emerging themes, signals, and patterns early before they’re obvious.",
+    "Voting Access & Member Benefits - Participate in platform voting and unlock the perks and incentives tied to engagement and understanding.",
+    "Follow Companies & Filter What You See - Follow companies and use advanced filters to focus on the finance and crypto stories that matter to you.",
 ]
 
 export default function Subscription({ clientSecret1, clientSecret2 }) {
@@ -52,8 +52,15 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
             <div className='w-full h-full flex flex-col p-4 md:p-8'>
                 {/* Header */}
                 <div className='flex flex-col gap-2 mb-6 md:mb-8'>
-                    <h1 className='text-2xl md:text-4xl font-bold text-[#2B425B]'>Subscription</h1>
-                    <p className='text-sm md:text-base text-[#475467]'>Upgrade your account and earn money</p>
+                    <div className='flex items-start justify-between'>
+                        <div>
+                            <h1 className='text-2xl md:text-4xl font-bold text-[#2B425B]'>Subscription</h1>
+                            <p className='text-sm md:text-base text-[#475467]'>Upgrade your account and earn money</p>
+                        </div>
+                        <div className="hidden md:flex items-center">
+                            <NotificationDropdown />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Mobile Layout */}
@@ -102,9 +109,12 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                         <p className='text-xs text-[#98A2B3] mb-4'>Everything in free plan plus..</p>
                         <div className='flex flex-col gap-3'>
                             {subscriptionItems.map((item, index) => (
-                                <div key={`item-${index}`} className='flex items-center gap-3'>
-                                    <Icon icon="ri:check-line" className="text-[#1D74D6] flex-shrink-0" width={20} height={20} />
-                                    <span className='text-sm text-[#2B425B]'>{item}</span>
+                                <div key={`item-${index}`} className='flex flex-col items-start justify-start gap-3'>
+                                    <div className="flex items-start gap-3">
+                                        <Icon icon="ri:check-line" className="text-[#1D74D6]" width={20} height={20} />
+                                        <span className='text-sm text-[#2B425B]'>{item.split(" - ")[0]}</span>
+                                    </div>
+                                    <span className='text-sm text-[#2B425B66] text-left'>{item.split(" - ")[1]}</span>
                                 </div>
                             ))}
                         </div>
@@ -151,9 +161,12 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                             <p className='text-xs text-[#98A2B3] mb-4 text-left'>Everything in free plan plus...</p>
                             <div className='flex flex-col gap-[17px] mb-6'>
                                 {subscriptionItems.map((item, index) => (
-                                    <div key={`monthly-item-${index}`} className='flex items-center gap-3'>
-                                        <Icon icon="ri:check-line" className="text-[#1D74D6]" width={20} height={20} />
-                                        <span className='text-sm text-[#2B425B]'>{item}</span>
+                                    <div key={`monthly-item-${index}`} className='flex flex-col items-start justify-start gap-3'>
+                                        <div className="flex items-start gap-3">
+                                            <Icon icon="ri:check-line" className="text-[#1D74D6]" width={20} height={20} />
+                                            <span className='text-sm text-[#2B425B]'>{item.split(" - ")[0]}</span>
+                                        </div>
+                                        <span className='text-sm text-[#2B425B66] text-left'>{item.split(" - ")[1]}</span>
                                     </div>
                                 ))}
                             </div>
@@ -188,9 +201,12 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                             <p className='text-xs text-[#98A2B3] mb-4 text-left'>Everything in free plan plus...</p>
                             <div className='flex flex-col gap-[17px] mb-6'>
                                 {subscriptionItems.map((item, index) => (
-                                    <div key={`yearly-item-${index}`} className='flex items-center gap-3'>
-                                        <Icon icon="ri:check-line" className="text-[#1D74D6]" width={20} height={20} />
-                                        <span className='text-sm text-[#2B425B]'>{item}</span>
+                                    <div key={`yearly-item-${index}`} className='flex flex-col items-start justify-start gap-3'>
+                                        <div className="flex items-start gap-3">
+                                            <Icon icon="ri:check-line" className="text-[#1D74D6]" width={20} height={20} />
+                                            <span className='text-sm text-[#2B425B]'>{item.split(" - ")[0]}</span>
+                                        </div>
+                                        <span className='text-sm text-[#2B425B66] text-left'>{item.split(" - ")[1]}</span>
                                     </div>
                                 ))}
                             </div>

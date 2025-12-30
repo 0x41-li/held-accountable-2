@@ -264,9 +264,6 @@ export default function CareerDetailPage() {
                 <Link href="/careers" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
                   Careers
                 </Link>
-                <Link href="#blog" className='text-[rgba(43, 66, 91, 1)] text-sm xl:text-[14px] leading-[30px]'>
-                  Blog
-                </Link>
                 <Link href="/auth/signin" className='inline-flex items-center justify-center gap-2 rounded-full bg-white text-sm xl:text-[14px] leading-[30px] text-[#3d83ff] w-[100px] xl:w-[120px] h-[40px] xl:h-[45px]'>
                   <Icon icon="majesticons:lock" width="20" height="20" className="xl:w-6 xl:h-6" />
                   Sign In
@@ -297,13 +294,6 @@ export default function CareerDetailPage() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Careers
-                  </Link>
-                  <Link 
-                    href="#blog" 
-                    className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Blog
                   </Link>
                   <Link 
                     href="/auth/signin" 
@@ -505,9 +495,6 @@ export default function CareerDetailPage() {
                 </Link>
                 <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
                   Careers
-                </Link>
-                <Link href="/app/support" className='text-sm text-[#475467] hover:text-[#101828] transition-colors'>
-                  Blog
                 </Link>
               </div>
               <div className="flex-1 flex flex-col items-start gap-4">

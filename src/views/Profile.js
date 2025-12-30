@@ -6,7 +6,8 @@ import { onAuthStateChanged, signInWithEmailAndPassword, updatePassword } from "
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 export default function Profile() {
     const [fullname, setFullname] = useState("");
@@ -23,20 +24,49 @@ export default function Profile() {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [notificationsLoading, setNotificationsLoading] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [notificationFilter, setNotificationFilter] = useState('all');
+    const [statistics, setStatistics] = useState({
+        voteAccuracy: 0,
+        totalVotes: 0,
+        totalComments: 0,
+        totalPoints: 0
+    });
+    const [statisticsLoading, setStatisticsLoading] = useState(false);
+    const [accBalance, setAccBalance] = useState(0);
+    const [pointHistory, setPointHistory] = useState([]);
+    const [convertingPoints, setConvertingPoints] = useState(false);
+    const [convertAll, setConvertAll] = useState(false);
+    const [pointsToConvert, setPointsToConvert] = useState('0');
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        // Check if we should open notifications tab from URL
+        const tab = searchParams?.get('tab');
+        if (tab === 'notifications') {
+            setActiveTab('NOTIFICATIONS');
+        }
+    }, [searchParams]);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (!currentUser) {
                 return;
             }
-            getUserById(auth.currentUser.uid).then(async u => {
-                setUser(u);
-                setFullname(u.fullname);
-                setEmail(u.email);
-                setUsername(u.username);
-                setWalletAddress(u.wallet_address);
-            });
+            const u = await getUserById(auth.currentUser.uid);
+            setUser(u);
+            setFullname(u.fullname);
+            setEmail(u.email);
+            setUsername(u.username);
+            setWalletAddress(u.wallet_address);
+            
+            // Load user statistics
+            loadStatistics(auth.currentUser.uid);
+            // Load ACC balance
+            loadAccBalance(auth.currentUser.uid);
         });
 
         getViralDetections().then(data => {
@@ -45,6 +75,204 @@ export default function Profile() {
 
         return () => unsubscribe();
     }, []);
+
+    // Load ACC balance and point history when REWARD tab is active
+    useEffect(() => {
+        if (activeTab === 'REWARD' && auth.currentUser) {
+            loadAccBalance(auth.currentUser.uid);
+            loadPointHistory(auth.currentUser.uid);
+        }
+    }, [activeTab]);
+
+    const loadAccBalance = async (userId) => {
+        try {
+            const response = await fetch(`/api/users/${userId}/acc-balance`);
+            if (response.ok) {
+                const data = await response.json();
+                setAccBalance(data.acc_balance || 0);
+            }
+        } catch (error) {
+            console.error('Error loading ACC balance:', error);
+        }
+    };
+
+    const loadPointHistory = async (userId) => {
+        try {
+            const response = await fetch(`/api/users/${userId}/point-history`);
+            if (response.ok) {
+                const data = await response.json();
+                setPointHistory(data.history || []);
+            }
+        } catch (error) {
+            console.error('Error loading point history:', error);
+        }
+    };
+
+    const handleConvertPoints = async () => {
+        if (!auth.currentUser) return;
+
+        setConvertingPoints(true);
+        try {
+            const response = await fetch(`/api/users/${auth.currentUser.uid}/convert-points`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    convertAll: convertAll,
+                    points: convertAll ? null : parseInt(pointsToConvert) || 0
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success(`Successfully converted ${data.points_converted} points to ${data.acc_tokens_awarded} ACC tokens!`);
+                // Reload statistics and ACC balance
+                await loadStatistics(auth.currentUser.uid);
+                await loadAccBalance(auth.currentUser.uid);
+                await loadPointHistory(auth.currentUser.uid);
+                setConvertAll(false);
+                setPointsToConvert('');
+            } else {
+                toast.error(data.error || 'Failed to convert points');
+            }
+        } catch (error) {
+            console.error('Error converting points:', error);
+            toast.error('Failed to convert points');
+        } finally {
+            setConvertingPoints(false);
+        }
+    };
+
+    const loadStatistics = async (userId) => {
+        try {
+            setStatisticsLoading(true);
+            const response = await fetch(`/api/users/${userId}/statistics`);
+            if (response.ok) {
+                const data = await response.json();
+                setStatistics({
+                    voteAccuracy: data.statistics.vote_accuracy || 0,
+                    totalVotes: data.statistics.total_votes || 0,
+                    totalComments: data.statistics.total_comments || 0,
+                    totalPoints: data.statistics.total_points || 0
+                });
+            }
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+        } finally {
+            setStatisticsLoading(false);
+        }
+    };
+
+    // Load notifications when notifications tab is active or filter changes
+    useEffect(() => {
+        if (activeTab === 'NOTIFICATIONS' && auth.currentUser) {
+            loadNotifications(auth.currentUser.uid);
+        }
+    }, [activeTab, notificationFilter]);
+
+    const loadNotifications = async (userId, filter = notificationFilter) => {
+        try {
+            setNotificationsLoading(true);
+            let url = `/api/notifications?user_id=${userId}`;
+            if (filter && filter !== 'all') {
+                url += `&type=${filter}`;
+            }
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch notifications');
+            }
+
+            const data = await response.json();
+            setNotifications(data.notifications || []);
+            setUnreadCount(data.unread_count || 0);
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+        } finally {
+            setNotificationsLoading(false);
+        }
+    };
+
+    const handleMarkAllAsRead = async () => {
+        if (!user || !auth.currentUser) return;
+
+        try {
+            const response = await fetch('/api/notifications/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: auth.currentUser.uid }),
+            });
+
+            if (response.ok) {
+                await loadNotifications(auth.currentUser.uid);
+            }
+        } catch (error) {
+            console.error('Error marking all as read:', error);
+        }
+    };
+
+    const handleMarkAsRead = async (notificationId) => {
+        try {
+            const response = await fetch(`/api/notifications/${notificationId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ is_read: true }),
+            });
+
+            if (response.ok) {
+                setNotifications(notifications.map(n => 
+                    n.id === notificationId ? { ...n, is_read: 1 } : n
+                ));
+                setUnreadCount(prev => Math.max(0, prev - 1));
+            }
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
+    };
+
+    const formatTimeAgo = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+
+        if (diffInSeconds < 60) return 'Just now';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minute${Math.floor(diffInSeconds / 60) > 1 ? 's' : ''} ago`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hour${Math.floor(diffInSeconds / 3600) > 1 ? 's' : ''} ago`;
+        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} day${Math.floor(diffInSeconds / 86400) > 1 ? 's' : ''} ago`;
+        if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} month${Math.floor(diffInSeconds / 2592000) > 1 ? 's' : ''} ago`;
+        return `${Math.floor(diffInSeconds / 31536000)} year${Math.floor(diffInSeconds / 31536000) > 1 ? 's' : ''} ago`;
+    };
+
+    const getNotificationIcon = (type) => {
+        switch (type) {
+            case 'vote_ended':
+                return <Icon icon="solar:clock-circle-linear" width={32} height={32} className="text-[#2B425B]" />;
+            case 'reward':
+                return <Icon icon="solar:gift-linear" width={32} height={32} className="text-[#34C759]" />;
+            case 'comment_reply':
+                return <Icon icon="solar:chat-round-call-linear" width={32} height={32} className="text-[#3D83FF]" />;
+            case 'system':
+                return <Icon icon="solar:settings-linear" width={32} height={32} className="text-[#3D83FF]" />;
+            default:
+                return <Icon icon="solar:bell-linear" width={32} height={32} className="text-[#2B425B]" />;
+        }
+    };
+
+    const handleNotificationClick = (notification) => {
+        if (notification.is_read === 0) {
+            handleMarkAsRead(notification.id);
+        }
+
+        if (notification.poll_id) {
+            router.push(`/app/polls/${notification.poll_id}`);
+        }
+    };
     
     const saveChanges = async () => {
         try {
@@ -83,7 +311,7 @@ export default function Profile() {
     if (!user)
         return <></>;
 
-    const tabs = ["PERSONAL", "ACCOUNT PLAN", "FINANCIAL", "PASSWORD"];
+    const tabs = ["PERSONAL", "REWARD", "ACCOUNT PLAN", "FINANCIAL", "PASSWORD", "NOTIFICATIONS"];
 
     return (
     <div className='w-full h-full overflow-hidden flex flex-col shadow-sm'>
@@ -97,12 +325,15 @@ export default function Profile() {
               <p className="text-[#475467] text-sm md:text-base text-left md:text-right">Manage your account settings and preferences</p>
             </div>
           
-            <button
-                className="hidden md:block gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
-                onClick={() => router.push("/app/subscription")}
-            >
-              Subscribe
-            </button>
+            <div className="hidden md:flex items-center gap-4">
+              <NotificationDropdown />
+              <button
+                  className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                  onClick={() => router.push("/app/subscription")}
+              >
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
         
@@ -124,6 +355,94 @@ export default function Profile() {
                   <Icon icon="mdi:pencil" width={20} height={20} className="md:w-6 md:h-6 text-[#3D83FF] cursor-pointer hover:text-[#2B425B]" />
                 </div>
                 <p className="text-sm text-[#98A2B3]">{email}</p>
+              </div>
+            </div>
+
+            {/* My Statistics Card */}
+            <div className="card-item rounded-2xl p-4 md:p-6 mb-6 bg-white">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg md:text-xl font-bold text-[#2B425B]">MY STATISTICS</h2>
+                <button 
+                  className="text-sm font-semibold text-[#3D83FF] hover:text-[#2B5FCC] transition-colors"
+                  onClick={() => setActiveTab("REWARD")}
+                >
+                  VIEW HISTORY
+                </button>
+              </div>
+              
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+                {/* Vote Accuracy */}
+                <div className="flex flex-1 flex-col items-center">
+                  <div className="relative w-32 h-20 md:w-56 md:h-32 mb-2">
+                    <svg className="w-full h-full" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
+                      <defs>
+                        <linearGradient id="voteAccuracyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#B2C7FF" />
+                          <stop offset="100%" stopColor="#398DEB" />
+                        </linearGradient>
+                      </defs>
+                      {/* Background arc (unfilled) */}
+                      <path
+                        d="M 20 80 A 80 80 0 0 1 180 80"
+                        stroke="#E4E7EC"
+                        strokeWidth="12"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      {/* Progress arc (filled) with gradient */}
+                      <path
+                        d="M 20 80 A 80 80 0 0 1 180 80"
+                        stroke="url(#voteAccuracyGradient)"
+                        strokeWidth="12"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeDasharray={`${Math.PI * 80 * (statistics.voteAccuracy / 100)} ${Math.PI * 80}`}
+                        className="transition-all duration-500"
+                        style={{
+                          strokeDashoffset: 0,
+                        }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col mt-12">
+                      <span className="text-2xl md:text-[46px] font-bold text-[#3D83FF]">
+                        {statistics.voteAccuracy}%
+                      </span>
+                      <p className="text-[12px] md:text-sm text-[#475467] mt-1">Vote Accuracy</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Votes */}
+                <div className="flex flex-1 flex-col items-center justify-center">
+                  <span className="text-2xl md:text-[36px] font-bold text-[#2B425B] mb-1">
+                    {statistics.totalVotes.toLocaleString()}
+                  </span>
+                  <p className="text-[16px] text-[#475467] text-center">Votes</p>
+                </div>
+
+                {/* Comments */}
+                <div className="flex flex-1 flex-col items-center justify-center">
+                  <span className="text-2xl md:text-[36px] font-bold text-[#2B425B] mb-1">
+                    {statistics.totalComments.toLocaleString()}
+                  </span>
+                  <p className="text-[16px] text-[#475467] text-center">Comments</p>
+                </div>
+
+                {/* Available Points */}
+                <div className="flex flex-1 flex-col items-center justify-center">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl md:text-[36px] font-bold text-[#2B425B]">
+                      {statistics.totalPoints.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-[16px] text-[#475467] text-center">Available Points</p>
+                </div>
+                <button 
+                  onClick={() => setActiveTab("REWARD")}
+                  className="gradient-button text-white text-[13px] leading-[13px] font-bold px-[24px] py-[12px] rounded-full hover:opacity-90 transition-opacity"
+                >
+                  Redeem
+                </button>
               </div>
             </div>
 
@@ -346,6 +665,222 @@ export default function Profile() {
                       Apply
                     </button>
                   </div>
+                </div>
+              )}
+
+              {activeTab === "REWARD" && (
+                <div className="flex flex-col gap-6">
+                  {/* ACC Token Overview */}
+                  <div className="px-6">
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-4">
+                        <img src="/images/V2.png" className="w-[84px] h-[84px]" />
+                        <div>
+                          <h3 className="text-[24px] leading-[24px] font-bold text-[#2B425B]">ACC</h3>
+                          <p className="text-[12px] text-[#515151] mt-[12px]">Held Accountable Coin</p>
+                        </div>
+                        <img src="/images/sep.png" />
+                        <div>
+                          <div className="text-[36px] leading-[24px] font-bold text-[#3D83FF]">{accBalance}</div>
+                          <p className="text-[12px] text-[#98A2B3] mt-[12px]">Your ACC</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Point Conversion Section */}
+                  <div className="px-6 flex flex-col items-start justify-start">
+                    <h3 className="text-[13px] leading-[13px] font-bold text-[#2B425B] mb-4">Convert Point to our Token</h3>
+                    
+                    <div className="flex items-center gap-2 mb-4">
+                      <input
+                        type="checkbox"
+                        id="convertAll"
+                        checked={convertAll}
+                        onChange={(e) => {
+                          setConvertAll(e.target.checked);
+                          if (e.target.checked) {
+                            setPointsToConvert('');
+                          }
+                        }}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="convertAll" className="text-[12px] leading-[13px] text-[#475467] cursor-pointer">
+                        Convert all my available points
+                      </label>
+                    </div>
+
+                    {/* Conversion Preview */}
+                    <div className="bg-[#F7F8FF80] rounded-[20px] p-4 mb-4 border border-[#E4E7EC] w-[400px]">
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-1 items-center gap-3">
+                          <span className="text-[13px] leading-[13px] font-semibold text-[#2B425B66] inline-flex items-center gap-2">
+                            Pts 
+                            <input
+                              type="number"
+                              placeholder="0"
+                              value={pointsToConvert}
+                              onChange={(e) => setPointsToConvert(e.target.value)}
+                              className="bg-transparent text-[#2B425B] outline-none h-[24px]"
+                              min="100"
+                              max={statistics.totalPoints}
+                            />
+                          </span>
+                        </div>
+                        <Icon icon="mdi:arrow-right" className="text-[#3D83FF] text-2xl" />
+                        <div className="flex items-center gap-3 flex-1">
+                          <span className="text-[13px] font-semibold text-[#2B425B66] inline-flex items-center gap-2 w-[100px]">
+                            ACC <span className="text-[#2B425B]">{convertAll ? Math.floor(statistics.totalPoints / 100) : Math.floor((parseInt(pointsToConvert) || 0) / 100)}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-[12px] text-[#2B425B] px-[16px] py-[8px] bg-[#3D83FF33] rounded-full mb-6">Conversion Rate: 100pts = 1 ACC</p>
+
+                    <button
+                      onClick={handleConvertPoints}
+                      disabled={convertingPoints || (!convertAll && (!pointsToConvert || parseInt(pointsToConvert) < 100)) || statistics.totalPoints < 100}
+                      className="gradient-button text-white font-bold px-6 py-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {convertingPoints ? 'Converting...' : 'Confirm'}
+                    </button>
+                  </div>
+
+                  {/* Point History */}
+                  <div className="bg-white rounded-2xl p-6 border border-[#E4E7EC]">
+                    <h3 className="text-xl font-bold text-[#2B425B] mb-4">Point History</h3>
+                    <div className="flex flex-col gap-3">
+                      {pointHistory.length === 0 ? (
+                        <p className="text-center text-[#98A2B3] py-8">No point history yet</p>
+                      ) : (
+                        pointHistory.map((entry) => (
+                          <div key={entry.id} className="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg border border-[#E4E7EC]">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-[#2B425B]">{entry.description || 'Point transaction'}</p>
+                              <p className="text-xs text-[#98A2B3] mt-1">
+                                {new Date(entry.created_at).toLocaleString()}
+                              </p>
+                            </div>
+                            <div className={`text-lg font-bold ${entry.points > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {entry.points > 0 ? '+' : ''}{entry.points} {entry.type === 'acc_reward' ? 'ACC' : 'Pts'}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "NOTIFICATIONS" && (
+                <div className="flex flex-col gap-6">
+                  {/* Header with Mark All As Read */}
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold text-[#2B425B]">
+                      {notifications.length} Notification{notifications.length !== 1 ? 's' : ''}
+                    </h2>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={handleMarkAllAsRead}
+                        className="text-sm font-semibold text-[#3D83FF] hover:text-[#2B5FCC] transition-colors uppercase"
+                      >
+                        Mark All As Read
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Filter Tabs */}
+                  <div className="flex gap-1 border-b border-[#E4E7EC] overflow-x-auto pb-2">
+                    {[
+                      { key: 'all', label: 'ALL' },
+                      { key: 'vote_ended', label: 'VOTE ENDED' },
+                      { key: 'reward', label: 'REWARDS' },
+                      { key: 'comment_reply', label: 'REPLIES' },
+                      { key: 'system', label: 'SYSTEM' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.key}
+                        onClick={() => {
+                          setNotificationFilter(tab.key);
+                          if (auth.currentUser) {
+                            loadNotifications(auth.currentUser.uid, tab.key);
+                          }
+                        }}
+                        className={`px-3 md:px-4 py-2 text-xs md:text-sm font-medium transition-colors relative whitespace-nowrap flex-shrink-0 ${
+                          notificationFilter === tab.key
+                            ? "text-blue-700 border border-dashed border-[#2B425B40] rounded-full"
+                            : "text-[#2b425b] hover:text-[#101828]"
+                        }`}
+                      >
+                        {tab.label}
+                        {notificationFilter === tab.key && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-700"></div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Notifications List */}
+                  {notificationsLoading ? (
+                    <div className="flex items-center justify-center py-20">
+                      <div className="text-[#2B425B]">Loading notifications...</div>
+                    </div>
+                  ) : notifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20">
+                      <Icon icon="solar:bell-off-linear" width={64} height={64} className="text-[#98A2B3] mb-4" />
+                      <p className="text-[#98A2B3] text-lg">No notifications yet</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          onClick={() => handleNotificationClick(notification)}
+                          className={`relative flex gap-4 p-4 rounded-2xl cursor-pointer transition-all hover:shadow-md ${
+                            notification.is_read === 0
+                              ? 'bg-white border border-[#E4E7EC]'
+                              : 'bg-[#F9FAFB] border border-transparent'
+                          }`}
+                        >
+                          {/* Icon */}
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#F7F8FF] flex items-center justify-center">
+                            {getNotificationIcon(notification.type)}
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <h3 className="text-base font-semibold text-[#2B425B] mb-1">
+                                  {notification.title}
+                                </h3>
+                                <p className="text-sm text-[#475467] leading-relaxed">
+                                  {notification.content}
+                                </p>
+                                {notification.points && (
+                                  <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-[#E8F5E9] rounded-full">
+                                    <Icon icon="solar:star-linear" width={16} height={16} className="text-[#34C759]" />
+                                    <span className="text-xs font-semibold text-[#2E7D32]">
+                                      +{notification.points} point{notification.points > 1 ? 's' : ''}
+                                    </span>
+                                  </div>
+                                )}
+                                <p className="text-xs text-[#98A2B3] mt-2">
+                                  {formatTimeAgo(notification.created_at)}
+                                </p>
+                              </div>
+
+                              {/* Unread Indicator */}
+                              {notification.is_read === 0 && (
+                                <div className="flex-shrink-0 w-3 h-3 rounded-full bg-[#EF4444]"></div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

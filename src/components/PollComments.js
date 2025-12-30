@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../../lib/firebase";
 import Image from "next/image";
 import { getUserById } from "@/services/polls/polls";
+import SortIcon from "@/assets/icons/sort.svg";
 
 export default function PollComments({ pollId }) {
   const [comments, setComments] = useState([]);
@@ -120,21 +121,9 @@ export default function PollComments({ pollId }) {
             {totalComments}
           </span>
         </div>
-        <div className="relative">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="appearance-none bg-white border border-[#E4E7EC] rounded-lg px-3 py-2 pr-7 text-sm text-[#667085] cursor-pointer hover:border-[#3B88E3] transition-colors focus:outline-none focus:border-[#3B88E3]"
-          >
-            <option value="most_recent">Most Recent</option>
-            <option value="oldest">Oldest</option>
-          </select>
-          <Icon 
-            icon="mdi:chevron-up" 
-            width={16} 
-            height={16} 
-            className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#667085]"
-          />
+        <div className="flex gap-4 items-center justify-center">
+          <SortIcon />
+          Most Recent
         </div>
       </div>
 

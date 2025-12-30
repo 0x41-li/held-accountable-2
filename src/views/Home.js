@@ -16,6 +16,7 @@ import { Icon } from "@iconify/react";
 import { FAMOUS_COMPANIES_DATA } from "@/services/const";
 import Link from "next/link";
 import Pagination from "@/components/common/Pagination";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 const carousel = [
   {
@@ -553,12 +554,15 @@ export default function Home() {
               </p>
             </div>
           
-            <button
-                className="hidden md:block gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
-                onClick={() => router.push("/app/subscription")}
-            >
-              Subscribe
-            </button>
+            <div className="hidden md:flex items-center gap-4">
+              <NotificationDropdown />
+              <button
+                  className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                  onClick={() => router.push("/app/subscription")}
+              >
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
 

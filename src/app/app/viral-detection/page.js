@@ -4,6 +4,7 @@ import ViralCard from "./card/ViralCard";
 import { Icon } from "@iconify/react";
 import ViralSidebarContent from "./card/ViralSidebarContent";
 import { getViralDetections } from "@/services/polls/polls";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 export default function ViralDetection() {
   const [viralData, setViralData] = useState([]);
@@ -47,12 +48,15 @@ export default function ViralDetection() {
               </div>
             </div>
           
-            <button
-                className="hidden md:block gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
-                onClick={() => window.location.href = "/app/subscription"}
-            >
-              Subscribe
-            </button>
+            <div className="hidden md:flex items-center gap-4">
+              <NotificationDropdown />
+              <button
+                  className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                  onClick={() => window.location.href = "/app/subscription"}
+              >
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
 

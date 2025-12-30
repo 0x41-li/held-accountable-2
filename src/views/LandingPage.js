@@ -96,9 +96,6 @@ export default function LandingPage() {
                                 <Link href="/careers" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
                                     Careers
                                 </Link>
-                                <Link href="#blog" className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px]'>
-                                    Blog
-                                </Link>
                                 <Link href="/auth/signin" className='inline-flex items-center justify-center gap-2 rounded-full bg-white text-[14px] leading-[30px] text-[#3d83ff] w-[120px] h-[45px]'>
                                     <Icon icon="majesticons:lock" width="24" height="24" />
                                     Sign In
@@ -131,13 +128,6 @@ export default function LandingPage() {
                                         Careers
                                     </Link>
                                     <Link 
-                                        href="#blog" 
-                                        className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Blog
-                                    </Link>
-                                    <Link 
                                         href="/auth/signin" 
                                         className='inline-flex items-center justify-center gap-2 rounded-full bg-white border-2 border-[#3d83ff] text-[14px] leading-[30px] text-[#3d83ff] w-full h-[45px] hover:bg-[#3d83ff] hover:text-white transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
@@ -157,10 +147,10 @@ export default function LandingPage() {
                         </div>
                         <div className="text-[48px] leading-[50px] md:text-[90px] md:leading-[90px] font-bold text-center text-[#2B425B]">
                             <span className="text-[#3d83ff]">A holistic</span> perspective
-                            <br /> on news
+                            <br /> on News
                         </div>
                         <div className="text-[15px] leading-[28px] md:text-[18px] md:leading-[32px] text-[#2B425B80] font-medium mt-[23px]">
-                            Everyone can make opinions and decisions, whether that is financial, political, regardless of their background.
+                        Many read finance and crypto news - yet still feel unsure or behind. It’s not about more information. It’s about better explanations and getting rewarded for understanding.
                         </div>
                         <button className="w-[140px] h-[54px] text-center justify-center items-center flex gradient-button text-white text-[13px] mt-[23px] px-6 py-4 rounded-[24px] z-[100]">Get Started</button>
                     </div>
@@ -206,7 +196,7 @@ export default function LandingPage() {
                                     </div>
 
                                     <div className="text-[13px] leading-[26px] md:text-[14px] md:leading-[28px] text-[#2b425b] font-[500] mt-[48px]">
-                                    To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape economics, and technology that empowers them to make their own choices and shape
+                                    Our mission is to make finance and crypto understandable by focusing on explainability, not volume, so people can think for themselves and act with confidence.
                                     </div>
                                     <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px] w-[140px] h-[54px]">
                                         More

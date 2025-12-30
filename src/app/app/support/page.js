@@ -5,12 +5,13 @@ import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { sendContact } from "@/services/polls/polls";
+import NotificationDropdown from "@/components/NotificationDropdown";
 import "./page.css";
 
 const faqs = [
     {
       question: "Is there a free trial available?",
-      answer: "Yes, you can try us for free for 30 days. If you want, we’ll provide you with a free, personalized 30-minute onboarding call to get you up and running as soon as possible."
+      answer: "Yes. We offer a free tier, and Premium gives you access to viral detection, perks, follow feature, and much more."
     },
     {
       question: "Can I change my plan later?",
@@ -92,10 +93,13 @@ export default function Support() {
 
     return (
         <div className='w-full h-full overflow-hidden pt-[32px] flex flex-col'>
-          <div className='flex px-[24px] pb-[20px] border-secondary items-start'>
+          <div className='flex px-[24px] pb-[20px] border-secondary items-start justify-between'>
             <div className='flex flex-col md:flex-row gap-[16px] flex-1 md:items-end'>
               <div className='text-[30px] leading-[38px] font-semibold'>Contact us</div>
               <div className='text-[16px] leading-[24px] text-[#7C7C7C]'>Fill the form below and we will contact you in 24 hours</div>
+            </div>
+            <div className="hidden md:flex items-center">
+              <NotificationDropdown />
             </div>
           </div>
           <div className='flex-1 flex flex-col h-full h-col gap-[32px] overflow-auto pt-[30px]'>

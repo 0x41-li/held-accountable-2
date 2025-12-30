@@ -10,6 +10,7 @@ import SnapshotSidebar from "@/components/Snapshot/SnapshotSidebar";
 import { SingleDatePicker } from "@/components/ui/SingleDatePicker";
 import { auth } from "../../../../lib/firebase";
 import Pagination from "@/components/common/Pagination";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 export default function Snapshot() {
   const router = useRouter();
@@ -169,21 +170,23 @@ export default function Snapshot() {
               <h1 className="text-3xl font-bold text-[#2b425b]">Snapshots</h1>
               <p className="text-[#2b425b] text-base">See what were discussed in previous days.</p>
             </div>
-            {shouldShowNewButton && (
-              <Link 
-                href="/app/new-snapshot" 
-                className="hidden md:block bg-blue-600 text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+            <div className="hidden md:flex items-center gap-4">
+              {shouldShowNewButton && (
+                <Link 
+                  href="/app/new-snapshot" 
+                  className="bg-blue-600 text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                >
+                  New
+                </Link>
+              )}
+              <NotificationDropdown />
+              <button
+                  className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                  onClick={() => router.push("/app/subscription")}
               >
-                New
-              </Link>
-            )}
-          
-            <button
-                className="hidden md:block gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
-                onClick={() => router.push("/app/subscription")}
-            >
-              Subscribe
-            </button>
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
 
