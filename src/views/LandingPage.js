@@ -79,10 +79,10 @@ export default function LandingPage() {
                                 className='md:hidden flex items-center justify-center w-10 h-10 text-[#2B425B]'
                                 aria-label="Toggle menu"
                             >
-                                <Icon 
-                                    icon={isMenuOpen ? "mdi:close" : "mdi:menu"} 
-                                    width="28" 
-                                    height="28" 
+                                <Icon
+                                    icon={isMenuOpen ? "mdi:close" : "mdi:menu"}
+                                    width="28"
+                                    height="28"
                                 />
                             </button>
                             {/* Desktop Navigation */}
@@ -102,33 +102,32 @@ export default function LandingPage() {
                                 </Link>
                             </div>
                             {/* Mobile Navigation Menu */}
-                            <div className={`absolute top-full left-0 right-0 mt-4 bg-white rounded-lg shadow-lg z-50 transition-all duration-300 ease-in-out ${
-                                isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-                            } md:hidden`}>
+                            <div className={`absolute top-full left-0 right-0 mt-4 bg-white rounded-lg shadow-lg z-50 transition-all duration-300 ease-in-out ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                                } md:hidden`}>
                                 <div className='flex flex-col p-4 gap-4 font-medium'>
-                                    <Link 
-                                        href="/about-us" 
+                                    <Link
+                                        href="/about-us"
                                         className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         About
                                     </Link>
-                                    <Link 
-                                        href="/app/support" 
+                                    <Link
+                                        href="/app/support"
                                         className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         Services
                                     </Link>
-                                    <Link 
-                                        href="/careers" 
+                                    <Link
+                                        href="/careers"
                                         className='text-[rgba(43, 66, 91, 1)] text-[14px] leading-[30px] py-2 px-4 hover:bg-[#EAECFB] rounded-md transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         Careers
                                     </Link>
-                                    <Link 
-                                        href="/auth/signin" 
+                                    <Link
+                                        href="/auth/signin"
                                         className='inline-flex items-center justify-center gap-2 rounded-full bg-white border-2 border-[#3d83ff] text-[14px] leading-[30px] text-[#3d83ff] w-full h-[45px] hover:bg-[#3d83ff] hover:text-white transition-colors'
                                         onClick={() => setIsMenuOpen(false)}
                                     >
@@ -146,11 +145,11 @@ export default function LandingPage() {
                             Trusted
                         </div>
                         <div className="text-[48px] leading-[50px] md:text-[90px] md:leading-[90px] font-bold text-center text-[#2B425B]">
-                            <span className="text-[#3d83ff]">A holistic</span> perspective
-                            <br /> on News
+                            <span className="text-[#3d83ff]">Before It Becomes</span>
+                            <br /> News
                         </div>
                         <div className="text-[15px] leading-[28px] md:text-[18px] md:leading-[32px] text-[#2B425B80] font-medium mt-[23px]">
-                        Many read finance and crypto news - yet still feel unsure or behind. It’s not about more information. It’s about better explanations and getting rewarded for understanding.
+                            Headlines and Newsletters report what happened. We explain what's actually going on.
                         </div>
                         <button className="w-[140px] h-[54px] text-center justify-center items-center flex gradient-button text-white text-[13px] mt-[23px] px-6 py-4 rounded-[24px] z-[100]">Get Started</button>
                     </div>
@@ -171,32 +170,30 @@ export default function LandingPage() {
                                     <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center flex-col">
                                         <img
                                             src="/images/informed1.png"
-                                            className={`mb-[-8%] transition-all duration-700 ease-out ${
-                                                informedVisible
-                                                    ? "opacity-100 translate-y-0 float-y-up"
-                                                    : "opacity-0 -translate-y-6"
-                                            }`}
+                                            className={`mb-[-8%] transition-all duration-700 ease-out ${informedVisible
+                                                ? "opacity-100 translate-y-0 float-y-up"
+                                                : "opacity-0 -translate-y-6"
+                                                }`}
                                             alt="Informed top"
                                         />
                                         <img
                                             src="/images/informed2.png"
-                                            className={`mt-[-8%] transition-all duration-700 ease-out delay-150 ${
-                                                informedVisible
-                                                    ? "opacity-100 translate-y-0 float-y-down"
-                                                    : "opacity-0 translate-y-6"
-                                            }`}
+                                            className={`mt-[-8%] transition-all duration-700 ease-out delay-150 ${informedVisible
+                                                ? "opacity-100 translate-y-0 float-y-down"
+                                                : "opacity-0 translate-y-6"
+                                                }`}
                                             alt="Informed bottom"
                                         />
                                     </div>
                                 </div>
                                 <div className="flex-1 flex flex-col items-start justify-center">
                                     <div className="text-[30px] leading-[36px] md:text-[56px] md:leading-[64px] font-[600] text-[#2B425B]">
-                                        <span className="text-[#3D83FF]">Make informed</span> <br/>
+                                        <span className="text-[#3D83FF]">Make informed</span> <br />
                                         opinions & decisions
                                     </div>
 
                                     <div className="text-[13px] leading-[26px] md:text-[14px] md:leading-[28px] text-[#2b425b] font-[500] mt-[48px]">
-                                    Our mission is to make finance and crypto understandable by focusing on explainability, not volume, so people can think for themselves and act with confidence.
+                                        Our mission is to make finance and crypto understandable by focusing on explainability, not volume, so people can think for themselves and act with confidence.
                                     </div>
                                     <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px] w-[140px] h-[54px]">
                                         More
@@ -207,12 +204,12 @@ export default function LandingPage() {
                                 <div className="flex-1 flex flex-col md:flex-row gap-[36px] items-center justify-center w-full">
                                     <div className="flex-1 flex flex-col items-start justify-center">
                                         <div className="text-[24px] leading-[30px] md:text-[56px] md:leading-[64px] font-[600] text-[#2B425B]">
-                                            <span className="text-[#3D83FF]">Dashboard</span> <br/>
+                                            <span className="text-[#3D83FF]">Dashboard</span> <br />
                                             Options
                                         </div>
 
                                         <div className="text-[13px] leading-[26px] md:text-[14px] md:leading-[28px] text-[#2b425b] font-[500] mt-[48px]">
-                                        To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape
+                                            To democratize wealth building by giving every person tools, education, and access to information on finance, politics, economics, and technology that empowers them to make their own choices and shape
                                         </div>
                                         <button className="gradient-button text-white text-[13px] mt-[48px] px-6 py-4 rounded-[24px]">
                                             Get Started
