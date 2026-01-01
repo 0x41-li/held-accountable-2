@@ -351,8 +351,7 @@ export default function PollDetail({
       </div>
 
       {/* Main Content - Three Column Layout */}
-      <div className="flex-1 flex flex-col 2xl:flex-row gap-6 px-6 md:px-10 py-6 overflow-auto">
-
+      <div className="flex-1 flex flex-col gap-6 px-6 md:px-10 py-6 overflow-auto">
         {/* Center Content */}
         <div className="flex-1 min-w-0">
           {/* Poll Image */}
@@ -365,10 +364,11 @@ export default function PollDetail({
               />
             </div>
           )}
-          <div className="flex gap-[140px]">
+
+          <div className="flex gap-8 xl:gap-16">
             {/* Left Sidebar - Section Navigation */}
             {sectionIds.length > 0 && sectionTitles.length > 0 && (
-              <div className="hidden lg:block w-56 flex-shrink-0">
+              <div className="hidden 2xl:block w-56 flex-shrink-0">
                 <div className="sticky top-6">
                   <nav className="flex flex-col gap-3">
                     {sectionIds.map((sectionId, index) => (
@@ -394,12 +394,13 @@ export default function PollDetail({
             ></div>
 
           </div>
+
           {/* Comments Section */}
           <PollComments pollId={poll.id} />
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-full xl:w-[400px] flex-shrink-0">
+        <div className="w-full flex-shrink-0">
           <div className="sticky flex flex-col gap-8 p-2 md:p-6">
             {/* Voting Section */}
             <div className="rounded-2xl">

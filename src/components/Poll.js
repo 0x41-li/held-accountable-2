@@ -217,7 +217,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   }, [poll.id, poll.vote_result, auth.currentUser]);
 
   return (
-    <Link href={`/app/polls/${poll.id}`} className="relative flex flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden cursor-pointer">
+    <Link href={`/app/polls/${poll.id}`} className="relative flex flex-col xl:flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden cursor-pointer">
       {/* Learn in 2 min & Invest button positioned at top right of card */}
       <div
         className="md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#2B425B66] text-sm hover:text-blue-700 transition-colors z-10"
@@ -234,11 +234,11 @@ export default function Poll({ poll: initialPoll, showDetail }) {
 
       {/* Image on the left */}
       <div className="flex flex-shrink-0 self-stretch items-stretch relative">
-        <div className="relative w-[140px] md:w-[250px] h-full">
+        <div className="relative w-full xl:w-[250px]">
           <img
             src={poll.image_url || "/images/narrative_detail.png"}
             alt="Narrative"
-            className="rounded-[32px] h-full p-2"
+            className="rounded-[32px] w-full h-full p-2 object-cover"
           />
           {/* Heart icon overlay on top right of image */}
           <button
