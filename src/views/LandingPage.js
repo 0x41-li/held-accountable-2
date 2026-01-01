@@ -149,9 +149,9 @@ export default function LandingPage() {
                             <br /> News
                         </div>
                         <div className="text-[15px] leading-[28px] md:text-[18px] md:leading-[32px] text-[#2B425B80] font-medium mt-[23px]">
-                            Headlines and Newsletters report what happened. We explain what's actually going on.
+                            Headlines and Newsletters report what happened. We explain what&apos;s actually going on.
                         </div>
-                        <button className="w-[140px] h-[54px] text-center justify-center items-center flex gradient-button text-white text-[13px] mt-[23px] px-6 py-4 rounded-[24px] z-[100]">Get Started</button>
+                        <button onClick={() => { router.push('/auth/signin') }} className="w-[140px] h-[54px] text-center justify-center items-center flex gradient-button text-white text-[13px] mt-[23px] px-6 py-4 rounded-[24px] z-[100]">Get Started</button>
                     </div>
                     <div className="relative w-full">
                         <img src="/images/hero_effect.png" className="absolute md:top-[-300px] left-0 w-full" />
