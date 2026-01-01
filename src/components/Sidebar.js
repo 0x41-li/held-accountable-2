@@ -97,8 +97,19 @@ export default function Sidebar() {
               (pathname == "/app/snapshots" ? "bg-[#F8F9FDaa]  text-black" : "")
             }
           >
-            <img src="/images/snapshots.png" />
+            <img src="/images/viral.png" />
             <span>Snapshots</span>
+          </Link>
+
+          <Link
+            href="/app/profile"
+            className={
+              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
+              (pathname == "/app/profile" ? "bg-[#F8F9FDaa]  text-black" : "")
+            }
+          >
+            <img src="/images/user-regular-full.svg" width={24} height={24} className="text-[#2B425B]" />
+            <span>Profile</span>
           </Link>
           {/* <Link
             href="/app/about-us"
@@ -134,7 +145,7 @@ export default function Sidebar() {
             <Icon icon="mingcute:user-4-line" />
             <span>Profile</span>
           </Link> */}
-          <Link
+          {/* <Link
             href="/app/support"
             className={
               "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
@@ -143,22 +154,22 @@ export default function Sidebar() {
           >
             <img src="/images/support.png" />
             <span>Support</span>
-          </Link>
+          </Link> */}
           {/* <Link href="/blog" className={"rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-[#F8F9FDaa]  text-black": "")}>
                     <Icon icon="mi:document" />
                     <span>Blog</span>
                 </Link> */}
           {user && user.role == "admin" &&
-          <Link
-            href="/app/admin/users"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/app/admin/users" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <Icon icon="mdi:users" />
-            <span>User Management</span>
-          </Link>
+            <Link
+              href="/app/admin/users"
+              className={
+                "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
+                (pathname == "/app/admin/users" ? "bg-[#F8F9FDaa]  text-black" : "")
+              }
+            >
+              <Icon icon="mdi:users" />
+              <span>User Management</span>
+            </Link>
           }
         </div>
       </div>
@@ -169,7 +180,6 @@ export default function Sidebar() {
               <div className="rounded-[12px] p-[16px] w-full gap-[8px] flex flex-col">
                 <div className="flex w-full justify-between">
                   <div className="flex gap-[8px] items-center">
-                    <img src="/images/sub_avatars.png" />
                     {/* <Link
                       href="/subscription"
                       className="w-[24px] h-[24px] rounded-full border border-primary bg-[#FAFAFA] flex items-center justify-center text-[#717680]"
