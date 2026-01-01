@@ -113,7 +113,7 @@ export default function Home() {
   const [selectedFortuneList, setSelectedFortuneList] = useState(DEFAULT_FORTUNE_LIST);
   const [showFortuneDropdown, setShowFortuneDropdown] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [detailId,  setDetailId] = useState(-1);
+  const [detailId, setDetailId] = useState(-1);
   const [viralData, setViralData] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -152,7 +152,7 @@ export default function Home() {
     };
 
     loadUserData();
-    
+
     // Listen for auth state changes
     const unsubscribe = auth.onAuthStateChanged(() => {
       loadUserData();
@@ -165,10 +165,10 @@ export default function Home() {
   useEffect(() => {
     let wasMobile = window.innerWidth < 768;
     setIsMobile(wasMobile);
-    
+
     const checkMobile = () => {
       const nowMobile = window.innerWidth < 768;
-      
+
       // Reset state when switching between mobile and desktop
       if (wasMobile !== nowMobile) {
         setPolls([]);
@@ -181,7 +181,7 @@ export default function Home() {
       }
       setIsMobile(nowMobile);
     };
-    
+
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -202,7 +202,7 @@ export default function Home() {
     // User is premium, allow selection
     setSelectedFortuneList(fortuneList);
     setShowFortuneDropdown(false);
-    
+
     // Reset polls and reload
     setStart(null);
     setHasMore(true);
@@ -229,30 +229,30 @@ export default function Home() {
     try {
       let url = '/api/company-polls?';
       const params = new URLSearchParams();
-      
+
       // TODO: Add Fortune list filtering when API supports it
       // For now, fetch all polls - filtering by Fortune list can be added later
       if (fortuneListId) {
         // params.append('fortune_list', fortuneListId.toString());
       }
-      
+
       params.append('status', '1'); // Only active polls
       params.append('page', page.toString());
       params.append('limit', limit.toString());
-      
+
       url += params.toString();
-      
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch polls');
       }
-      
+
       const data = await response.json();
       let polls = data.polls || [];
-      
+
       // TODO: Filter by Fortune list client-side when API doesn't support it
       // For now, return all polls
-      
+
       // Return polls with pagination metadata
       return {
         polls,
@@ -276,11 +276,11 @@ export default function Home() {
     // Parse section_ids and section_titles if they're JSON strings
     let sectionIds = [];
     let sectionTitles = [];
-    
+
     try {
       if (apiPoll.section_ids) {
-        sectionIds = typeof apiPoll.section_ids === 'string' 
-          ? JSON.parse(apiPoll.section_ids) 
+        sectionIds = typeof apiPoll.section_ids === 'string'
+          ? JSON.parse(apiPoll.section_ids)
           : apiPoll.section_ids;
       }
       if (apiPoll.section_titles) {
@@ -294,7 +294,7 @@ export default function Home() {
 
     // Convert createdAt string to Firebase timestamp format
     const createdAt = apiPoll.created_at ? new Date(apiPoll.created_at) : new Date();
-    
+
     return {
       id: apiPoll.id.toString(),
       title: apiPoll.title || '',
@@ -353,7 +353,7 @@ export default function Home() {
       }
 
       const transformedPolls = result.polls.map(transformPollData);
-      
+
       if (transformedPolls.length > 0) {
         setPolls((prevPolls) => [
           ...transformedPolls.filter((p) => !prevPolls.some((p1) => p1.id === p.id)),
@@ -397,7 +397,7 @@ export default function Home() {
     try {
       // Determine items per page based on mobile/desktop
       const itemsPerPage = (isMobile && isPageLoad) ? 5 : 10;
-      
+
       // Fetch polls with pagination from API
       const result = await fetchPollsFromAPI(
         null,
@@ -411,18 +411,18 @@ export default function Home() {
       if (isMobile && isPageLoad) {
         // For mobile pagination, replace polls instead of appending
         setPolls(transformedPolls);
-        
+
         // Use pagination metadata from API
         if (pagination) {
           setTotalPages(pagination.totalPages > 0 ? pagination.totalPages : 1);
         } else {
           // Fallback: estimate total pages
-          const calculatedTotalPages = transformedPolls.length < itemsPerPage 
-            ? pageNum 
+          const calculatedTotalPages = transformedPolls.length < itemsPerPage
+            ? pageNum
             : pageNum + 1;
           setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
         }
-        
+
         return;
       } else if (!isMobile && !isPageLoad) {
         // Desktop infinite scroll behavior - only when not mobile and not a page load
@@ -438,10 +438,10 @@ export default function Home() {
               ...prevPolls,
               ...transformedPolls.filter((p) => !prevPolls.some((p1) => p1.id === p.id))
             ];
-            
+
             return newPolls;
           });
-          
+
           // Use pagination metadata to determine if there are more pages
           if (pagination) {
             setHasMore(pagination.hasNextPage);
@@ -519,7 +519,7 @@ export default function Home() {
           <div className="flex items-start flex-1 justify-between gap-4">
             <div className="flex md:items-end gap-3 md:mt-4 flex-col md:flex-row flex-1">
               <div className="flex gap-[16px] items-center">
-                <h1 className="text-[30px] md:text-3xl font-bold text-[#2b425b]">What's happening now?</h1>
+                <h1 className="text-[30px] md:text-3xl font-bold text-[#2b425b]">What&apos;s happening now?</h1>
               </div>
               <p className="text-[#475467] text-sm md:text-base text-left md:text-right">
                 Live updates{" "}
@@ -530,12 +530,12 @@ export default function Home() {
                 until next breaking news
               </p>
             </div>
-          
+
             <div className="hidden md:flex items-center gap-4">
               <NotificationDropdown />
               <button
-                  className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
-                  onClick={() => router.push("/app/subscription")}
+                className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
+                onClick={() => router.push("/app/subscription")}
               >
                 Subscribe
               </button>
@@ -544,7 +544,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col xl:flex-row flex-1 overflow-hidden">
           <div className="flex flex-col flex-1">
             {/* Fortune List Filter */}
             <div className="flex flex-row gap-2 items-center justify-center md:justify-start md:gap-4 px-2 md:px-6">
@@ -570,10 +570,10 @@ export default function Home() {
                         </>
                       )}
                     </div>
-                    <Icon 
-                      icon={showFortuneDropdown ? "mdi:chevron-up" : "mdi:chevron-down"} 
-                      width={20} 
-                      height={20} 
+                    <Icon
+                      icon={showFortuneDropdown ? "mdi:chevron-up" : "mdi:chevron-down"}
+                      width={20}
+                      height={20}
                     />
                   </button>
                 </div>
@@ -583,7 +583,7 @@ export default function Home() {
                   <>
                     {/* Backdrop for mobile */}
                     {isMobile && (
-                      <div 
+                      <div
                         className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
                         onClick={() => setShowFortuneDropdown(false)}
                       />
@@ -702,7 +702,7 @@ export default function Home() {
                     </p>
                   </div>
                   <p className="text-[11px] text-[#2B425B54] leading-6">
-                    Jacinda Ardern's Glasgow Visit and the Continued Influence of Former Visit and the Continued Influence
+                    Jacinda Ardern&apos;s Glasgow Visit and the Continued Influence of Former Visit and the Continued Influence
                   </p>
                   <Link
                     href="/about-us"
@@ -717,7 +717,7 @@ export default function Home() {
         </div>
       </div>
       {
-        detailId != -1 && <PollDetailPage key={`detail_page_${detailId}`} data={{id: detailId, back: () => setDetailId(-1)}} />
+        detailId != -1 && <PollDetailPage key={`detail_page_${detailId}`} data={{ id: detailId, back: () => setDetailId(-1) }} />
       }
 
       {/* Premium Modal */}

@@ -41,13 +41,13 @@ export default function Navbar() {
         className="rounded-[8px] w-[40px] h-[40px] flex items-center justify-center text-[20px]"
         onClick={() => setShow(!show)}
       >
-        {!show?<Icon icon="mingcute:menu-fill" />:<Icon icon="mdi:close" />}
+        {!show ? <Icon icon="mingcute:menu-fill" /> : <Icon icon="mdi:close" />}
       </button>
       {show && (
         <div className="fixed left-0 top-[90px] bottom-0 right-0 bg-[#dbe7f8] flex border-t z-[999]">
           {/* <div className="w-1/3" onClick={() => setShow(false)}></div> */}
           <div className="w-full pt-[20px]">
-            <div className="flex flex-col items-end justify-end px-[16px] gap-[40px] h-full overflow-scroll">
+            <div className="flex flex-col items-end justify-end px-[16px] gap-[24px] h-full overflow-scroll">
               <Link
                 href="/app/home"
                 className={
@@ -91,13 +91,27 @@ export default function Navbar() {
               <Link
                 href="/app/profile"
                 className={
-                  "rounded-[12px] py-[8px] px-[4px] flex justify-end items-center w-full gap-[28px] text-[16px]  " +
-                  (pathname == "/app/profile" ? "font-bold" : "")
+                  "rounded-[12px] py-[8px] px-[16px] flex justify-end items-center w-full gap-[36px] text-[16px] " +
+                  (pathname == "/app/profile" ? "bg-[#F8F9FDaa]  text-black" : "")
                 }
               >
-                <span>{user?.fullname}</span>
-                <img src={user?.avatar} className="w-[40px] h-[40px] rounded-full" />
+                <span>Profile</span>
+                <img src="/images/user-regular-full.svg" width={24} height={24} className="text-[#2B425B]" />
               </Link>
+
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    auth.signOut();
+                    router.push("/auth/signin");
+                  }}
+                  className="rounded-[12px] py-[8px] px-[16px] flex justify-end items-center w-full gap-[36px] text-[16px]"
+                >
+                  <span className="">Logout</span>
+                  <Icon icon="material-symbols:logout-rounded" className="w-6 h-6 text-[#2B425B]" />
+                </button>
+              </div>
+
               <div className="flex-1"></div>
               {user && (
                 <div className="flex flex-col gap-[10px] w-full">

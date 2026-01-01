@@ -60,36 +60,6 @@ export default function Sidebar() {
             <img src="/images/viral.png" />
             <span>Viral Detection</span>
           </Link>
-          {/* <Link
-            href="/trending"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/trending" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <Icon icon="mingcute:fire-line" />
-            <span>Headlines</span>
-          </Link> */}
-          {/* <Link
-            href="/enterprises"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/enterprises" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <Icon icon="carbon:satellite-radar" />
-            <span>Enterprise Radar</span>
-          </Link> */}
-          {/* <Link
-            href="/blog"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/blog" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <Icon icon="mi:document" />
-            <span>Leadership</span>
-          </Link> */}
           <Link
             href="/app/snapshots"
             className={
@@ -111,54 +81,20 @@ export default function Sidebar() {
             <img src="/images/user-regular-full.svg" width={24} height={24} className="text-[#2B425B]" />
             <span>Profile</span>
           </Link>
-          {/* <Link
-            href="/app/about-us"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/app/about-us" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <img src="/images/about-us.png" />
-            <span>About Us</span>
-          </Link> */}
-          {/* <Link href="/app/manage" className={"rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " + (pathname == '/app/manage' ? "bg-[#F8F9FDaa]  text-black": "")}>
-                    <Icon icon="gravity-ui:square-list-ul" />
-                    <span>Poll Management</span>
-                </Link> */}
-          {/* <Link
-            href="/careers"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/careers" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <img src="/images/careers.png" />
-            <span>Careers</span>
-          </Link> */}
-          {/* <Link
-            href="/profile"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/profile" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <Icon icon="mingcute:user-4-line" />
-            <span>Profile</span>
-          </Link> */}
-          {/* <Link
-            href="/app/support"
-            className={
-              "rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " +
-              (pathname == "/app/support" ? "bg-[#F8F9FDaa]  text-black" : "")
-            }
-          >
-            <img src="/images/support.png" />
-            <span>Support</span>
-          </Link> */}
-          {/* <Link href="/blog" className={"rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px] " + (pathname == '/blog' ? "bg-[#F8F9FDaa]  text-black": "")}>
-                    <Icon icon="mi:document" />
-                    <span>Blog</span>
-                </Link> */}
+
+          <div className="flex items-center justify-center">
+            <button
+              onClick={() => {
+                auth.signOut();
+                router.push("/auth/signin");
+              }}
+              className="rounded-[12px] py-[16px] px-[16px] flex items-center w-full gap-[12px]"
+            >
+              <Icon icon="material-symbols:logout-rounded" fill="#2B425B" className="w-6 h-6 text-[#2B425B]" />
+              <span className="">Logout</span>
+            </button>
+          </div>
+
           {user && user.role == "admin" &&
             <Link
               href="/app/admin/users"

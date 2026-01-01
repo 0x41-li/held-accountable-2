@@ -604,8 +604,7 @@ export async function getWikipediaSummary(title) {
 }
 
 export async function getDescriptionUsingGPT(question) {
-  const openai_api_key =
-    "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";
+  const openai_api_key = process.env.OPENAI_API_KEY_PROJ;
   const url = "https://api.openai.com/v1/responses";
 
   try {
@@ -677,8 +676,7 @@ export async function getNewsFromNewsAi(condition) {
 }
 
 export async function generatePoll(article_url, article_title, article_body) {
-  const openai_api_key =
-    "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";
+  const openai_api_key = process.env.OPENAI_API_KEY_SVCACCT;
   const url = "https://api.openai.com/v1/responses";
 
   const message = `
@@ -1153,8 +1151,7 @@ export async function getEventsWithSocialScoreFromNewsAi(condition) {
 }
 
 export async function generateViralDetectionUsingGPT(event) {
-  const openai_api_key =
-    "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";
+  const openai_api_key = process.env.OPENAI_API_KEY_SVCACCT;
   const url = "https://api.openai.com/v1/responses";
 
   const message = `Please create an professional analysis article based on following event.
@@ -1352,8 +1349,7 @@ export async function getCompanyNewsFromNewsAi(company_id) {
 
 
 export async function generateComapnyArticleUsingGPT(news_title, news_body) {
-  const openai_api_key =
-    "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";
+  const openai_api_key = process.env.OPENAI_API_KEY_SVCACCT;
   const url = "https://api.openai.com/v1/responses";
 
   const message = `Please create an professional analysis article based on following news.
@@ -1472,4 +1468,3 @@ export async function getBusinessNewsForCompaniesFromNewsAi() {
     return null;
   }
 }
-
