@@ -368,7 +368,7 @@ export default function PollDetail({
           <div className="flex gap-8 xl:gap-16">
             {/* Left Sidebar - Section Navigation */}
             {sectionIds.length > 0 && sectionTitles.length > 0 && (
-              <div className="hidden 2xl:block w-56 flex-shrink-0">
+              <div className="hidden xl:block w-56 flex-shrink-0">
                 <div className="sticky top-6">
                   <nav className="flex flex-col gap-3">
                     {sectionIds.map((sectionId, index) => (
@@ -384,6 +384,7 @@ export default function PollDetail({
                 </div>
               </div>
             )}
+
             {/* Article Content */}
             <div
               ref={contentRef}
