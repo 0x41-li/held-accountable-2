@@ -3,10 +3,10 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import SubscriptionPay from "@/components/SubscriptionPay";
 import {
-  PaymentElement,
-  useStripe,
-  useElements,
-  Elements
+    PaymentElement,
+    useStripe,
+    useElements,
+    Elements
 } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import NotificationDropdown from "@/components/NotificationDropdown";
@@ -68,13 +68,12 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                     {/* Subscription Cards */}
                     <div className='flex flex-row gap-3 mb-6'>
                         {/* Monthly Plan */}
-                        <div 
+                        <div
                             onClick={() => setSubscriptionType("monthly")}
-                            className={`relative flex-1 rounded-2xl border p-4 text-center cursor-pointer transition-all ${
-                                subscriptionType === 'monthly' 
-                                    ? 'bg-white border-[#3D83FF] shadow-md' 
-                                    : 'bg-[#F9FAFB] border-[#E4E7EC] hover:border-[#D0D5DD]'
-                            }`}
+                            className={`relative flex-1 rounded-2xl border p-4 text-center cursor-pointer transition-all ${subscriptionType === 'monthly'
+                                ? 'bg-white border-[#3D83FF] shadow-md'
+                                : 'bg-[#F9FAFB] border-[#E4E7EC] hover:border-[#D0D5DD]'
+                                }`}
                         >
                             <h3 className='text-[20px] font-bold text-[#2B425B] mb-3'>Monthly</h3>
                             <div className='mb-4'>
@@ -84,13 +83,12 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                         </div>
 
                         {/* Yearly Plan */}
-                        <div 
+                        <div
                             onClick={() => setSubscriptionType("yearly")}
-                            className={`relative flex-1 rounded-2xl border p-4 text-center cursor-pointer transition-all ${
-                                subscriptionType === 'yearly' 
-                                    ? 'bg-white border-[#3D83FF] shadow-md' 
-                                    : 'bg-white border-[#E4E7EC] hover:border-[#D0D5DD]'
-                            }`}
+                            className={`relative flex-1 rounded-2xl border p-4 text-center cursor-pointer transition-all ${subscriptionType === 'yearly'
+                                ? 'bg-white border-[#3D83FF] shadow-md'
+                                : 'bg-white border-[#E4E7EC] hover:border-[#D0D5DD]'
+                                }`}
                         >
                             {/* Most Popular Badge */}
                             <div className='absolute -top-2 -right-2 px-2 py-0.5 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white text-[10px] font-bold rounded-full uppercase'>
@@ -122,7 +120,7 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
 
                     {/* Upgrade Button */}
                     <div className='mt-auto'>
-                        <button 
+                        <button
                             className='w-full gradient-button rounded-xl py-3 font-bold text-sm text-white shadow-sm hover:shadow-md transition-all'
                             onClick={() => {
                                 setShowPayDlg(true);
@@ -154,11 +152,14 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                         {/* Monthly Plan */}
                         <div className='relative w-full md:w-[400px] bg-[#F7F8FF80] rounded-[32px] border border-[#E9EAEB] p-6 shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] text-center'>
                             <h3 className='text-[24px] font-bold text-[#2B425B] mb-4'>Monthly</h3>
+
                             <div className='mb-6'>
                                 <div className='text-[90px] font-bold text-[#2B425B]'>$5</div>
                                 <div className='text-[16px] text-[#2B425B]'>month</div>
                             </div>
+
                             <p className='text-xs text-[#98A2B3] mb-4 text-left'>Everything in free plan plus...</p>
+
                             <div className='flex flex-col gap-[17px] mb-6'>
                                 {subscriptionItems.map((item, index) => (
                                     <div key={`monthly-item-${index}`} className='flex flex-col items-start justify-start gap-3'>
@@ -170,20 +171,15 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                                     </div>
                                 ))}
                             </div>
-                            <button 
-                                className={`w-full rounded-lg py-3 px-4 font-bold text-sm transition-all ${
-                                    isSubscribed && subscriptionType === 'monthly'
-                                        ? 'text-[#344054]'
-                                        : 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-sm hover:shadow-md'
-                                }`}
+
+                            <button
+                                className='gradient-button rounded-full py-3 px-[50px] font-bold text-sm text-white shadow-sm hover:shadow-md transition-all'
                                 onClick={() => {
-                                    if (!isSubscribed || subscriptionType !== 'monthly') {
-                                        setSubscriptionType("monthly");
-                                        setShowPayDlg(true);
-                                    }
+                                    setSubscriptionType("yearly");
+                                    setShowPayDlg(true);
                                 }}
                             >
-                                {isSubscribed && subscriptionType === 'monthly' ? 'Your Subscription' : 'Upgrade'}
+                                Upgrade
                             </button>
                         </div>
 
@@ -193,12 +189,16 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                             <div className='absolute -top-3 -right-3 px-3 py-1 badge-bg text-white text-xs font-bold rounded-full uppercase'>
                                 Most Popular
                             </div>
+
                             <h3 className='text-[24px] font-bold text-[#2B425B] mb-4'>Yearly</h3>
+
                             <div className='mb-6'>
                                 <div className='text-[90px] font-bold text-[#2B425B]'>$50</div>
                                 <div className='text-[16px] text-[#2B425B]'>year</div>
                             </div>
+
                             <p className='text-xs text-[#98A2B3] mb-4 text-left'>Everything in free plan plus...</p>
+
                             <div className='flex flex-col gap-[17px] mb-6'>
                                 {subscriptionItems.map((item, index) => (
                                     <div key={`yearly-item-${index}`} className='flex flex-col items-start justify-start gap-3'>
@@ -210,8 +210,9 @@ export default function Subscription({ clientSecret1, clientSecret2 }) {
                                     </div>
                                 ))}
                             </div>
+
                             <div className="flex justify-center">
-                                <button 
+                                <button
                                     className='gradient-button rounded-full py-3 px-[50px] font-bold text-sm text-white shadow-sm hover:shadow-md transition-all'
                                     onClick={() => {
                                         setSubscriptionType("yearly");
