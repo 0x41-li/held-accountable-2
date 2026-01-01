@@ -97,7 +97,7 @@ export default function Sidebar() {
               (pathname == "/app/snapshots" ? "bg-[#F8F9FDaa]  text-black" : "")
             }
           >
-            <img src="/images/viral.png" />
+            <img src="/images/snapshots.png" />
             <span>Snapshots</span>
           </Link>
 
