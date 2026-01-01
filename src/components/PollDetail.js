@@ -27,7 +27,7 @@ export default function PollDetail({
   const observerRef = useRef(null);
   const contentRef = useRef(null);
   const timeoutIdsRef = useRef([]);
-  
+
   if (!poll) {
     return <></>;
   }
@@ -36,8 +36,8 @@ export default function PollDetail({
   const sectionIds = useMemo(() => {
     try {
       if (poll.section_ids) {
-        return typeof poll.section_ids === 'string' 
-          ? JSON.parse(poll.section_ids) 
+        return typeof poll.section_ids === 'string'
+          ? JSON.parse(poll.section_ids)
           : poll.section_ids;
       }
     } catch (e) {
@@ -85,9 +85,9 @@ export default function PollDetail({
 
     const markSectionAsViewed = async (sectionId) => {
       if (viewedSectionsRef.current.has(sectionId)) return;
-      
+
       viewedSectionsRef.current.add(sectionId);
-      
+
       try {
         const response = await fetch(`/api/polls/${poll.id}/mark-section-viewed`, {
           method: 'POST',
@@ -132,7 +132,7 @@ export default function PollDetail({
 
         if (element) {
           const elementTop = element.getBoundingClientRect().top + scrollTop;
-          
+
           // Mark as viewed if the element has been scrolled past the trigger point
           if (elementTop <= triggerPoint && !viewedSectionsRef.current.has(sectionId)) {
             markSectionAsViewed(sectionId);
@@ -154,7 +154,7 @@ export default function PollDetail({
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Also check periodically in case user is reading without scrolling
     const intervalId = setInterval(checkSectionsInView, 2000);
 
@@ -174,11 +174,11 @@ export default function PollDetail({
         if (response.ok) {
           const data = await response.json();
           const votes = data.votes || [];
-          
+
           // Count votes (assuming vote: 0 = bullish, 1 = bearish)
           const bullish = votes.filter(v => v.vote === 0 || v.vote === null).length;
           const bearish = votes.filter(v => v.vote === 1).length;
-          
+
           setVoteCount({
             bullish,
             bearish,
@@ -299,12 +299,12 @@ export default function PollDetail({
   const isVotingExpired = hoursRemaining === 0;
   const votingFinished = isVotingExpired || (poll.vote_result !== null && poll.vote_result !== undefined && poll.vote_result !== -1);
   const voteResult = poll.vote_result !== null && poll.vote_result !== undefined && poll.vote_result !== -1 ? poll.vote_result : null;
-  
+
   // Calculate percentages
   const totalVotes = voteCount.total || 1; // Avoid division by zero
   const bullishPercentage = totalVotes > 0 ? Math.round((voteCount.bullish / totalVotes) * 100) : 0;
   const bearishPercentage = totalVotes > 0 ? Math.round((voteCount.bearish / totalVotes) * 100) : 0;
-  
+
   // Check if user voted correctly
   const userVotedCorrectly = votingFinished && voteResult !== null && voted !== null && voted === voteResult;
 
@@ -351,7 +351,7 @@ export default function PollDetail({
       </div>
 
       {/* Main Content - Three Column Layout */}
-      <div className="flex-1 flex flex-col md:flex-row gap-6 px-6 md:px-10 py-6 overflow-auto">
+      <div className="flex-1 flex flex-col 2xl:flex-row gap-6 px-6 md:px-10 py-6 overflow-auto">
 
         {/* Center Content */}
         <div className="flex-1 min-w-0">
@@ -368,31 +368,31 @@ export default function PollDetail({
           <div className="flex gap-[140px]">
             {/* Left Sidebar - Section Navigation */}
             {sectionIds.length > 0 && sectionTitles.length > 0 && (
-            <div className="hidden lg:block w-56 flex-shrink-0">
-              <div className="sticky top-6">
-                <nav className="flex flex-col gap-3">
-                  {sectionIds.map((sectionId, index) => (
-                    <a
-                      key={sectionId}
-                      href={`#${sectionId}`}
-                      className="text-[14px] leading-[22px] text-[#2B425B66] hover:text-[#2B425B] transition-colors py-1.5 pl-3"
-                    >
-                      {sectionTitles[index] || sectionId}
-                    </a>
-                  ))}
-                </nav>
+              <div className="hidden lg:block w-56 flex-shrink-0">
+                <div className="sticky top-6">
+                  <nav className="flex flex-col gap-3">
+                    {sectionIds.map((sectionId, index) => (
+                      <a
+                        key={sectionId}
+                        href={`#${sectionId}`}
+                        className="text-[14px] leading-[22px] text-[#2B425B66] hover:text-[#2B425B] transition-colors py-1.5 pl-3"
+                      >
+                        {sectionTitles[index] || sectionId}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
               </div>
-            </div>
-          )}
+            )}
             {/* Article Content */}
             <div
               ref={contentRef}
               className="poll-detail-content text-base font-normal text-[#535862] leading-[28px] prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ 
-                __html: poll.content ? poll.content : '<p>No content available</p>' 
+              dangerouslySetInnerHTML={{
+                __html: poll.content ? poll.content : '<p>No content available</p>'
               }}
             ></div>
-            
+
           </div>
           {/* Comments Section */}
           <PollComments pollId={poll.id} />
@@ -408,14 +408,14 @@ export default function PollDetail({
                 <span className="text-[11px] font-medium text-[#2B425B66]">{voteCount.total} VOTES</span>
               </div>
               <p className="text-[11px] text-[#2B425B66] mb-4">Votes are final. Please read the article first. Your vote affects your accuracy rate.</p>
-              
+
               {votingFinished ? (
                 // Finished voting - show progress bars
                 <div className="flex flex-col gap-3 mb-4">
                   {/* Bullish Option */}
                   <div className={`relative rounded-xl overflow-hidden border-2`}>
                     <div className="relative w-full bg-white/50 rounded-lg overflow-hidden h-[60px]">
-                      <div 
+                      <div
                         className={`absolute left-0 top-0 h-full ${voteResult === 0 ? "bg-correct-vote" : "bg-gray-300"} rounded-lg transition-all duration-500`}
                         style={{ width: `${bullishPercentage}%` }}
                       >
@@ -437,11 +437,11 @@ export default function PollDetail({
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Bearish Option */}
                   <div className={`relative rounded-xl overflow-hidden border-2`}>
                     <div className="relative w-full bg-white/50 rounded-lg overflow-hidden h-[60px]">
-                      <div 
+                      <div
                         className={`absolute left-0 top-0 h-full ${voteResult === 1 ? "bg-correct-vote" : "bg-gray-300"} rounded-lg transition-all duration-500`}
                         style={{ width: `${bearishPercentage}%` }}
                       >
@@ -463,7 +463,7 @@ export default function PollDetail({
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Congratulations Message */}
                   {userVotedCorrectly && userVotePoints > 0 && (
                     <div className="flex items-center gap-3 mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
@@ -485,13 +485,12 @@ export default function PollDetail({
                   <button
                     onClick={() => handleSelectVote(0)}
                     disabled={voted !== null}
-                    className={`flex items-center gap-3 p-4 transition-all rounded-[24px] ${
-                      selectedVote === 0 || voted === 0
-                        ? "card-item"
-                        : voted === null
+                    className={`flex items-center gap-3 p-4 transition-all rounded-[24px] ${selectedVote === 0 || voted === 0
+                      ? "card-item"
+                      : voted === null
                         ? "border-[#2B425B66] border border-dashed hover:border-white card-item-hover cursor-pointer"
                         : "bg-white border-[#2B425B66] opacity-50 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     <BullishIcon />
                     <span className="font-medium text-[#2B425B]">Bullish</span>
@@ -499,13 +498,12 @@ export default function PollDetail({
                   <button
                     onClick={() => handleSelectVote(1)}
                     disabled={voted !== null}
-                    className={`flex items-center gap-3 p-4 transition-all rounded-[24px] ${
-                      selectedVote === 1 || voted === 1
-                        ? "card-item"
-                        : voted === null
+                    className={`flex items-center gap-3 p-4 transition-all rounded-[24px] ${selectedVote === 1 || voted === 1
+                      ? "card-item"
+                      : voted === null
                         ? "border-[#2B425B66] border border-dashed hover:border-white card-item-hover cursor-pointer"
                         : "bg-white border-[#2B425B66] opacity-50 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     <BearishIcon />
                     <span className="font-medium text-[#2B425B]">Bearish</span>
@@ -525,7 +523,7 @@ export default function PollDetail({
                     >
                       Vote
                     </button>
-                  ):(<span className="text-sm font-medium text-[#6941C6]">
+                  ) : (<span className="text-sm font-medium text-[#6941C6]">
                     Voted {voted === 0 ? 'Bullish' : 'Bearish'}
                   </span>)}
                 </div>
@@ -570,12 +568,12 @@ export default function PollDetail({
           </div>
         </div>
       </div>
-      
+
       {/* Back Button */}
       {back && (
         <div className="flex justify-center pb-[30px] pt-6 border-t border-[#E4E7EC]">
-          <button 
-            onClick={() => back()} 
+          <button
+            onClick={() => back()}
             className="border border-secondary px-[16px] py-[8px] flex items-center gap-[2px]"
           >
             <Icon icon='lets-icons:back' />Back
