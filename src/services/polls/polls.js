@@ -681,7 +681,8 @@ export async function generatePoll(article_url, article_title, article_body) {
     "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";
   const url = "https://api.openai.com/v1/responses";
 
-  const message = `Create a short "Breaking News" card from this url: ${article_url}
+  const message = `
+Create a short "Breaking News" card from this url: ${article_url}
 
 If you can not access please reference following content:
 
@@ -716,7 +717,7 @@ ${article_body}
 
 - Anti-repetition constraint:
   - Each section must contribute NEW information (new mechanism, stakeholder, timeframe, example, or metric).
-  - Do not restate the headline beyond the "Explain It Like I'm New" section.
+  - Do not restate the headline beyond the "Explain It Like I’m New" section.
   - Avoid repeating the same key claim in more than TWO sections.
   - No verbatim sentence reuse across sections.
   - If a point is already explained, reference it briefly rather than re-explaining it.
@@ -740,7 +741,7 @@ ${article_body}
    - The Question This Raises = one forward-looking question only; do not answer it.
 
    Length caps:
-   - Explain It Like I'm New: 3–4 sentences MAX.
+   - Explain It Like I’m New: 3–4 sentences MAX.
    - Each main section: 2–4 sentences MAX.
    - Analytics & Data: 3–6 bullets MAX.
    - Sources: 3–6 bullets.
@@ -748,8 +749,8 @@ ${article_body}
    Uniqueness requirement:
    - Each section must include at least ONE unique anchor not used elsewhere (a statistic, stakeholder group, mechanism, concrete example, or timeframe).
 
-   **Explain It Like I'm New**
-   - Add a section titled **"Explain It Like I'm New"**.
+   **Explain It Like I’m New**
+   - Add a section titled **"Explain It Like I’m New"**.
    - Explain the entire news headline in extremely simple terms.
    - 3–4 sentences MAX.
    - No jargon. Assume zero prior knowledge.
@@ -780,19 +781,6 @@ ${article_body}
    - Use only open data sources (e.g., World Bank, IMF, OECD, UN, national statistical agencies, FRED).
    - Clearly state years, regions, and units.
 
-   New — Investment Impact Section:
-   - Add a clearly labeled subsection titled **":dollar: If you invested X dollars, what would that mean?"** whenever the topic is **Crypto, AI, Finance, or Politics** that specifically mentions a company or a high-level person involved with a company.
-   - Use only open data (e.g., index/sector returns from FRED, World Bank, IMF, OECD) and Wikipedia for background.
-   - If precise asset-level open data are unavailable, use a transparent index-level proxy (state the proxy and timeframe) or provide a formulaic illustration (e.g., compound growth at an open-data CAGR).
-   - Default **X = $1,000** unless a different amount is explicitly provided by the user or the article context; state all assumptions.
-   - Present outcomes numerically and label as a hypothetical illustration, **not financial advice**.
-
-   **NEW — Enterprise Adoption Add-on (must accompany the Investment Impact subsection):**
-   - Immediately after the ":dollar: If you invested X dollars..." subsection, add a second subsection titled **":office: How large companies leverage this today"**.
-   - Summarize how major firms (e.g., Fortune 500 or sector leaders) are adopting, deploying, or monetizing the technology/policy/asset discussed.
-   - Use only open sources and Wikipedia company pages for background.
-   - Prefer 2–4 concise examples; keep neutral, avoid marketing language.
-
    **Sources**
    - At the end of the article, add a sources list with 3–6 bullet points.
    - Name the organization and the dataset/report/page title actually used.
@@ -815,7 +803,9 @@ ${article_body}
 - No invented dates.
 - If H1 has a number, identical number appears in the title.
 - No administration mislabel; if uncertain → neutral phrasing.
-- Title length ≤ 160 characters; no duplicate with existing items.`;
+- Title length ≤ 160 characters; no duplicate with existing items.
+
+  `;
 
   try {
     const response = await fetch(url, {
@@ -1366,128 +1356,20 @@ export async function generateComapnyArticleUsingGPT(news_title, news_body) {
     "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";
   const url = "https://api.openai.com/v1/responses";
 
-  const message = `Create a short "Breaking News" card from this url: ${article_url}
+  const message = `Please create an professional analysis article based on following news.
 
-If you can not access please reference following content:
+### News Details ###
 
-### Article Title ###
-${article_title}
-
-### Article Body Start ###
-${article_body}
-### Article Body End ###
-
-### Non-negotiable rules (internal; do not print):
-- Parse ONLY from the article's own page:
-  - outlet_name (must match URL domain), publish_datetime (ISO), location, the main H1 headline text, and the first 1–2 sentences.
-  - If the H1 contains a hard number (e.g., casualties, % move, count), KEEP the same number (or "at least X" if that is how it appears).
-
-- Dates:
-  - Prefer the article's publish date UNLESS the H1 explicitly includes an absolute event date (e.g., "on Sept. 28, 2025"). Do NOT invent or convert relative dates (e.g., "Sunday")—omit the date from the headline if you can't resolve it to an absolute date on the page.
-
-- Leaders/administrations (U.S. guardrail by event date):
-  - 2017-01-20 → 2021-01-20 = Trump
-  - 2021-01-20 → 2025-01-20 = Biden
-  - 2025-01-20 → present = Trump
-  If uncertain, use neutral phrasing ("the U.S. administration"). Never guess.
-
-- Outlet lock: The parenthetical MUST match the URL's news brand (e.g., reuters.com → Reuters; bbc.com → BBC News; abcnews.go.com → ABC News).
-
-- No embellishment or inference. If a number/date is unclear, omit it rather than inventing it.
-
-- Content should be html not markdown.
-
-- All results should be English.
-
-- Anti-repetition constraint:
-  - Each section must contribute NEW information (new mechanism, stakeholder, timeframe, example, or metric).
-  - Do not restate the headline beyond the "Explain It Like I’m New" section.
-  - Avoid repeating the same key claim in more than TWO sections.
-  - No verbatim sentence reuse across sections.
-  - If a point is already explained, reference it briefly rather than re-explaining it.
+News Title:
+${news_title}
+News Content:
+${news_body}
 
 ### Output:
-1. **company**: Company wikipedia url (e.g. http://en.wikipedia.org/wiki/Apple)
-2. **company_name**: Company name (e.g. Apple)
-3. **title**: Clear and compelling title. Closely mirror the article H1 and preserve all hard facts.
-4. **content**: 250–500 words of professional, company-focused analysis. Should be html not markdown. Use only Wikipedia and open data sources (e.g., government or NGO reports). Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral, PhD-level tone.
-
-   The content must read like a legitimate published article and include the following sections, in this order. Each section must use proper HTML heading tags (e.g., h2) and each heading must include a unique id attribute.
-
-   Section-specific scope (do not overlap):
-   - What People Are Noticing = observable signals only (market reaction, user behavior, executive actions, policy signals). No causes.
-   - Why This Is Happening = underlying drivers (macro, industry, technology, regulation). No timing discussion.
-   - What Changed to Make This Matter Now = recent catalysts and why timing shifted. No long-term history.
-   - How Institutions Respond = institutional behavior only (allocations, governance, compliance, procurement).
-   - What This Tends to Lead To Over Time = historical patterns and second-order effects.
-   - What Does This Mean for Me? = practical implications for individuals. No institutional analysis.
-   - Where This Eventually Shows Up = downstream effects in markets, products, pricing, jobs, or regulation.
-   - The Question This Raises = one forward-looking question only; do not answer it.
-
-   Length caps:
-   - Explain It Like I’m New: 3–4 sentences MAX.
-   - Each main section: 2–4 sentences MAX.
-   - Analytics & Data: 3–6 bullets MAX.
-   - Sources: 3–6 bullets.
-
-   Uniqueness requirement:
-   - Each section must include at least ONE unique anchor not used elsewhere (a statistic, stakeholder group, mechanism, concrete example, or timeframe).
-
-   **Explain It Like I’m New**
-   - Add a section titled **"Explain It Like I’m New"**.
-   - Explain the entire news headline in extremely simple terms.
-   - 3–4 sentences MAX.
-   - No jargon. Assume zero prior knowledge.
-
-   **What People Are Noticing**
-
-   **Why This Is Happening**
-
-   **What Changed to Make This Matter Now**
-
-   **How Institutions Respond**
-   - Focus on how large companies, institutions, or major organizations are responding.
-
-   **What This Tends to Lead To Over Time**
-
-   **What Does This Mean for Me?**
-   - Explain implications for individuals, workers, consumers, or everyday investors.
-   - No personalized or prescriptive financial advice.
-
-   **Where This Eventually Shows Up**
-   - Markets, products, pricing, regulation, jobs, or daily life.
-
-   **The Question This Raises**
-   - One clear forward-looking question implied by the situation.
-
-   **Analytics & Data**
-   - Always include analytics (stats, trends, or charts).
-   - Use only open data sources (e.g., World Bank, IMF, OECD, UN, national statistical agencies, FRED).
-   - Clearly state years, regions, and units.
-
-   **Sources**
-   - At the end of the article, add a sources list with 3–6 bullet points.
-   - Name the organization and the dataset/report/page title actually used.
-   - Use only open sources.
-   - Place the Wikipedia source as the last bullet.
-   - Do NOT include the news article itself.
-
-   - The whole content should be outputed as html not markdown.
-   - Headings and subheadings should use proper HTML tags (h1, h2, etc.).
-   - Each section must include a unique id attribute.
-
-5. **sections_ids**: array of section ids so that we can scroll to those sections in the article using a tag like <a href="#what-people-are-noticing">What People Are Noticing</a>
-6. **sections_titles**: array of section names
-7. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Crypto"]
-
-### Final self-audit (internal; do not print):
-
-- Company is the primary analytical subject.
-- Outlet parenthetical matches URL domain.
-- No invented dates.
-- If H1 has a number, identical number appears in the title.
-- No administration mislabel; if uncertain → neutral phrasing.
-- Title length ≤ 160 characters; no duplicate with existing items.`;
+1. **title**: Clear and compelling title.
+2. **content**: 250–500 words of professional analysis. Use only Wikipedia and open data sources (e.g., government or NGO reports). Do not paraphrase the article. Provide deeper context — such as causes, historical/regional trends, or policy implications. Avoid generic definitions or rhetorical questions. Maintain a neutral tone.
+Style whole blog content well with headings, subheadings, and bullet points for better readability. And also some words that need to be bolded for emphasis.
+3. **category**: category of the article. It should be one of these values - ["AI", "Finance", "Politics", "Crypto]`;
 
   try {
     const response = await fetch(url, {
