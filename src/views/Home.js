@@ -517,11 +517,12 @@ export default function Home() {
         {/* Header */}
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start flex-1 justify-between gap-4">
-            <div className="flex md:items-end gap-3 md:mt-4 flex-col md:flex-row flex-1">
+            <div className="flex lg:items-end gap-3 lg:mt-4 flex-col lg:flex-row flex-1">
               <div className="flex gap-[16px] items-center">
-                <h1 className="text-[30px] md:text-3xl font-bold text-[#2b425b]">What&apos;s happening now?</h1>
+                <h1 className="text-[30px] lg:text-3xl font-bold text-[#2b425b]">What&apos;s happening now?</h1>
               </div>
-              <p className="text-[#475467] text-sm md:text-base text-left md:text-right">
+
+              <p className="text-[#475467] text-sm lg:text-base text-left lg:text-right">
                 Live updates{" "}
                 <span className="text-[#2B425B] font-bold">
                   {parseInt(remainingSeconds / 60)} min {remainingSeconds % 60}{" "}
@@ -531,7 +532,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               <NotificationDropdown />
               <button
                 className="gradient-button text-white font-bold px-8 py-3 rounded-full shadow-sm hover:shadow-md transition-all"
@@ -544,7 +545,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col 2xl:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col xl:flex-row flex-1 overflow-hidden">
           <div className="flex flex-col flex-1">
             {/* Fortune List Filter */}
             <div className="flex flex-row gap-2 items-center justify-center md:justify-start md:gap-4 px-2 md:px-6">
@@ -636,7 +637,7 @@ export default function Home() {
             </div>
 
             {/* Left Column - Polls */}
-            <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-6 md:px-10 pt-[20px]`}>
+            <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-5 md:px-10 pt-[20px]`}>
               <div className="flex flex-col gap-6">
                 {polls.map((poll) => (
                   <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
@@ -657,7 +658,7 @@ export default function Home() {
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="flex xl:w-[400px] flex-col">
+          <div className="flex flex-col max-w-[400px]">
             <div className="flex flex-col gap-8 p-6 overflow-auto">
               {/* Viral Detection Section */}
               <div className="flex flex-col gap-[27px]">

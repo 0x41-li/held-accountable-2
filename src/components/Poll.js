@@ -217,12 +217,11 @@ export default function Poll({ poll: initialPoll, showDetail }) {
   }, [poll.id, poll.vote_result, auth.currentUser]);
 
   return (
-    <Link href={`/app/polls/${poll.id}`} className="relative flex flex-col xl:flex-row w-full rounded-[32px] border border-[#E9EAEB] p-0 hover:border-blue-300 transition-colors bg-[#F7F8FF80] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden cursor-pointer">
+    <Link href={`/app/polls/${poll.id}`} className="relative flex gap-4 w-full rounded-[24px] border border-[#E9EAEB] p-2 hover:border-blue-300 transition-colors bg-[rgba(247,248,255,0.5)] shadow-[0_20px_50px_0_rgba(27,53,132,0.2)] overflow-hidden cursor-pointer h-[160px]">
       {/* Learn in 2 min & Invest button positioned at top right of card */}
       <div
-        className="md:flex absolute uppercase top-0 right-0 flex items-center gap-2 text-[#2B425B66] text-sm hover:text-blue-700 transition-colors z-10"
+        className="hidden sm:flex absolute uppercase top-0 right-0 items-center gap-2 text-[#2B425B66] text-sm hover:text-blue-700 transition-colors z-10"
       >
-        <span className="text-[#2B425B]">{commentCount}</span> Comments
         <div className="w-16 h-16 bg-[rgba(247, 248, 255, 0.5)] flex items-center justify-center rounded-bl-[32px] border-gray-200/50"
           style={{
             boxShadow: "0px 20px 50px 0px rgba(27, 53, 132, 0.1)",
@@ -234,11 +233,11 @@ export default function Poll({ poll: initialPoll, showDetail }) {
 
       {/* Image on the left */}
       <div className="flex flex-shrink-0 self-stretch items-stretch relative">
-        <div className="relative w-full xl:w-[250px]">
+        <div className="relative w-[140px] h-[130px] lg:h-full lg:w-[200px] xl:h-[144px] xl:w-[240px]">
           <img
             src={poll.image_url || "/images/narrative_detail.png"}
             alt="Narrative"
-            className="rounded-[32px] w-full h-full p-2 object-cover"
+            className="rounded-[16px] w-full h-full object-cover"
           />
           {/* Heart icon overlay on top right of image */}
           <button
@@ -260,8 +259,8 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       </div>
 
       {/* Content on the right */}
-      <div className="flex-1 flex flex-col relative p-2 md:p-6">
-        <div className="flex items-center gap-2 mb-2 md:pr-32 flex-wrap">
+      <div className="flex flex-col gap-2 relative py-4">
+        <div className="flex items-center gap-2 md:pr-32 flex-wrap">
           <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
             {category}
           </span>
@@ -286,39 +285,23 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           </div>
         </div>
 
-        {/* Read Progress Bar */}
-        {/* {auth.currentUser && (
-        <div className="mb-3 md:mb-4 md:pr-32">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-1.5 bg-[#E4E7EC] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#B2C7FF] to-[#398DEB] transition-all duration-300 rounded-full"
-                style={{ width: `${readProgress}%` }}
-              />
-            </div>
-            <span className="text-[10px] md:text-xs text-[#475467] font-medium min-w-[35px] text-right">
-              {readProgress}%
-            </span>
-          </div>
-        </div>
-      )} */}
-
-        <h3 className="text-[16px] md:text-[18px] md:text-xl font-[500] text-[#101828] mb-2 line-clamp-2 md:pr-32">
+        <h3 className="text-[16px] lg:text-xl font-[500] text-[#101828] sm:pr-16 line-clamp-1 md:line-clamp-2">
           {headlineText}
         </h3>
 
-        {firstInsight ? (
-          <p className="text-[#2B425B66] text-[11px] md:text-[12px] md:text-base leading-6 mb-2 line-clamp-1 md:line-clamp-2">
-            {firstInsight.content.replace(/\*/g, "").replace(/#/g, "")}
-          </p>
-        ) : (
-          <p className="text-[#2B425B66] text-[12px] md:text-base leading-6 mb-4 line-clamp-1 md:line-clamp-3">
-            {poll.questions[0].summary || "No content available"}
-          </p>
-        )}
+        <div className="flex-1 overflow-hidden">
+          {firstInsight ? (
+            <p className="text-[#2B425B66] h-full text-[11px] md:text-[12px] md:text-base leading-6">
+              {firstInsight.content.replace(/\*/g, "").replace(/#/g, "")}
+            </p>
+          ) : (
+            <p className="text-[#2B425B66] h-full text-[12px] lg:text-base leading-6 sm:pr-16">
+              {poll.questions[0].summary || "No content available"}
+            </p>
+          )}
+        </div>
 
-
-        <Link
+        {/* <Link
           href={`/app/polls/${poll.id}`}
           onClick={(e) => {
             if (showDetail) {
@@ -329,7 +312,10 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           className="md:hidden uppercase text-[#1D74D6] font-bold text-[11px] hover:text-blue-700"
         >
           Learn in 2 min & Invest
-        </Link>
+        </Link> */}
+
+        <div className="absolute bottom-0 left-0 h-10 w-full z-10 bg-gradient-to-t to-transparent from-[#e4ecfa]"></div>
+
 
         <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
       </div>

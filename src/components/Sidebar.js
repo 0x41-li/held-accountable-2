@@ -31,7 +31,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="hidden md:flex flex-col justify-between w-[230px] max-h-screen">
+    <div className="hidden lg:flex flex-col justify-between w-[230px] max-h-screen">
       <div className="flex flex-col gap-[24px] pt-[32px] ">
         <Link href="/" className="flex items-center pl-[23px]">
           <img src="/images/logo.png" width={50} />

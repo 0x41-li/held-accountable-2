@@ -6,7 +6,7 @@ import TrendingEventsBar from "@/components/common/TrendingEventsBar";
 export default function AppLayout({ children }) {
     return <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
         <TrendingEventsBar />
-        <div className="flex-1 flex flex-col md:flex-row">
+        <div className="flex-1 flex flex-col lg:flex-row">
             <div className="flex">
                 <Sidebar />
                 <Navbar />
