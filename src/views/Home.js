@@ -637,7 +637,7 @@ export default function Home() {
 
             {/* Left Column - Polls */}
             <div className={`flex-1 ${isMobile ? 'overflow-visible' : 'overflow-auto'} px-6 md:px-10 pt-[20px]`}>
-              <div className="flex flex-row lg:flex-col gap-6">
+              <div className="flex flex-col gap-6">
                 {polls.map((poll) => (
                   <Poll poll={poll} key={poll.id} showDetail={setDetailId} />
                 ))}
