@@ -259,7 +259,7 @@ export default function Poll({ poll: initialPoll, showDetail }) {
       </div>
 
       {/* Content on the right */}
-      <div className="flex flex-col gap-2 relative py-4">
+      <div className="flex flex-col gap-2 relative lg:py-4">
         <div className="flex items-center gap-2 md:pr-32 flex-wrap">
           <span className={`text-[11px] md:text-sm font-medium ${categoryColor}`}>
             {category}
