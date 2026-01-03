@@ -285,17 +285,17 @@ export default function Poll({ poll: initialPoll, showDetail }) {
           </div>
         </div>
 
-        <h3 className="text-[16px] lg:text-xl font-[500] text-[#101828] sm:pr-16 line-clamp-1 md:line-clamp-2">
+        <h3 className="text-[16px] lg:text-xl font-[500] text-[#101828] sm:pr-16 line-clamp-1">
           {headlineText}
         </h3>
 
         <div className="flex-1 overflow-hidden">
           {firstInsight ? (
-            <p className="text-[#2B425B66] h-full text-[11px] md:text-[12px] md:text-base leading-6">
+            <p className="bg-gradient-to-b from-[#515151] to-[#51515100] bg-clip-text text-transparent h-full text-[11px] md:text-[12px] md:text-base leading-6">
               {firstInsight.content.replace(/\*/g, "").replace(/#/g, "")}
             </p>
           ) : (
-            <p className="text-[#2B425B66] h-full text-[12px] lg:text-base leading-6 sm:pr-16">
+            <p className="h-full text-[12px] lg:text-base leading-6 sm:pr-16 bg-gradient-to-b from-[#515151] to-[#51515100] bg-clip-text text-transparent">
               {poll.questions[0].summary || "No content available"}
             </p>
           )}
@@ -313,9 +313,6 @@ export default function Poll({ poll: initialPoll, showDetail }) {
         >
           Learn in 2 min & Invest
         </Link> */}
-
-        <div className="absolute bottom-0 left-0 h-10 w-full z-10 bg-gradient-to-t to-transparent from-[#e4ecfa]"></div>
-
 
         <ShareModal show={showShareModal} hideDialog={() => setShowShareModal(false)} data={{ id: poll.id, title: poll.questions[0].headline }} />
       </div>
